@@ -9,15 +9,15 @@
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
-    "@vitejs/plugin-react": "latest",
-    "vite": "latest",
-    "typescript": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "zustand": "latest",
-    "framer-motion": "latest",
-    "three": "latest",
-    "phaser": "latest"
+    "@vitejs/plugin-react": "6.0.1",
+    "vite": "8.0.10",
+    "typescript": "6.0.3",
+    "react": "19.2.5",
+    "react-dom": "19.2.5",
+    "zustand": "5.0.12",
+    "framer-motion": "12.38.0",
+    "three": "0.184.0",
+    "phaser": "4.0.0"
   },
   "devDependencies": {}
 }
