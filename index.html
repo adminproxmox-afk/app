@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Навчальні ігри</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="style/index.css">
+<link rel="stylesheet" href="style/ui-preferences.css">
+<link rel="stylesheet" href="style/app-shell.css">
+</head>
+<body>
+<div class="page-shell">
+  <main class="app phone-frame">
+    <div class="screen">
+      <div class="toast" id="toast"></div>
+
+      <header class="app-topbar">
+        <div class="app-topbar__row row g-2 align-items-center flex-nowrap">
+          <div class="col-auto app-topbar__side app-topbar__side--start">
+            <div class="app-topbar__brand app-topbar__brand--static" aria-hidden="true">
+              <span class="app-brand-mark"></span>
+            </div>
+          </div>
+          <div class="col app-topbar__center">
+            <h1 class="app-topbar__title" id="pageTitle">Головна</h1>
+          </div>
+          <div class="col-auto app-topbar__side app-topbar__side--end">
+            <div class="app-topbar__coins coins">
+              <span class="app-coin-pill__icon" aria-hidden="true"></span>
+              <span id="coinBalance">125</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="content-panel">
+        <div id="contentContainer"></div>
+        <button class="logout-button" id="logoutBtn">Вийти з акаунту</button>
+      </section>
+
+      <nav class="bottom-nav" aria-label="Нижня навігація">
+        <button class="bottom-nav__item active" data-nav="home" type="button"><span class="bottom-nav__icon">⌂</span><span>Головна</span></button>
+        <button class="bottom-nav__item" data-nav="profile" type="button"><span class="bottom-nav__icon">●</span><span>Аватар</span></button>
+        <button class="bottom-nav__item" data-nav="shop" type="button"><span class="bottom-nav__icon">▣</span><span>Магазин</span></button>
+        <button class="bottom-nav__item" data-nav="settings" type="button"><span class="bottom-nav__icon">⚙</span><span>Налаштування</span></button>
+      </nav>
+    </div>
+  </main>
+</div>
+
+<div id="lectureModal" class="modal">
+  <div class="modal-content lecture-modal">
+    <div class="lecture-modal__top">
+      <span class="lecture-modal__badge" id="lectureBadge">Міні-лекція</span>
+      <button class="lecture-modal__close" id="lectureCloseIcon" type="button" aria-label="Закрити">×</button>
+    </div>
+    <h3 id="lectureTitle">Лекція</h3>
+    <p id="lectureSummary">Коротка база перед запуском гри.</p>
+
+    <section class="lecture-section">
+      <strong class="lecture-section__title" id="lectureTheoryTitle">Що треба знати</strong>
+      <div class="lecture-points" id="lecturePoints"></div>
+    </section>
+
+    <section class="lecture-section">
+      <strong class="lecture-section__title" id="lectureFlowTitle">Як це буде в грі</strong>
+      <p class="lecture-section__text" id="lectureFlowText"></p>
+    </section>
+
+    <section class="lecture-section">
+      <strong class="lecture-section__title" id="lectureResultTitle">Результат після лекції</strong>
+      <p class="lecture-section__text" id="lectureResultText"></p>
+    </section>
+
+    <section class="lecture-section" id="lectureDetailSection" hidden>
+      <strong class="lecture-section__title" id="lectureDetailTitle">Логіка гри</strong>
+      <div class="lecture-detail-grid" id="lectureDetailGrid"></div>
+    </section>
+
+    <div class="modal-buttons lecture-modal__actions">
+      <button class="modal-cancel" id="lectureCloseBtn" type="button">Закрити</button>
+      <button class="modal-save" id="lectureStartBtn" type="button">Почати гру</button>
+    </div>
+  </div>
+</div>
+
+<div id="gameModal" class="modal">
+  <div class="modal-content game-modal">
+    <div class="game-modal__top">
+      <span class="game-modal__badge" id="gameBadge">Логіка гри</span>
+      <button class="game-modal__close" id="gameCloseIcon" type="button" aria-label="Закрити">×</button>
+    </div>
+
+    <section class="game-step" id="gameLogicStep">
+      <h3 id="gameLogicTitle">Гра</h3>
+      <p id="gameLogicSummary">Коротко про те, як працює ця гра.</p>
+      <div class="game-logic-grid" id="gameLogicGrid"></div>
+      <div class="modal-buttons game-modal__actions">
+        <button class="modal-cancel" id="gameLogicCloseBtn" type="button">Закрити</button>
+        <button class="modal-save" id="gameContinueBtn" type="button">До гри</button>
+      </div>
+    </section>
+
+    <section class="game-step" id="gamePlayStep" hidden>
+      <div class="game-play-shell">
+        <div class="game-play-shell__header">
+          <span class="game-play-shell__label" id="gamePlayLabel">Демо-рівень</span>
+          <span class="game-play-shell__status" id="gamePlayStatus">Основа гри</span>
+        </div>
+        <h3 id="gamePlayTitle">Екран гри</h3>
+        <p class="game-play-shell__lead" id="gamePlayLead">Тут буде сама гра.</p>
+        <div class="game-play-cards" id="gamePlayCards"></div>
+      </div>
+      <div class="modal-buttons game-modal__actions game-modal__actions--stack">
+        <button class="modal-cancel" id="gameBackBtn" type="button">Назад до логіки</button>
+        <button class="modal-save" id="gameCloseBtn" type="button">Закрити гру</button>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script src="js/db.js"></script>
+<script src="js/ui-preferences.js"></script>
+<script src="js/index.js"></script>
+</body>
+</html>
+

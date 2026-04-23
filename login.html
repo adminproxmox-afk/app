@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="style/login.css">
+  <link rel="stylesheet" href="style/ui-preferences.css">
+</head>
+<body>
+  <div class="auth-shell">
+    <div class="auth-glow auth-glow--one"></div>
+    <div class="auth-glow auth-glow--two"></div>
+
+    <main class="card auth-card">
+      <div class="icon">⬛</div>
+      <h2>Sign into your account</h2>
+      <p class="subtitle" id="authSubtitle">Use your username, email, or a connected provider to continue.</p>
+
+      <div class="field-group">
+        <input type="text" id="login" placeholder="Username or Email" autocomplete="username">
+        <div class="field-hint" id="loginHint">Use username or email</div>
+      </div>
+
+      <div class="field-group">
+        <input type="password" id="password" placeholder="Password" autocomplete="current-password">
+        <div class="field-hint" id="passwordHint">Minimum 8 characters, uppercase letter and number</div>
+      </div>
+
+      <button id="loginButton" type="button">Log In</button>
+
+      <div id="message" class="auth-message" aria-live="polite"></div>
+
+      <div class="divider">or sign in with</div>
+
+      <div class="socials" id="socialButtons">
+        <button class="social-btn social-btn--google" data-provider="google" type="button">
+          <i class="fab fa-google"></i>
+          <span class="social-btn__label">Google</span>
+        </button>
+        <button class="social-btn social-btn--telegram" data-provider="telegram" type="button">
+          <i class="fab fa-telegram"></i>
+          <span class="social-btn__label">Telegram</span>
+        </button>
+      </div>
+
+      <div class="bottom-text">Don't have an account? <a href="regist.html">Sign up!</a></div>
+    </main>
+  </div>
+  <script src="js/db.js"></script>
+  <script src="js/ui-preferences.js"></script>
+  <script src="js/auth-provider-config.js"></script>
+  <script src="js/auth-common.js"></script>
+  <script src="js/auth-real.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>
+
