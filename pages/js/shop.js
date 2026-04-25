@@ -93,9 +93,68 @@ const shopMap = {
   'Останні придбання у вашому профілі.': 'Recent purchases in your profile.',
   'Ще немає покупок': 'No purchases yet',
   'Міграцію локальних даних завершено': 'Local data migration completed',
-  'Одяг': 'Wardrobe',
+  'Одяг': 'Clothes',
   'Річ уже є у гардеробі': 'This item is already in the wardrobe',
-  'Доступно у персонажі': 'Available on the character page'
+  'Доступно у персонажі': 'Available on the character page',
+  'Шкіра': 'Skin',
+  'Волосся': 'Hair',
+  'Аксесуар': 'Accessory',
+  'Штани': 'Pants',
+  'Взуття': 'Shoes',
+  'Ефект': 'Effect',
+  'Світлий': 'Light',
+  'Бежевий': 'Beige',
+  'Теплий': 'Warm',
+  'Бурштин': 'Amber',
+  'Глибокий': 'Deep',
+  'Бронза': 'Bronze',
+  'Пісок': 'Sand',
+  'Какао': 'Cocoa',
+  'Класика': 'Classic',
+  'Темний': 'Dark',
+  'Блонд': 'Blonde',
+  'Мідний': 'Copper',
+  'Синій': 'Blue',
+  'Срібло': 'Silver',
+  'Зелений': 'Green',
+  'Слива': 'Plum',
+  'Без аксесуару': 'No accessory',
+  'Окуляри': 'Glasses',
+  'Гарнітура': 'Headset',
+  'Корона': 'Crown',
+  'Візор': 'Visor',
+  'Маска': 'Mask',
+  'Марсала': 'Marsala',
+  'Хвоя': 'Pine',
+  'Графіт': 'Graphite',
+  'Фіалка': 'Violet',
+  'Пісочний': 'Sand',
+  'Сталь': 'Steel',
+  'Бірюза': 'Teal',
+  'Нічні': 'Navy',
+  'Сірі': 'Gray',
+  'Чорні': 'Black',
+  'Олива': 'Olive',
+  'Кава': 'Coffee',
+  'Азур': 'Azure',
+  'Пурпур': 'Purple',
+  'Вино': 'Wine',
+  'Базові': 'Basic',
+  'Туман': 'Mist',
+  'Світлі': 'Light',
+  'Рубін': 'Ruby',
+  'Океан': 'Ocean',
+  'Золото': 'Gold',
+  'Лайм': 'Lime',
+  'Аметист': 'Amethyst',
+  'Без ефекту': 'No effect',
+  'Лід': 'Ice',
+  'Вогонь': 'Fire',
+  'Сонце': 'Sun',
+  'Ліс': 'Forest',
+  'Плазма': 'Plasma',
+  'Рожевий': 'Rose',
+  'Неон': 'Neon'
 };
 
 function trShop(value) {
@@ -114,13 +173,14 @@ const shopItems = [
 const defaultCharacterSelected = {
   skin: 'skin-soft',
   hair: 'hair-classic',
+  accessory: 'accessory-none',
   shirt: 'shirt-red',
   pants: 'pants-navy',
   shoes: 'shoes-black',
   extra: 'extra-soft'
 };
 
-const defaultCharacterOwned = ['skin-soft', 'hair-classic', 'shirt-red', 'pants-navy', 'shoes-black', 'extra-soft'];
+const defaultCharacterOwned = ['skin-soft', 'hair-classic', 'accessory-none', 'shirt-red', 'pants-navy', 'shoes-black', 'extra-soft'];
 
 const wardrobeCatalog = [
   {
@@ -166,6 +226,19 @@ const wardrobeCatalog = [
       { id: 'shirt-sand', label: 'Пісочний', price: 16 },
       { id: 'shirt-steel', label: 'Сталь', price: 14 },
       { id: 'shirt-teal', label: 'Бірюза', price: 18 }
+    ]
+  },
+  {
+    id: 'accessory',
+    label: 'Аксесуар',
+    icon: '🕶️',
+    items: [
+      { id: 'accessory-none', label: 'Без аксесуару', price: 0 },
+      { id: 'accessory-glasses', label: 'Окуляри', price: 14 },
+      { id: 'accessory-headset', label: 'Гарнітура', price: 16 },
+      { id: 'accessory-crown', label: 'Корона', price: 18 },
+      { id: 'accessory-visor', label: 'Візор', price: 17 },
+      { id: 'accessory-mask', label: 'Маска', price: 15 }
     ]
   },
   {
@@ -560,7 +633,7 @@ function buyWardrobeItem(itemId) {
     const coins = Number(db.profile.coins || 0);
 
     if (owned.has(item.id)) {
-      toastMessage = `${trShop('Річ уже є у гардеробі')}: ${item.label}`;
+      toastMessage = `${trShop('Річ уже є у гардеробі')}: ${trShop(item.label)}`;
       return;
     }
 
@@ -576,7 +649,7 @@ function buyWardrobeItem(itemId) {
     db.character.owned = Array.from(new Set([...db.character.owned, item.id]));
     addToHistory(db, item.id, 'wardrobe', item.price);
     unlockedAchievements = updateAchievements(db, item.price);
-    toastMessage = `${trShop('Куплено')}: ${item.label}`;
+    toastMessage = `${trShop('Куплено')}: ${trShop(item.label)}`;
   });
 
   if (modalState) {
@@ -727,7 +800,7 @@ function renderWardrobe() {
   let html = '<div class="products-grid">';
 
   visibleItems.forEach((item) => {
-    html += `<article class="product-card"><div class="product-icon">${item.icon}</div><div class="product-name">${item.label}</div><div class="product-desc">${item.categoryLabel} • ${t.wardrobeHint}</div><div class="product-price"><span>🪙</span><span>${item.price}</span></div><button class="buy-button" type="button" onclick="buyWardrobeItem('${item.id}')" ${coins < item.price ? 'disabled' : ''}>${t.buy}</button></article>`;
+    html += `<article class="product-card"><div class="product-icon">${item.icon}</div><div class="product-name">${trShop(item.label)}</div><div class="product-desc">${trShop(item.categoryLabel)} • ${t.wardrobeHint}</div><div class="product-price"><span>🪙</span><span>${item.price}</span></div><button class="buy-button" type="button" onclick="buyWardrobeItem('${item.id}')" ${coins < item.price ? 'disabled' : ''}>${t.buy}</button></article>`;
   });
 
   html += '</div>';
@@ -773,7 +846,7 @@ function getHistoryLabel(entry) {
     return trShop(findAvatarByEmoji(entry.itemId)?.name || entry.itemId);
   }
   if (entry.type === 'wardrobe') {
-    return findWardrobeItemById(entry.itemId)?.label || entry.itemId;
+    return trShop(findWardrobeItemById(entry.itemId)?.label || entry.itemId);
   }
   return trShop(findItemById(entry.itemId)?.name || entry.itemId);
 }

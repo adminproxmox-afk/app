@@ -1,0 +1,71 @@
+{
+  "season": "Spring 2026 Snapshot",
+  "updatedAt": "2026-04-25T09:30:00Z",
+  "players": [
+    {
+      "publicId": "nova",
+      "name": "Nova",
+      "avatar": "🚀",
+      "xp": 980,
+      "favoriteCategory": "it",
+      "categoryScores": {
+        "it": 520,
+        "economy": 180,
+        "softskills": 170,
+        "agro": 110
+      }
+    },
+    {
+      "publicId": "mia",
+      "name": "Mia",
+      "avatar": "📈",
+      "xp": 910,
+      "favoriteCategory": "economy",
+      "categoryScores": {
+        "it": 160,
+        "economy": 470,
+        "softskills": 140,
+        "agro": 140
+      }
+    },
+    {
+      "publicId": "kai",
+      "name": "Kai",
+      "avatar": "🤝",
+      "xp": 860,
+      "favoriteCategory": "softskills",
+      "categoryScores": {
+        "it": 150,
+        "economy": 160,
+        "softskills": 410,
+        "agro": 140
+      }
+    },
+    {
+      "publicId": "leo",
+      "name": "Leo",
+      "avatar": "🌾",
+      "xp": 790,
+      "favoriteCategory": "agro",
+      "categoryScores": {
+        "it": 120,
+        "economy": 130,
+        "softskills": 140,
+        "agro": 400
+      }
+    },
+    {
+      "publicId": "iris",
+      "name": "Iris",
+      "avatar": "🧠",
+      "xp": 735,
+      "favoriteCategory": "softskills",
+      "categoryScores": {
+        "it": 120,
+        "economy": 110,
+        "softskills": 360,
+        "agro": 145
+      }
+    }
+  ]
+}

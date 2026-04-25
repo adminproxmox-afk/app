@@ -54,6 +54,10 @@ const copy = {
     strongestFallback: 'Ще формується',
     playedToast: 'за',
     leaderboardEmpty: 'Поки що немає гравців у цій категорії',
+    communityBoard: 'Спільний топ',
+    communitySnapshot: 'Оновлення спільного топу',
+    communityLoading: 'Завантажуємо спільний snapshot рейтингу...',
+    communityFallback: 'Поки що показуємо локальний прогрес. Для живого спільного топу знадобиться окрема база.',
     lectureBadge: 'Міні-лекція',
     lectureTheoryTitle: 'Що треба знати',
     lectureFlowTitle: 'Як це буде в грі',
@@ -128,6 +132,10 @@ const copy = {
     strongestFallback: 'Still forming',
     playedToast: 'for',
     leaderboardEmpty: 'No players in this category yet',
+    communityBoard: 'Community board',
+    communitySnapshot: 'Community snapshot update',
+    communityLoading: 'Loading the shared leaderboard snapshot...',
+    communityFallback: 'Showing local progress for now. A separate backend is needed for a live shared board.',
     lectureBadge: 'Mini lesson',
     lectureTheoryTitle: 'What to know first',
     lectureFlowTitle: 'How it works in the game',
@@ -1887,43 +1895,19 @@ const gamePlayBlueprints = {
   }
 };
 
-const leaderboardPlayers = [
-  {
-    name: 'Nova',
-    avatar: '🚀',
-    xp: 980,
-    favoriteCategory: 'it',
-    categoryScores: { it: 520, economy: 180, softskills: 170, agro: 110 }
-  },
-  {
-    name: 'Mia',
-    avatar: '📈',
-    xp: 910,
-    favoriteCategory: 'economy',
-    categoryScores: { it: 160, economy: 470, softskills: 140, agro: 140 }
-  },
-  {
-    name: 'Kai',
-    avatar: '🤝',
-    xp: 860,
-    favoriteCategory: 'softskills',
-    categoryScores: { it: 150, economy: 160, softskills: 410, agro: 140 }
-  },
-  {
-    name: 'Leo',
-    avatar: '🌾',
-    xp: 790,
-    favoriteCategory: 'agro',
-    categoryScores: { it: 120, economy: 130, softskills: 140, agro: 400 }
-  }
-];
-
 const state = {
   leaderboardFilter: 'all',
   selectedCategory: 'it',
   selectedSubcategory: 'webdev',
   activeLecture: null,
   activeGame: null
+};
+
+const communityState = {
+  status: 'loading',
+  players: [],
+  season: '',
+  updatedAt: ''
 };
 
 let toastTimer;
@@ -1986,6 +1970,80 @@ function getProgress() {
     },
     recentGames: Array.isArray(progress.recentGames) ? progress.recentGames : []
   };
+}
+
+function normalizeCategoryScores(scores) {
+  return {
+    ...PROGRESS_TEMPLATE.categoryScores,
+    ...(scores && typeof scores === 'object' ? scores : {})
+  };
+}
+
+function normalizeCommunityPlayer(player, index) {
+  if (!player || typeof player !== 'object') return null;
+  const name = String(player.name || '').trim();
+  if (!name) return null;
+  const categoryScores = normalizeCategoryScores(player.categoryScores);
+  return {
+    publicId: String(player.publicId || player.login || name || `community-${index}`)
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, '-'),
+    name,
+    avatar: String(player.avatar || '👨‍🎓').trim() || '👨‍🎓',
+    avatarImage: String(player.avatarImage || '').trim(),
+    xp: Number(player.xp || 0),
+    favoriteCategory: categories?.[player.favoriteCategory] ? player.favoriteCategory : (getStrongestCategoryId(categoryScores) || 'it'),
+    categoryScores
+  };
+}
+
+function formatCommunityUpdatedAt(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return new Intl.DateTimeFormat(lang === 'en' ? 'en-US' : 'uk-UA', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  }).format(date);
+}
+
+function getCommunityMeta() {
+  if (communityState.status === 'loading') return copy.communityLoading;
+  if (communityState.status !== 'ready') return copy.communityFallback;
+
+  const updatedAt = formatCommunityUpdatedAt(communityState.updatedAt);
+  const season = String(communityState.season || '').trim();
+  if (updatedAt && season) return `${copy.communitySnapshot}: ${updatedAt} • ${season}`;
+  if (updatedAt) return `${copy.communitySnapshot}: ${updatedAt}`;
+  if (season) return `${copy.communitySnapshot}: ${season}`;
+  return copy.communitySnapshot;
+}
+
+function loadCommunityLeaderboard() {
+  communityState.status = 'loading';
+  return fetch('data/community-leaderboard.json', { cache: 'no-store' })
+    .then((response) => {
+      if (!response.ok) throw new Error(`community-${response.status}`);
+      return response.json();
+    })
+    .then((payload) => {
+      communityState.players = Array.isArray(payload?.players)
+        ? payload.players.map(normalizeCommunityPlayer).filter(Boolean)
+        : [];
+      communityState.season = String(payload?.season || '').trim();
+      communityState.updatedAt = String(payload?.updatedAt || '').trim();
+      communityState.status = 'ready';
+      renderHome();
+    })
+    .catch(() => {
+      communityState.players = [];
+      communityState.season = '';
+      communityState.updatedAt = '';
+      communityState.status = 'fallback';
+      renderHome();
+    });
 }
 
 function updateBalance() {
@@ -2441,6 +2499,7 @@ function getLeaderboard(filterId = state.leaderboardFilter) {
   const profile = getProfile();
   const progress = getProgress();
   const currentPlayer = {
+    publicId: String(profile.username || currentUser || 'player').trim().toLowerCase(),
     name: profile.name || currentUser,
     avatar: profile.currentAvatar || profile.avatar || '👨‍🎓',
     avatarImage: profile.avatarImage || '',
@@ -2453,7 +2512,16 @@ function getLeaderboard(filterId = state.leaderboardFilter) {
     isCurrentUser: true
   };
 
-  const allPlayers = [...leaderboardPlayers, currentPlayer];
+  const allPlayers = [...communityState.players, currentPlayer].reduce((result, player, index) => {
+    const key = String(player.publicId || player.name || `player-${index}`).trim().toLowerCase() || `player-${index}`;
+    const existingIndex = result.findIndex((entry) => String(entry.publicId || entry.name || '').trim().toLowerCase() === key);
+    if (existingIndex === -1) {
+      result.push(player);
+    } else if (player.isCurrentUser) {
+      result[existingIndex] = { ...result[existingIndex], ...player };
+    }
+    return result;
+  }, []);
 
   if (filterId === 'all') {
     return allPlayers
@@ -2547,8 +2615,8 @@ function renderLeaderboardSection() {
     : `<div class="leaderboard-empty">${copy.leaderboardEmpty}</div>`;
 
   return `
-    <section class="dashboard-section">
-      <div class="section-heading"><div><p class="section-kicker">${copy.leaderboardTitle}</p><h3>${copy.leaderboardText}</h3></div></div>
+    <section class="dashboard-section dashboard-section--leaderboard">
+      <div class="section-heading"><div><p class="section-kicker">${copy.leaderboardTitle}</p><h3>${copy.leaderboardText}</h3><p class="leaderboard-note">${escapeHtml(getCommunityMeta())}</p></div></div>
       <div class="filter-row">${filterMarkup}</div>
       <div class="leaderboard-list">${rows}</div>
     </section>
@@ -2783,8 +2851,9 @@ function renderHomeLeaderboardCard() {
     <section class="home-panel home-panel--leaderboard">
       <div class="home-panel__header home-panel__header--leaderboard">
         <div>
-          <span class="home-panel__eyebrow">TOP 3</span>
+          <span class="home-panel__eyebrow">${copy.communityBoard}</span>
           <h3>${copy.compactLeaderboardTitle}</h3>
+          <p class="home-panel__meta">${escapeHtml(getCommunityMeta())}</p>
         </div>
         <span class="home-panel__badge" aria-hidden="true">🏆</span>
       </div>
@@ -2811,6 +2880,7 @@ function renderHome() {
       ${renderHomeProfileCard(profile, progress)}
       ${renderHomeStatsCard(progress)}
       ${renderHomeLeaderboardCard()}
+      ${renderLeaderboardSection()}
       ${renderHomePopularGames()}
       ${renderCategoryExplorer()}
       ${renderHomeGamesPreview(selectedCategory, selectedSubcategory, availableGames)}
@@ -2967,6 +3037,7 @@ function init() {
   ensureProgressDefaults();
   updateBalance();
   renderHome();
+  loadCommunityLeaderboard();
   initLectureModal();
   initGameModal();
   initBottomNav();

@@ -36,12 +36,13 @@
     selected: {
       skin: 'skin-soft',
       hair: 'hair-classic',
+      accessory: 'accessory-none',
       shirt: 'shirt-red',
       pants: 'pants-navy',
       shoes: 'shoes-black',
       extra: 'extra-soft'
     },
-    owned: ['skin-soft', 'hair-classic', 'shirt-red', 'pants-navy', 'shoes-black', 'extra-soft']
+    owned: ['skin-soft', 'hair-classic', 'accessory-none', 'shirt-red', 'pants-navy', 'shoes-black', 'extra-soft']
   };
 
   const FEMALE_CHARACTER = {
@@ -49,12 +50,13 @@
     selected: {
       skin: 'skin-soft',
       hair: 'hair-blonde',
+      accessory: 'accessory-none',
       shirt: 'shirt-violet',
       pants: 'pants-navy',
       shoes: 'shoes-white',
       extra: 'extra-soft'
     },
-    owned: ['skin-soft', 'hair-blonde', 'shirt-violet', 'pants-navy', 'shoes-white', 'extra-soft']
+    owned: ['skin-soft', 'hair-blonde', 'accessory-none', 'shirt-violet', 'pants-navy', 'shoes-white', 'extra-soft']
   };
 
   function getLanguage() {
@@ -220,9 +222,19 @@
     return Object.keys(template.selected).every((key) => current[key] === template.selected[key]);
   }
 
+  function ownedMatchesTemplate(owned, template) {
+    const current = Array.from(new Set(owned || []));
+    const required = Array.from(new Set(template?.owned || []));
+    return required.every((itemId) => current.includes(itemId)) && current.length === required.length;
+  }
+
   function isStarterCharacter(character) {
     const selected = character?.selected || {};
-    return selectedMatchesTemplate(selected, DEFAULT_CHARACTER) || selectedMatchesTemplate(selected, FEMALE_CHARACTER);
+    const owned = character?.owned || [];
+    return (
+      (selectedMatchesTemplate(selected, DEFAULT_CHARACTER) && ownedMatchesTemplate(owned, DEFAULT_CHARACTER))
+      || (selectedMatchesTemplate(selected, FEMALE_CHARACTER) && ownedMatchesTemplate(owned, FEMALE_CHARACTER))
+    );
   }
 
   function applyGenderProfileDefaults(profile, db, syncCharacter = false) {
@@ -248,8 +260,17 @@
         db.character = genderCharacter;
       } else {
         db.character = {
+          ...genderCharacter,
           ...currentCharacter,
-          owned: Array.from(new Set([...(currentCharacter.owned || []), ...genderCharacter.owned]))
+          selected: {
+            ...genderCharacter.selected,
+            ...(currentCharacter.selected || {})
+          },
+          owned: Array.from(new Set([
+            ...(currentCharacter.owned || []),
+            ...genderCharacter.owned,
+            ...Object.values(currentCharacter.selected || {})
+          ]))
         };
       }
     }
@@ -357,7 +378,9 @@
   }
 
   function setBodyTheme(settings) {
-    document.body.style.filter = settings.darkMode ? 'none' : 'saturate(.94) brightness(1.03)';
+    document.body.style.filter = '';
+    document.body.classList.toggle('theme-dark', Boolean(settings.darkMode));
+    document.body.classList.toggle('theme-light', !settings.darkMode);
   }
 
   function renderProfile() {
@@ -508,7 +531,7 @@
     });
 
     closeModal(elements.editModal);
-    renderProfile();
+    renderAll();
     window.AppUI?.refresh?.();
     showToast(tr('profileUpdated'));
   }
@@ -520,7 +543,7 @@
       profile.avatarImage = '';
     });
     closeModal(elements.avatarModal);
-    renderProfile();
+    renderAll();
     window.AppUI?.refresh?.();
     showToast(tr('avatarChanged'));
   }
@@ -533,7 +556,7 @@
       profile.avatarImage = '';
     });
     closeModal(elements.avatarModal);
-    renderProfile();
+    renderAll();
     window.AppUI?.refresh?.();
     showToast(tr('avatarReset'));
   }
@@ -549,7 +572,7 @@
         profile.avatarImage = String(reader.result || '');
       });
       closeModal(elements.avatarModal);
-      renderProfile();
+      renderAll();
       window.AppUI?.refresh?.();
       showToast(tr('avatarPhotoUpdated'));
     };
@@ -567,7 +590,7 @@
     updateSettings((settings) => {
       Object.assign(settings, DEFAULT_SETTINGS);
     });
-    renderSettings();
+    renderAll();
     window.AppUI?.refresh?.();
     showToast(tr('settingsReset'));
   }
@@ -589,6 +612,7 @@
         owned: [...defaultCharacter.owned]
       };
     });
+    renderAll();
     showToast(tr('cacheCleared'));
   }
 
@@ -657,12 +681,14 @@
     document.getElementById('musicItem').addEventListener('click', () => {
       updateSettings((settings) => { settings.musicEnabled = !settings.musicEnabled; });
       renderSettings();
+      window.AppEnhancements?.refreshAudio?.();
       showToast(tr('musicUpdated'));
     });
 
     document.getElementById('soundItem').addEventListener('click', () => {
       updateSettings((settings) => { settings.soundEnabled = !settings.soundEnabled; });
       renderSettings();
+      window.AppEnhancements?.refreshAudio?.();
       showToast(tr('soundsUpdated'));
     });
 
@@ -670,6 +696,7 @@
       const value = Number(event.target.value || 70);
       updateSettings((settings) => { settings.volume = value; });
       elements.volumeValue.textContent = `${value}%`;
+      window.AppEnhancements?.refreshAudio?.();
     });
 
     elements.volumeSlider.addEventListener('change', () => showToast(tr('volumeUpdated')));
@@ -677,6 +704,7 @@
     elements.languageSelect.addEventListener('change', (event) => {
       const value = event.target.value === 'en' ? 'en' : 'uk';
       updateSettings((settings) => { settings.language = value; });
+      renderAll();
       window.AppUI?.refresh?.();
       showToast(tr('languageUpdated'));
     });

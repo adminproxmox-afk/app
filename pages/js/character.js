@@ -45,12 +45,14 @@
   const charMap = {
     'Шкіра': 'Skin',
     'Волосся': 'Hair',
+    'Аксесуар': 'Accessory',
     'Одяг': 'Clothes',
     'Штани': 'Pants',
     'Взуття': 'Shoes',
     'Ефект': 'Effect',
     'Оновіть тон шкіри персонажа.': 'Adjust the character skin tone.',
     'Змініть колір зачіски.': 'Change the hair color.',
+    'Додайте деталь до образу персонажа.': 'Add a detail to the character look.',
     'Підберіть верх під образ.': 'Choose the top for the look.',
     'Налаштуйте нижню частину образу.': 'Adjust the lower part of the look.',
     'Оберіть комфортне взуття.': 'Pick comfortable shoes.',
@@ -73,6 +75,12 @@
     'Срібло': 'Silver',
     'Зелений': 'Green',
     'Слива': 'Plum',
+    'Без аксесуару': 'No accessory',
+    'Окуляри': 'Glasses',
+    'Гарнітура': 'Headset',
+    'Корона': 'Crown',
+    'Візор': 'Visor',
+    'Маска': 'Mask',
     'Марсала': 'Marsala',
     'Хвоя': 'Pine',
     'Графіт': 'Graphite',
@@ -116,6 +124,7 @@
   const categories = [
     { id: 'skin', side: 'left', label: 'Шкіра', hint: 'Оновіть тон шкіри персонажа.', icon: 'hand' },
     { id: 'hair', side: 'left', label: 'Волосся', hint: 'Змініть колір зачіски.', icon: 'hair' },
+    { id: 'accessory', side: 'left', label: 'Аксесуар', hint: 'Додайте деталь до образу персонажа.', icon: 'accessory' },
     { id: 'shirt', side: 'left', label: 'Одяг', hint: 'Підберіть верх під образ.', icon: 'shirt' },
     { id: 'pants', side: 'right', label: 'Штани', hint: 'Налаштуйте нижню частину образу.', icon: 'pants' },
     { id: 'shoes', side: 'right', label: 'Взуття', hint: 'Оберіть комфортне взуття.', icon: 'shoes' },
@@ -142,6 +151,14 @@
       { id: 'hair-silver', label: 'Срібло', value: '#a9afb8', price: 20 },
       { id: 'hair-green', label: 'Зелений', value: '#52785f', price: 19 },
       { id: 'hair-plum', label: 'Слива', value: '#755191', price: 21 }
+    ],
+    accessory: [
+      { id: 'accessory-none', label: 'Без аксесуару', variant: 'none', color: 'transparent', accent: 'transparent', preview: '○', price: 0 },
+      { id: 'accessory-glasses', label: 'Окуляри', variant: 'glasses', color: '#203247', accent: '#8fb9ff', preview: '◔', price: 14 },
+      { id: 'accessory-headset', label: 'Гарнітура', variant: 'headset', color: '#3d4f77', accent: '#95d8ff', preview: '⌐', price: 16 },
+      { id: 'accessory-crown', label: 'Корона', variant: 'crown', color: '#d2a43f', accent: '#fff0a8', preview: '▲', price: 18 },
+      { id: 'accessory-visor', label: 'Візор', variant: 'visor', color: '#4c7ad2', accent: '#d6f0ff', preview: '▬', price: 17 },
+      { id: 'accessory-mask', label: 'Маска', variant: 'mask', color: '#5d668f', accent: '#c4cbff', preview: '▭', price: 15 }
     ],
     shirt: [
       { id: 'shirt-red', label: 'Марсала', value: '#8a2d31', price: 0 },
@@ -191,12 +208,13 @@
     selected: {
       skin: 'skin-soft',
       hair: 'hair-classic',
+      accessory: 'accessory-none',
       shirt: 'shirt-red',
       pants: 'pants-navy',
       shoes: 'shoes-black',
       extra: 'extra-soft'
     },
-    owned: ['skin-soft', 'hair-classic', 'shirt-red', 'pants-navy', 'shoes-black', 'extra-soft']
+    owned: ['skin-soft', 'hair-classic', 'accessory-none', 'shirt-red', 'pants-navy', 'shoes-black', 'extra-soft']
   };
 
   const femaleDefaultState = {
@@ -207,7 +225,7 @@
       shirt: 'shirt-violet',
       shoes: 'shoes-white'
     },
-    owned: ['skin-soft', 'hair-blonde', 'shirt-violet', 'pants-navy', 'shoes-white', 'extra-soft']
+    owned: ['skin-soft', 'hair-blonde', 'accessory-none', 'shirt-violet', 'pants-navy', 'shoes-white', 'extra-soft']
   };
 
   function normalizeGender(value) {
@@ -229,6 +247,7 @@
   const icons = {
     hand: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.7 11.9V5.5a1.4 1.4 0 1 1 2.8 0v4.3h.8V4.6a1.4 1.4 0 1 1 2.8 0v5.2h.8V5.8a1.4 1.4 0 1 1 2.8 0v6.7c0 4-2.7 7.2-6.2 7.2h-2.3a5 5 0 0 1-5-5v-2a1.4 1.4 0 1 1 2.8 0v1h.7z"/></svg>',
     hair: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.7c4.7 0 7.6 2.8 7.6 6.8v1.4h-2v-1.1c0-2.1-1.4-3.8-3.8-4.4-.4 1.5-1.5 2.2-3.8 2.5-1.1.1-2 .4-2.8.8-1 .5-1.6 1.3-1.7 2.2v3H3.4v-3.3c0-4.7 3.2-7.9 8.6-7.9z"/></svg>',
+    accessory: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a3 3 0 0 1 3-3h2.4l1.3 1.4h2.6L14.6 9H17a3 3 0 1 1 0 6h-2.4l-1.3-1.4h-2.6L9.4 15H7a3 3 0 0 1-3-3zm3-1.2a1.2 1.2 0 1 0 0 2.4h2.7l1.4-1.2-1.4-1.2zm10 0h-2.7l-1.4 1.2 1.4 1.2H17a1.2 1.2 0 1 0 0-2.4z"/></svg>',
     shirt: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.2 4h5.6l2.3 2.2 2.9 1.5-2 4.4-2.3-.9v8.7H8.3v-8.7l-2.3.9-2-4.4 2.9-1.5z"/></svg>',
     pants: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10l-1.2 7.7 1.3 8.3h-4l-.9-6.2L11.3 20h-4l1.3-8.3z"/></svg>',
     shoes: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15.5h6.1l2.2 1.7c.6.5 1.4.8 2.2.8H20V20H4zm9.4-5.4 1.4 4H20v2h-6.6c-1 0-1.9-.3-2.7-.9l-2.4-1.8H4v-2.3h6.3l1.4-4.1z"/></svg>',
@@ -245,6 +264,7 @@
     profileName: document.getElementById('profileName'),
     profileStatus: document.getElementById('profileStatus'),
     avatarPreview: document.getElementById('avatarPreview'),
+    avatarAccessory: document.getElementById('avatarAccessory'),
     toast: document.getElementById('toast'),
     backBtn: document.getElementById('backBtn'),
     avatarAuraLeft: document.getElementById('avatarAuraLeft'),
@@ -366,14 +386,19 @@
 
     const shape = document.createElement('div');
     shape.className = 'item-card__shape';
-    if (categoryId === 'skin' || categoryId === 'hair') {
+    if (categoryId === 'accessory') {
+      shape.classList.add('item-card__shape--accessory');
+      shape.textContent = item.preview || '○';
+    } else if (categoryId === 'skin' || categoryId === 'hair') {
       shape.classList.add('item-card__shape--circle');
     } else if (categoryId === 'shoes') {
       shape.classList.add('item-card__shape--line');
     } else {
       shape.classList.add('item-card__shape--square');
     }
-    shape.style.background = item.value;
+    if (categoryId !== 'accessory') {
+      shape.style.background = item.value;
+    }
     preview.appendChild(shape);
 
     return preview;
@@ -435,6 +460,7 @@
   function applyAvatar() {
     const skin = getItem('skin', state.selected.skin)?.value || '#f2bb7b';
     const hair = getItem('hair', state.selected.hair)?.value || '#95694b';
+    const accessory = getItem('accessory', state.selected.accessory) || items.accessory[0];
     const shirt = getItem('shirt', state.selected.shirt)?.value || '#8a2d31';
     const pants = getItem('pants', state.selected.pants)?.value || '#27323e';
     const shoes = getItem('shoes', state.selected.shoes)?.value || '#151d25';
@@ -442,10 +468,18 @@
 
     document.documentElement.style.setProperty('--skin-color', skin);
     document.documentElement.style.setProperty('--hair-color', hair);
+    document.documentElement.style.setProperty('--accessory-color', accessory?.color || 'transparent');
+    document.documentElement.style.setProperty('--accessory-shine', accessory?.accent || 'transparent');
     document.documentElement.style.setProperty('--shirt-color', shirt);
     document.documentElement.style.setProperty('--pants-color', pants);
     document.documentElement.style.setProperty('--shoe-color', shoes);
     document.documentElement.style.setProperty('--accent-color', extra);
+
+    if (elements.avatarAccessory) {
+      const variant = accessory?.variant || 'none';
+      elements.avatarAccessory.dataset.variant = variant;
+      elements.avatarAccessory.classList.toggle('is-visible', variant !== 'none');
+    }
 
     const glow = extra === 'transparent' ? 'transparent' : `${extra}55`;
     const shadow = extra === 'transparent' ? 'transparent' : `${extra}aa`;

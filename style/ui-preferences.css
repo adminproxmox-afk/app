@@ -183,19 +183,19 @@ body.theme-dark select option {
 
 body.theme-light {
   color-scheme: light;
-  color: #000000;
+  color: #122033;
   background:
-    radial-gradient(circle at top, rgba(131, 179, 132, 0.16), transparent 28%),
-    radial-gradient(circle at 90% 12%, rgba(95, 145, 255, 0.1), transparent 22%),
-    linear-gradient(180deg, #e9eee7 0%, #d9e2e6 48%, #cfd9e0 100%);
+    radial-gradient(circle at top, rgba(118, 170, 126, 0.18), transparent 30%),
+    radial-gradient(circle at 88% 10%, rgba(91, 141, 255, 0.12), transparent 24%),
+    linear-gradient(180deg, #eef4ee 0%, #e4ebf0 48%, #dae3ea 100%);
 }
 
 body.theme-light .phone-frame {
   background:
-    radial-gradient(circle at 100% 0, rgba(91, 141, 255, 0.13), transparent 26%),
-    radial-gradient(circle at 0 100%, rgba(87, 181, 145, 0.08), transparent 20%),
-    linear-gradient(180deg, #eef3f7 0%, #e2e9ef 44%, #d8e1e8 100%);
-  box-shadow: inset 0 0 0 1px rgba(96, 121, 146, 0.14), 0 24px 60px rgba(26, 41, 61, 0.16);
+    radial-gradient(circle at 100% 0, rgba(91, 141, 255, 0.14), transparent 28%),
+    radial-gradient(circle at 0 100%, rgba(87, 181, 145, 0.1), transparent 22%),
+    linear-gradient(180deg, #f5f8fb 0%, #e8eef4 44%, #dde6ed 100%);
+  box-shadow: inset 0 0 0 1px rgba(77, 99, 123, 0.14), 0 24px 60px rgba(26, 41, 61, 0.16);
 }
 
 body.theme-light .header-card,
@@ -213,9 +213,9 @@ body.theme-light .inventory-panel,
 body.theme-light .hero-panel,
 body.theme-light .modal-content {
   background:
-    linear-gradient(180deg, rgba(246, 249, 252, 0.98), rgba(232, 239, 245, 0.98));
+    linear-gradient(180deg, rgba(250, 252, 255, 0.99), rgba(236, 242, 247, 0.98));
   box-shadow: inset 0 0 0 1px rgba(58, 79, 103, 0.1), 0 16px 34px rgba(34, 54, 80, 0.1);
-  color: #000000;
+  color: #122033;
 }
 
 body.theme-light .eyebrow,
@@ -229,17 +229,21 @@ body.theme-light .progress-card p,
 body.theme-light .leaderboard-copy small,
 body.theme-light .daily-desc,
 body.theme-light .history-date,
-body.theme-light .section-header p {
-  color: #000000;
+body.theme-light .section-header p,
+body.theme-light .summary-item__label,
+body.theme-light .section-kicker,
+body.theme-light .section-mini,
+body.theme-light .metric-card span {
+  color: rgba(18, 32, 51, 0.66);
 }
 
 body.theme-light .bottom-nav {
-  background: linear-gradient(180deg, rgba(241, 246, 250, 0.98), rgba(224, 232, 239, 0.98));
+  background: linear-gradient(180deg, rgba(247, 250, 252, 0.98), rgba(228, 235, 242, 0.98));
   box-shadow: inset 0 0 0 1px rgba(58, 79, 103, 0.1), 0 16px 36px rgba(35, 52, 75, 0.14);
 }
 
 body.theme-light .bottom-nav__item {
-  color: #000000;
+  color: rgba(18, 32, 51, 0.58);
 }
 
 body.theme-light .back-button,
@@ -252,8 +256,11 @@ body.theme-light .tab,
 body.theme-light .detail-row,
 body.theme-light .pref-row,
 body.theme-light .pref-range,
-body.theme-light .pref-select {
-  color: #000000;
+body.theme-light .pref-select,
+body.theme-light .setting-item,
+body.theme-light .tool-button,
+body.theme-light .back-link {
+  color: #122033;
 }
 
 body.theme-light .metric-card,
@@ -270,8 +277,8 @@ body.theme-light .achievement-item,
 body.theme-light .daily-card,
 body.theme-light .history-item,
 body.theme-light .summary-card {
-  background: linear-gradient(180deg, rgba(233, 240, 246, 0.88), rgba(223, 232, 240, 0.96));
-  color: #000000;
+  background: linear-gradient(180deg, rgba(241, 246, 250, 0.94), rgba(229, 236, 243, 0.98));
+  color: #122033;
   box-shadow: inset 0 0 0 1px rgba(58, 79, 103, 0.1), 0 10px 24px rgba(41, 61, 86, 0.08);
 }
 
@@ -279,8 +286,8 @@ body.theme-light .language-select,
 body.theme-light .modal-input,
 body.theme-light select,
 body.theme-light .modal-select {
-  background: linear-gradient(180deg, #edf2f6 0%, #dfe7ee 100%);
-  color: #000000;
+  background: linear-gradient(180deg, #f1f5f9 0%, #e3ebf2 100%);
+  color: #122033;
   border: 1px solid rgba(58, 79, 103, 0.16);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
 }
@@ -288,8 +295,8 @@ body.theme-light .modal-select {
 body.theme-light .language-select option,
 body.theme-light .modal-select option,
 body.theme-light select option {
-  background: #edf2f6;
-  color: #000000;
+  background: #f1f5f9;
+  color: #122033;
 }
 
 body.theme-light .topbar,
@@ -319,39 +326,12 @@ body.theme-light .achievement-item,
 body.theme-light .daily-card,
 body.theme-light .history-item,
 body.theme-light .detail-row__value,
-body.theme-light .summary-item__label,
 body.theme-light .summary-item__value,
 body.theme-light .profile-name,
 body.theme-light .page-title,
 body.theme-light .topbar__title,
-body.theme-light .action-button,
-body.theme-light .secondary-button,
-body.theme-light .logout-button,
-body.theme-light .launch-button,
-body.theme-light .tab,
-body.theme-light .detail-row,
-body.theme-light .pref-row,
-body.theme-light .pref-range,
-body.theme-light .pref-select,
-body.theme-light .setting-item,
-body.theme-light .tool-button,
-body.theme-light .back-link,
-body.theme-light .back-button,
-body.theme-light .topbar__icon,
-body.theme-light .language-select,
-body.theme-light .modal-input,
-body.theme-light select,
-body.theme-light strong,
-body.theme-light h1,
-body.theme-light h2,
-body.theme-light h3,
-body.theme-light h4,
-body.theme-light p,
-body.theme-light span,
-body.theme-light small,
-body.theme-light label,
-body.theme-light button {
-  color: #000000;
+body.theme-light .leaderboard-score {
+  color: #122033;
 }
 
 body.theme-light .back-button,
@@ -368,7 +348,7 @@ body.theme-light .pref-select,
 body.theme-light .setting-item,
 body.theme-light .tool-button,
 body.theme-light .back-link {
-  background: linear-gradient(180deg, rgba(238, 243, 247, 0.98), rgba(224, 232, 239, 0.98));
+  background: linear-gradient(180deg, rgba(244, 248, 251, 0.98), rgba(230, 237, 243, 0.98));
   box-shadow: inset 0 0 0 1px rgba(58, 79, 103, 0.1);
 }
 
@@ -380,43 +360,48 @@ body.theme-light .modal-save,
 body.theme-light .modal-confirm,
 body.theme-light .buy-button,
 body.theme-light .modal-button {
+  color: #fdfefe;
   box-shadow: 0 12px 24px rgba(66, 111, 210, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 body.theme-light .hero-banner {
-  background: linear-gradient(135deg, rgba(91, 141, 255, 0.16), rgba(71, 170, 135, 0.12));
+  background: linear-gradient(135deg, rgba(91, 141, 255, 0.14), rgba(71, 170, 135, 0.1));
 }
 
 body.theme-light .hero-badge,
 body.theme-light .profile-avatar,
 body.theme-light .game-card__icon,
-body.theme-light .leaderboard-avatar {
+body.theme-light .leaderboard-avatar,
+body.theme-light .home-profile-card__avatar,
+body.theme-light .home-game-card__icon,
+body.theme-light .home-podium-card__avatar {
   background: rgba(91, 141, 255, 0.12);
-  box-shadow: inset 0 0 0 1px rgba(91, 141, 255, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(91, 141, 255, 0.16);
+  color: #173456;
 }
 
 body.theme-light .game-meta span,
-body.theme-light .profile-status {
+body.theme-light .profile-status,
+body.theme-light .home-game-card__meta span,
+body.theme-light .home-chip--muted {
   background: rgba(58, 79, 103, 0.12);
-  color: #000000;
+  color: #18324d;
 }
 
-body.theme-light .section-kicker,
-body.theme-light .section-mini,
-body.theme-light .metric-card span {
-  color: #000000;
+body.theme-light .home-chip {
+  background: rgba(91, 141, 255, 0.14);
+  color: #1a3972;
 }
 
-@media (max-width: 390px) {
-  body.theme-light .bottom-nav {
-    box-shadow: inset 0 0 0 1px rgba(58, 79, 103, 0.08), 0 10px 20px rgba(0, 0, 0, 0.1);
-  }
+body.theme-light .home-panel--leaderboard {
+  background: linear-gradient(180deg, rgba(255, 245, 219, 0.96), rgba(240, 246, 251, 0.98));
+  box-shadow: inset 0 0 0 1px rgba(213, 176, 86, 0.16), 0 16px 28px rgba(41, 61, 86, 0.1);
 }
 
 body.theme-light .coins,
 body.theme-light .coin-pill {
-  background: linear-gradient(180deg, rgba(245, 233, 188, 0.98), rgba(229, 212, 156, 0.98));
-  color: #000000;
+  background: linear-gradient(180deg, rgba(248, 239, 201, 0.98), rgba(236, 220, 165, 0.98));
+  color: #6e5208;
 }
 
 @media (max-width: 519px) {

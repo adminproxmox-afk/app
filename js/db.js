@@ -9,24 +9,26 @@
     selected: {
       skin: 'skin-soft',
       hair: 'hair-classic',
+      accessory: 'accessory-none',
       shirt: 'shirt-red',
       pants: 'pants-navy',
       shoes: 'shoes-black',
       extra: 'extra-soft'
     },
-    owned: ['skin-soft', 'hair-classic', 'shirt-red', 'pants-navy', 'shoes-black', 'extra-soft']
+    owned: ['skin-soft', 'hair-classic', 'accessory-none', 'shirt-red', 'pants-navy', 'shoes-black', 'extra-soft']
   };
   const FEMALE_CHARACTER = {
     activeCategory: 'skin',
     selected: {
       skin: 'skin-soft',
       hair: 'hair-blonde',
+      accessory: 'accessory-none',
       shirt: 'shirt-violet',
       pants: 'pants-navy',
       shoes: 'shoes-white',
       extra: 'extra-soft'
     },
-    owned: ['skin-soft', 'hair-blonde', 'shirt-violet', 'pants-navy', 'shoes-white', 'extra-soft']
+    owned: ['skin-soft', 'hair-blonde', 'accessory-none', 'shirt-violet', 'pants-navy', 'shoes-white', 'extra-soft']
   };
   const DEFAULT_PROGRESS = {
     xp: 0,
@@ -168,7 +170,7 @@
   }
 
   function isWardrobeItemId(value) {
-    return /^(skin|hair|shirt|pants|shoes|extra)-/.test(String(value || ''));
+    return /^(skin|hair|accessory|shirt|pants|shoes|extra)-/.test(String(value || ''));
   }
 
   function getWardrobePurchasesFromHistory(history) {

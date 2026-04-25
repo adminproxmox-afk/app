@@ -11,6 +11,8 @@
   --mint: #77d1a8;
   --gold-soft: #f0d39b;
   --hair-color: #95694b;
+  --accessory-color: transparent;
+  --accessory-shine: transparent;
   --skin-color: #f2bb7b;
   --shirt-color: #8a2d31;
   --pants-color: #27323e;
@@ -316,6 +318,7 @@ button {
 }
 
 .avatar-hair,
+.avatar-accessory,
 .avatar-head,
 .avatar-arm,
 .avatar-torso,
@@ -380,6 +383,152 @@ button {
 .avatar-figure--female .avatar-hair::after {
   right: -3px;
   transform: rotate(18deg);
+}
+
+.avatar-accessory {
+  top: 41px;
+  left: 24px;
+  width: 68px;
+  height: 28px;
+  opacity: 0;
+  transform: translateY(-5px) scale(0.96);
+  transform-origin: center;
+  transition: opacity 0.22s ease, transform 0.22s ease, filter 0.22s ease;
+  pointer-events: none;
+}
+
+.avatar-accessory.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.avatar-accessory::before,
+.avatar-accessory::after {
+  content: '';
+  position: absolute;
+  box-sizing: border-box;
+}
+
+.avatar-accessory[data-variant='glasses'] {
+  background: linear-gradient(180deg, var(--accessory-color), var(--accessory-color)) center 9px / 14px 3px no-repeat;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.18));
+}
+
+.avatar-accessory[data-variant='glasses']::before,
+.avatar-accessory[data-variant='glasses']::after {
+  top: 4px;
+  width: 20px;
+  height: 14px;
+  border: 3px solid var(--accessory-color);
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06));
+}
+
+.avatar-accessory[data-variant='glasses']::before {
+  left: 7px;
+}
+
+.avatar-accessory[data-variant='glasses']::after {
+  right: 7px;
+}
+
+.avatar-accessory[data-variant='headset'] {
+  border-top: 4px solid var(--accessory-color);
+  border-radius: 30px 30px 0 0;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.16));
+}
+
+.avatar-accessory[data-variant='headset']::before,
+.avatar-accessory[data-variant='headset']::after {
+  top: 11px;
+  width: 12px;
+  height: 18px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, var(--accessory-shine), var(--accessory-color));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.avatar-accessory[data-variant='headset']::before {
+  left: 2px;
+}
+
+.avatar-accessory[data-variant='headset']::after {
+  right: 2px;
+}
+
+.avatar-accessory[data-variant='crown'] {
+  top: 24px;
+  left: 26px;
+  width: 62px;
+  height: 24px;
+  filter: drop-shadow(0 5px 10px rgba(164, 122, 32, 0.28));
+}
+
+.avatar-accessory[data-variant='crown']::before {
+  inset: 0;
+  border-radius: 0 0 12px 12px;
+  background: linear-gradient(180deg, var(--accessory-shine), var(--accessory-color));
+  clip-path: polygon(0 100%, 0 44%, 16% 62%, 28% 12%, 46% 60%, 54% 60%, 72% 12%, 84% 62%, 100% 44%, 100% 100%);
+}
+
+.avatar-accessory[data-variant='crown']::after {
+  left: 24px;
+  top: 7px;
+  width: 14px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 247, 200, 0.88);
+  box-shadow: 0 0 10px rgba(255, 239, 166, 0.52);
+}
+
+.avatar-accessory[data-variant='visor'] {
+  top: 38px;
+  left: 21px;
+  width: 74px;
+  height: 22px;
+}
+
+.avatar-accessory[data-variant='visor']::before {
+  inset: 0;
+  border-radius: 999px 999px 12px 12px;
+  background: linear-gradient(180deg, var(--accessory-shine), var(--accessory-color));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16), 0 6px 12px rgba(26, 42, 67, 0.18);
+}
+
+.avatar-accessory[data-variant='visor']::after {
+  left: 8px;
+  top: 4px;
+  width: 18px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.48);
+}
+
+.avatar-accessory[data-variant='mask'] {
+  top: 49px;
+  left: 30px;
+  width: 56px;
+  height: 18px;
+}
+
+.avatar-accessory[data-variant='mask']::before {
+  inset: 0;
+  border-radius: 12px;
+  background: linear-gradient(180deg, var(--accessory-shine), var(--accessory-color));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 6px 12px rgba(0, 0, 0, 0.14);
+}
+
+.avatar-accessory[data-variant='mask']::after {
+  left: -8px;
+  right: -8px;
+  top: 8px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--accessory-color);
+}
+
+.avatar-figure--female .avatar-accessory[data-variant='crown'] {
+  top: 21px;
 }
 
 .avatar-head {
@@ -691,6 +840,20 @@ button {
   width: 18px;
   height: 7px;
   border-radius: 999px;
+}
+
+.item-card__shape--accessory {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(121, 166, 255, 0.14), rgba(121, 166, 255, 0.04));
+  color: #dfe8ff;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .item-card__label {
