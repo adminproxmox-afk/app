@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css">
+  <link rel="stylesheet" href="style/register.css">
+  <link rel="stylesheet" href="style/ui-preferences.css">
+  <link rel="stylesheet" href="style/enhancements.css">
+</head>
+<body>
+  <div class="auth-shell">
+    <div class="auth-glow auth-glow--one"></div>
+    <div class="auth-glow auth-glow--two"></div>
+
+    <main class="card auth-card">
+      <div class="icon">⬛</div>
+      <h2>Create an Account</h2>
+      <p class="subtitle" id="authSubtitle">Create a stronger account or continue instantly with your preferred provider.</p>
+
+      <div class="field-group">
+        <input type="text" id="login" placeholder="Username" autocomplete="username">
+        <div class="field-hint" id="loginHint">3-20 chars: letters, numbers, _ . -</div>
+      </div>
+
+      <div class="field-group">
+        <input type="email" id="email" placeholder="Email" autocomplete="email">
+        <div class="field-hint" id="emailHint">We will use this email for sign-in and account recovery.</div>
+      </div>
+
+      <div class="field-group gender-field">
+        <div class="gender-label" id="genderLabel">Стать</div>
+        <div class="gender-options" role="radiogroup" aria-labelledby="genderLabel">
+          <label class="gender-option">
+            <input type="radio" name="gender" value="male" checked>
+            <span data-gender-label="male">Чоловік</span>
+          </label>
+          <label class="gender-option">
+            <input type="radio" name="gender" value="female">
+            <span data-gender-label="female">Жінка</span>
+          </label>
+        </div>
+        <div class="field-hint" id="genderHint">Це одразу застосує аватар і персонажа.</div>
+      </div>
+
+      <div class="field-group">
+        <input type="password" id="password" placeholder="Password" autocomplete="new-password">
+        <div class="field-hint" id="passwordHint">At least 8 characters, uppercase letter and number</div>
+      </div>
+
+      <div class="field-group">
+        <input type="password" id="confirm" placeholder="Confirm Password" autocomplete="new-password">
+        <div class="field-hint" id="confirmHint">Repeat the password exactly to finish registration</div>
+      </div>
+
+      <button id="registerButton" type="button">Sign Up</button>
+
+      <div id="message" class="auth-message" aria-live="polite"></div>
+
+      <div class="divider">or sign up with</div>
+
+      <div class="socials" id="socialButtons">
+        <button class="social-btn social-btn--google" data-provider="google" type="button">
+          <i class="fab fa-google"></i>
+          <span class="social-btn__label">Google</span>
+        </button>
+        <button class="social-btn social-btn--telegram" data-provider="telegram" type="button">
+          <i class="fab fa-telegram"></i>
+          <span class="social-btn__label">Telegram</span>
+        </button>
+      </div>
+
+      <div class="bottom-text">Have an account? <a href="login.html">Log In!</a></div>
+    </main>
+  </div>
+  <script src="js/db.js"></script>
+  <script src="js/ui-preferences.js"></script>
+  <script src="js/auth-provider-config.js"></script>
+  <script src="js/auth-common.js"></script>
+  <script src="js/auth-real.js"></script>
+  <script src="js/regist.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/howler@2.2.3/dist/howler.min.js"></script>
+  <script src="js/app-enhancements.js"></script>
+</body>
+</html>
+

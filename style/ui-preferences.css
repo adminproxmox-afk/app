@@ -1,0 +1,499 @@
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.page-shell {
+  min-height: 100dvh;
+  align-items: flex-start !important;
+  justify-content: center;
+  padding-top: clamp(6px, 1.6vw, 18px) !important;
+  padding-bottom: clamp(6px, 1.6vw, 18px) !important;
+}
+
+.phone-frame {
+  margin: 0 auto;
+  min-height: calc(100dvh - clamp(12px, 3.2vw, 36px));
+}
+
+.screen {
+  min-height: calc(100dvh - clamp(12px, 3.2vw, 36px));
+}
+
+@media (min-width: 520px) {
+  .phone-frame {
+    min-height: min(860px, calc(100dvh - 24px));
+  }
+
+  .screen {
+    min-height: min(860px, calc(100dvh - 24px));
+  }
+}
+
+@media (min-width: 900px) {
+  .page-shell {
+    padding-top: 16px !important;
+    padding-bottom: 16px !important;
+  }
+
+  .phone-frame {
+    min-height: min(780px, calc(100dvh - 32px));
+  }
+
+  .screen {
+    min-height: min(780px, calc(100dvh - 32px));
+  }
+}
+
+@media (min-width: 1200px) {
+  .phone-frame {
+    min-height: min(820px, calc(100dvh - 32px));
+  }
+
+  .screen {
+    min-height: min(820px, calc(100dvh - 32px));
+  }
+}
+
+body.theme-dark {
+  color-scheme: dark;
+  color: #eef4ff;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(78, 120, 255, 0.16), transparent 24%),
+    radial-gradient(circle at 12% 18%, rgba(72, 180, 138, 0.12), transparent 22%),
+    linear-gradient(180deg, #09110d 0%, #0c1311 42%, #080d12 100%);
+}
+
+body.theme-dark .phone-frame {
+  background:
+    radial-gradient(circle at 100% 0, rgba(91, 141, 255, 0.14), transparent 28%),
+    radial-gradient(circle at 0 100%, rgba(64, 180, 144, 0.08), transparent 24%),
+    linear-gradient(180deg, #121920 0%, #0e141b 46%, #0b1016 100%);
+  box-shadow: inset 0 0 0 1px rgba(132, 157, 184, 0.1), 0 28px 64px rgba(0, 0, 0, 0.44);
+}
+
+body.theme-dark .header-card,
+body.theme-dark .content-panel,
+body.theme-dark .dashboard-section,
+body.theme-dark .tabs-panel,
+body.theme-dark .shop-panel,
+body.theme-dark .topbar,
+body.theme-dark .profile-card,
+body.theme-dark .summary-card,
+body.theme-dark .detail-card,
+body.theme-dark .prefs-card,
+body.theme-dark .actions-card,
+body.theme-dark .inventory-panel,
+body.theme-dark .hero-panel,
+body.theme-dark .modal-content {
+  background:
+    linear-gradient(180deg, rgba(17, 24, 35, 0.96), rgba(11, 16, 24, 0.98));
+  box-shadow: inset 0 0 0 1px rgba(143, 168, 196, 0.08), 0 18px 36px rgba(0, 0, 0, 0.24);
+  color: #eef4ff;
+}
+
+body.theme-dark .eyebrow,
+body.theme-dark .setting-desc,
+body.theme-dark .detail-row__label,
+body.theme-dark .pref-row__copy small,
+body.theme-dark .achievement-desc,
+body.theme-dark .game-desc,
+body.theme-dark .profile-copy p,
+body.theme-dark .progress-card p,
+body.theme-dark .leaderboard-copy small,
+body.theme-dark .daily-desc,
+body.theme-dark .history-date,
+body.theme-dark .section-header p,
+body.theme-dark .summary-item__label,
+body.theme-dark .section-kicker,
+body.theme-dark .section-mini,
+body.theme-dark .metric-card span {
+  color: rgba(220, 229, 242, 0.62);
+}
+
+body.theme-dark .back-button,
+body.theme-dark .topbar__icon,
+body.theme-dark .action-button,
+body.theme-dark .secondary-button,
+body.theme-dark .logout-button,
+body.theme-dark .launch-button,
+body.theme-dark .tab,
+body.theme-dark .detail-row,
+body.theme-dark .pref-row,
+body.theme-dark .pref-range,
+body.theme-dark .pref-select,
+body.theme-dark .setting-item,
+body.theme-dark .tool-button,
+body.theme-dark .back-link {
+  color: #edf3ff;
+}
+
+body.theme-dark .detail-row,
+body.theme-dark .pref-row,
+body.theme-dark .pref-range,
+body.theme-dark .pref-select,
+body.theme-dark .setting-item,
+body.theme-dark .metric-card,
+body.theme-dark .progress-card,
+body.theme-dark .leaderboard-row,
+body.theme-dark .leaderboard-empty,
+body.theme-dark .game-card,
+body.theme-dark .empty-games,
+body.theme-dark .filter-chip,
+body.theme-dark .subcategory-pill,
+body.theme-dark .product-card,
+body.theme-dark .avatar-item,
+body.theme-dark .achievement-item,
+body.theme-dark .daily-card,
+body.theme-dark .history-item,
+body.theme-dark .summary-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02));
+  box-shadow: inset 0 0 0 1px rgba(147, 171, 198, 0.07);
+}
+
+body.theme-dark .bottom-nav {
+  background: linear-gradient(180deg, rgba(16, 22, 32, 0.98), rgba(10, 15, 23, 0.98));
+  box-shadow: inset 0 0 0 1px rgba(143, 168, 196, 0.08), 0 18px 36px rgba(0, 0, 0, 0.3);
+}
+
+body.theme-dark .bottom-nav__item {
+  color: rgba(229, 236, 245, 0.58);
+}
+
+body.theme-dark .language-select,
+body.theme-dark .modal-input,
+body.theme-dark select,
+body.theme-dark .modal-select {
+  background: linear-gradient(180deg, rgba(18, 24, 36, 0.98), rgba(13, 18, 29, 0.98));
+  color: #eef4ff;
+  border: 1px solid rgba(143, 168, 196, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+body.theme-dark .language-select option,
+body.theme-dark .modal-select option,
+body.theme-dark select option {
+  background: #121926;
+  color: #eef4ff;
+}
+
+body.theme-light {
+  color-scheme: light;
+  color: #000000;
+  background:
+    radial-gradient(circle at top, rgba(131, 179, 132, 0.16), transparent 28%),
+    radial-gradient(circle at 90% 12%, rgba(95, 145, 255, 0.1), transparent 22%),
+    linear-gradient(180deg, #e9eee7 0%, #d9e2e6 48%, #cfd9e0 100%);
+}
+
+body.theme-light .phone-frame {
+  background:
+    radial-gradient(circle at 100% 0, rgba(91, 141, 255, 0.13), transparent 26%),
+    radial-gradient(circle at 0 100%, rgba(87, 181, 145, 0.08), transparent 20%),
+    linear-gradient(180deg, #eef3f7 0%, #e2e9ef 44%, #d8e1e8 100%);
+  box-shadow: inset 0 0 0 1px rgba(96, 121, 146, 0.14), 0 24px 60px rgba(26, 41, 61, 0.16);
+}
+
+body.theme-light .header-card,
+body.theme-light .content-panel,
+body.theme-light .dashboard-section,
+body.theme-light .tabs-panel,
+body.theme-light .shop-panel,
+body.theme-light .header-card,
+body.theme-light .topbar,
+body.theme-light .profile-card,
+body.theme-light .detail-card,
+body.theme-light .prefs-card,
+body.theme-light .actions-card,
+body.theme-light .inventory-panel,
+body.theme-light .hero-panel,
+body.theme-light .modal-content {
+  background:
+    linear-gradient(180deg, rgba(246, 249, 252, 0.98), rgba(232, 239, 245, 0.98));
+  box-shadow: inset 0 0 0 1px rgba(58, 79, 103, 0.1), 0 16px 34px rgba(34, 54, 80, 0.1);
+  color: #000000;
+}
+
+body.theme-light .eyebrow,
+body.theme-light .setting-desc,
+body.theme-light .detail-row__label,
+body.theme-light .pref-row__copy small,
+body.theme-light .achievement-desc,
+body.theme-light .game-desc,
+body.theme-light .profile-copy p,
+body.theme-light .progress-card p,
+body.theme-light .leaderboard-copy small,
+body.theme-light .daily-desc,
+body.theme-light .history-date,
+body.theme-light .section-header p {
+  color: #000000;
+}
+
+body.theme-light .bottom-nav {
+  background: linear-gradient(180deg, rgba(241, 246, 250, 0.98), rgba(224, 232, 239, 0.98));
+  box-shadow: inset 0 0 0 1px rgba(58, 79, 103, 0.1), 0 16px 36px rgba(35, 52, 75, 0.14);
+}
+
+body.theme-light .bottom-nav__item {
+  color: #000000;
+}
+
+body.theme-light .back-button,
+body.theme-light .topbar__icon,
+body.theme-light .action-button,
+body.theme-light .secondary-button,
+body.theme-light .logout-button,
+body.theme-light .launch-button,
+body.theme-light .tab,
+body.theme-light .detail-row,
+body.theme-light .pref-row,
+body.theme-light .pref-range,
+body.theme-light .pref-select {
+  color: #000000;
+}
+
+body.theme-light .metric-card,
+body.theme-light .progress-card,
+body.theme-light .leaderboard-row,
+body.theme-light .leaderboard-empty,
+body.theme-light .game-card,
+body.theme-light .empty-games,
+body.theme-light .filter-chip,
+body.theme-light .subcategory-pill,
+body.theme-light .product-card,
+body.theme-light .avatar-item,
+body.theme-light .achievement-item,
+body.theme-light .daily-card,
+body.theme-light .history-item,
+body.theme-light .summary-card {
+  background: linear-gradient(180deg, rgba(233, 240, 246, 0.88), rgba(223, 232, 240, 0.96));
+  color: #000000;
+  box-shadow: inset 0 0 0 1px rgba(58, 79, 103, 0.1), 0 10px 24px rgba(41, 61, 86, 0.08);
+}
+
+body.theme-light .language-select,
+body.theme-light .modal-input,
+body.theme-light select,
+body.theme-light .modal-select {
+  background: linear-gradient(180deg, #edf2f6 0%, #dfe7ee 100%);
+  color: #000000;
+  border: 1px solid rgba(58, 79, 103, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+body.theme-light .language-select option,
+body.theme-light .modal-select option,
+body.theme-light select option {
+  background: #edf2f6;
+  color: #000000;
+}
+
+body.theme-light .topbar,
+body.theme-light .profile-card,
+body.theme-light .detail-card,
+body.theme-light .prefs-card,
+body.theme-light .actions-card,
+body.theme-light .header-card,
+body.theme-light .content-panel,
+body.theme-light .dashboard-section,
+body.theme-light .tabs-panel,
+body.theme-light .shop-panel,
+body.theme-light .inventory-panel,
+body.theme-light .hero-panel,
+body.theme-light .summary-card,
+body.theme-light .metric-card,
+body.theme-light .progress-card,
+body.theme-light .leaderboard-row,
+body.theme-light .leaderboard-empty,
+body.theme-light .game-card,
+body.theme-light .empty-games,
+body.theme-light .filter-chip,
+body.theme-light .subcategory-pill,
+body.theme-light .product-card,
+body.theme-light .avatar-item,
+body.theme-light .achievement-item,
+body.theme-light .daily-card,
+body.theme-light .history-item,
+body.theme-light .detail-row__value,
+body.theme-light .summary-item__label,
+body.theme-light .summary-item__value,
+body.theme-light .profile-name,
+body.theme-light .page-title,
+body.theme-light .topbar__title,
+body.theme-light .action-button,
+body.theme-light .secondary-button,
+body.theme-light .logout-button,
+body.theme-light .launch-button,
+body.theme-light .tab,
+body.theme-light .detail-row,
+body.theme-light .pref-row,
+body.theme-light .pref-range,
+body.theme-light .pref-select,
+body.theme-light .setting-item,
+body.theme-light .tool-button,
+body.theme-light .back-link,
+body.theme-light .back-button,
+body.theme-light .topbar__icon,
+body.theme-light .language-select,
+body.theme-light .modal-input,
+body.theme-light select,
+body.theme-light strong,
+body.theme-light h1,
+body.theme-light h2,
+body.theme-light h3,
+body.theme-light h4,
+body.theme-light p,
+body.theme-light span,
+body.theme-light small,
+body.theme-light label,
+body.theme-light button {
+  color: #000000;
+}
+
+body.theme-light .back-button,
+body.theme-light .topbar__icon,
+body.theme-light .action-button,
+body.theme-light .secondary-button,
+body.theme-light .logout-button,
+body.theme-light .launch-button,
+body.theme-light .tab,
+body.theme-light .detail-row,
+body.theme-light .pref-row,
+body.theme-light .pref-range,
+body.theme-light .pref-select,
+body.theme-light .setting-item,
+body.theme-light .tool-button,
+body.theme-light .back-link {
+  background: linear-gradient(180deg, rgba(238, 243, 247, 0.98), rgba(224, 232, 239, 0.98));
+  box-shadow: inset 0 0 0 1px rgba(58, 79, 103, 0.1);
+}
+
+body.theme-light .tab.active,
+body.theme-light .bottom-nav__item.active,
+body.theme-light .toggle-switch.active,
+body.theme-light .launch-button,
+body.theme-light .modal-save,
+body.theme-light .modal-confirm,
+body.theme-light .buy-button,
+body.theme-light .modal-button {
+  box-shadow: 0 12px 24px rgba(66, 111, 210, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+body.theme-light .hero-banner {
+  background: linear-gradient(135deg, rgba(91, 141, 255, 0.16), rgba(71, 170, 135, 0.12));
+}
+
+body.theme-light .hero-badge,
+body.theme-light .profile-avatar,
+body.theme-light .game-card__icon,
+body.theme-light .leaderboard-avatar {
+  background: rgba(91, 141, 255, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(91, 141, 255, 0.12);
+}
+
+body.theme-light .game-meta span,
+body.theme-light .profile-status {
+  background: rgba(58, 79, 103, 0.12);
+  color: #000000;
+}
+
+body.theme-light .section-kicker,
+body.theme-light .section-mini,
+body.theme-light .metric-card span {
+  color: #000000;
+}
+
+@media (max-width: 390px) {
+  body.theme-light .bottom-nav {
+    box-shadow: inset 0 0 0 1px rgba(58, 79, 103, 0.08), 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+body.theme-light .coins,
+body.theme-light .coin-pill {
+  background: linear-gradient(180deg, rgba(245, 233, 188, 0.98), rgba(229, 212, 156, 0.98));
+  color: #000000;
+}
+
+@media (max-width: 519px) {
+  .page-shell {
+    padding: 0 !important;
+    align-items: stretch !important;
+  }
+
+  .phone-frame {
+    width: 100% !important;
+    min-height: 100dvh !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+  }
+
+  body.theme-dark .phone-frame,
+  body.theme-light .phone-frame,
+  .phone-frame {
+    box-shadow: none !important;
+  }
+
+  .screen {
+    min-height: 100dvh !important;
+    height: 100dvh !important;
+    padding-top: calc(12px + env(safe-area-inset-top)) !important;
+    padding-right: 12px !important;
+    padding-bottom: calc(var(--nav-height) + 18px + env(safe-area-inset-bottom)) !important;
+    padding-left: 12px !important;
+    gap: 12px !important;
+  }
+
+  .header-card,
+  .content-panel,
+  .tabs-panel,
+  .shop-panel,
+  .topbar,
+  .profile-card,
+  .summary-card,
+  .detail-card,
+  .prefs-card,
+  .actions-card,
+  .inventory-panel,
+  .hero-panel {
+    border-radius: 24px !important;
+  }
+
+  .modal {
+    align-items: flex-end !important;
+    padding: 0 !important;
+  }
+
+  .modal-content {
+    width: 100% !important;
+    max-width: none !important;
+    max-height: min(88dvh, 820px) !important;
+    border-radius: 28px 28px 0 0 !important;
+    padding-right: 18px !important;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important;
+    padding-left: 18px !important;
+  }
+
+  .bottom-nav {
+    left: 12px !important;
+    right: 12px !important;
+    bottom: max(10px, env(safe-area-inset-bottom)) !important;
+    height: 74px !important;
+    padding: 7px !important;
+    border-radius: 24px !important;
+    gap: 6px !important;
+  }
+
+  .bottom-nav__item {
+    gap: 6px !important;
+  }
+
+  .bottom-nav__item span:last-child {
+    font-size: 10px !important;
+    line-height: 1.05 !important;
+  }
+}

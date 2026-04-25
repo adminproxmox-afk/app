@@ -1,26 +1,19 @@
 # Skill Play Web App
 
-The project now ships as a single React/Vite foundation from `react-app`.
-GitHub Pages builds and deploys only `react-app/dist`.
+The project uses a plain static structure on `HTML/CSS/vanilla JS`.
+The main app lives in the root files and folders: `index.html`, `js`, `pages`, `style`, and `data`.
 
-## Run locally
+## Main pages
 
-```sh
-cd react-app
-npm install
-npm run typecheck
-npm run dev
-```
-
-## Build
-
-```sh
-cd react-app
-npm run build
-```
+- [index.html](/E:/app/web/app/index.html)
+- [login.html](/E:/app/web/app/login.html)
+- [regist.html](/E:/app/web/app/regist.html)
+- [pages/shop.html](/E:/app/web/app/pages/shop.html)
+- [pages/character.html](/E:/app/web/app/pages/character.html)
+- [pages/setting.html](/E:/app/web/app/pages/setting.html)
 
 ## Deployment
 
-- GitHub Pages is published from `.github/workflows/deploy-react.yml`
-- Vite uses `base: './'`, so the generated build works correctly from Pages artifacts
-- The app now includes the home flow, shop, avatar, settings, games, and local browser auth inside the React foundation
+- GitHub Pages is published from [.github/workflows/deploy-site.yml](/E:/app/web/app/.github/workflows/deploy-site.yml)
+- the workflow uploads the root static site directly
+- no React build step is required

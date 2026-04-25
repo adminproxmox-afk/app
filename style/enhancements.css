@@ -1,0 +1,113 @@
+:root {
+  --fx-bullet: rgba(255, 255, 255, 0.22);
+  --fx-bullet-active: #79a6ff;
+  --fx-swiper-bottom: 28px;
+}
+
+body.app-enhanced,
+body {
+  text-rendering: optimizeLegibility;
+}
+
+.home-swiper,
+.home-category-swiper,
+.home-games-swiper,
+.home-popular-swiper {
+  width: 100%;
+  overflow: visible;
+}
+
+.home-swiper .swiper-wrapper {
+  align-items: stretch;
+}
+
+.home-swiper .swiper-slide {
+  height: auto;
+  display: flex;
+}
+
+.home-swiper .swiper-slide > * {
+  width: 100%;
+}
+
+.home-category-swiper,
+.home-games-swiper,
+.home-popular-swiper {
+  padding-bottom: var(--fx-swiper-bottom);
+}
+
+.home-swiper .swiper-pagination {
+  bottom: 0 !important;
+}
+
+.home-swiper .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: var(--fx-bullet);
+  opacity: 1;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.home-swiper .swiper-pagination-bullet-active {
+  background: var(--fx-bullet-active);
+  transform: scale(1.15);
+}
+
+.home-popular-section .home-panel__header {
+  align-items: flex-start;
+}
+
+.home-popular-section .home-panel__header h3 {
+  margin: 0;
+}
+
+.home-popular-section .home-panel__text {
+  margin: 6px 0 0;
+}
+
+.home-game-card,
+.category-card {
+  height: 100%;
+}
+
+.home-category-swiper .category-card {
+  min-height: 168px;
+}
+
+.shop-empty,
+.inventory-empty {
+  backdrop-filter: blur(14px);
+}
+
+.auth-card,
+.about-card,
+.policy-card,
+.terms-card,
+.home-profile-card,
+.home-panel,
+.dashboard-section,
+.product-card,
+.avatar-item,
+.detail-card,
+.prefs-card,
+.actions-card,
+.inventory-panel {
+  will-change: transform, opacity;
+}
+
+@media (max-width: 519px) {
+  .home-category-swiper .category-card {
+    min-height: 182px;
+  }
+
+  .home-games-swiper,
+  .home-popular-swiper {
+    margin-right: -2px;
+  }
+}
+
+@media (min-width: 900px) {
+  .home-category-swiper .category-card {
+    min-height: 196px;
+  }
+}
