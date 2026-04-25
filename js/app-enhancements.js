@@ -278,6 +278,8 @@
         state.triggers.push(trigger);
       });
     });
+
+    window.ScrollTrigger.refresh();
   }
 
   function cleanupOrphanSwipers() {
@@ -497,6 +499,11 @@
   }
 
   function refresh() {
+    if (hasScrollTrigger()) {
+      window.gsap.registerPlugin(window.ScrollTrigger);
+    }
+
+    document.body.classList.add('app-enhanced');
     audio.init();
     audio.refresh();
     bindGlobalInteractions();

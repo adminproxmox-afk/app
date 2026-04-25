@@ -17,3 +17,11 @@ The main app lives in the root files and folders: `index.html`, `js`, `pages`, `
 - GitHub Pages is published from [.github/workflows/deploy-site.yml](/E:/app/web/app/.github/workflows/deploy-site.yml)
 - the workflow uploads the root static site directly
 - no React build step is required
+
+## Enhancement layer
+
+The vanilla site now uses CDN-based libraries for richer UX without switching to a framework:
+
+- `GSAP + ScrollTrigger` for entrance and scroll-driven motion
+- `Swiper` for touch-friendly carousels on the home screen
+- `Howler.js` for interface sounds and ambient audio based on user settings
