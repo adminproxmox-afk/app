@@ -1,4 +1,4 @@
-name: Deploy React Prototype
+name: Deploy React Foundation
 
 on:
   push:
