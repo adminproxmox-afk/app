@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>HTML Builder - Learn by Building</title>
+  <link rel="stylesheet" href="style/HTML Crash Course.css">
+</head>
+<body>
+<div id="app">
+  <header id="topbar">
+    <div class="logo">
+      <span>&lt;</span>html<span>/&gt;</span>
+      <span class="logo-text">builder</span>
+    </div>
+    <div class="sep"></div>
+    <div id="level-tabs"></div>
+    <div class="xp-group">
+      <span class="xp-num" id="xp-num">0 XP</span>
+      <div class="xp-track">
+        <div class="xp-fill" id="xp-fill" style="width:0%"></div>
+      </div>
+    </div>
+    <button id="btn-reset" title="Очистити робочу зону">↺</button>
+    <button id="btn-check">Перевірити ✓</button>
+  </header>
+
+  <aside id="sidebar"></aside>
+
+  <main id="canvas-wrap">
+    <div id="task-card">
+      <span class="task-icon">🎯</span>
+      <div class="task-body">
+        <div class="task-title" id="task-title"></div>
+        <div class="task-desc" id="task-desc"></div>
+        <div class="task-template" id="task-template"></div>
+      </div>
+    </div>
+
+    <div id="drop-root">
+      <div class="empty-hint" id="empty-hint">
+        <div class="empty-hint-icon">⬡</div>
+        <div class="empty-hint-text">Перетягни HTML-блоки сюди</div>
+      </div>
+    </div>
+  </main>
+
+  <aside id="panel">
+    <div class="panel-tabs">
+      <button class="ptab active" data-tab="preview">Preview</button>
+      <button class="ptab" data-tab="code">Код</button>
+      <button class="ptab" data-tab="validate">Помилки</button>
+    </div>
+    <div class="panel-body">
+      <div class="panel-view active" id="tab-preview">
+        <div class="preview-label">live preview</div>
+        <iframe id="preview-frame" sandbox="allow-same-origin"></iframe>
+      </div>
+
+      <div class="panel-view" id="tab-code">
+        <div id="code-output" aria-live="polite"></div>
+      </div>
+
+      <div class="panel-view" id="tab-validate">
+        <div id="val-output">
+          <div class="val-idle">Натисни "Перевірити", щоб побачити результат</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <footer id="bottombar">
+    <div class="status-dot" id="status-dot"></div>
+    <span id="status-text">Готово - перетягуй теги, щоб будувати DOM</span>
+    <span>·</span>
+    <span>Вузлів: <span class="node-count" id="node-count">0</span></span>
+  </footer>
+</div>
+
+<div id="levelup-overlay">
+  <div class="lu-card">
+    <span class="lu-emoji" id="lu-emoji">🎉</span>
+    <div class="lu-title" id="lu-title">Рівень пройдено!</div>
+    <div class="lu-subtitle" id="lu-subtitle"></div>
+    <div class="lu-xp" id="lu-xp"></div>
+    <button class="lu-btn" id="lu-btn">Наступний рівень →</button>
+  </div>
+</div>
+
+<div id="toast-wrap"></div>
+<div id="drag-ghost"></div>
+
+<script src="../../../js/db.js"></script>
+<script src="../../../js/ui-preferences.js"></script>
+<script src="js/HTML Crash Course.js"></script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2021",
-    "module": "none",
+    "module": "ES2020",
     "lib": [
       "ES2021",
       "DOM",
@@ -12,7 +12,9 @@
     "maxNodeModuleJsDepth": 0
   },
   "include": [
-    "./js/**/*.js"
+    "./js/**/*.js",
+    "./pages/js/**/*.js",
+    "./game/**/*.js"
   ],
   "exclude": [
     "./.git",

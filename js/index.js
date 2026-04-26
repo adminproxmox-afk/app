@@ -17,6 +17,11 @@ const PROGRESS_TEMPLATE = {
   recentGames: []
 };
 
+const EXTERNAL_GAME_ROUTES = {
+  'html-crash': 'game/html-crash-course.html'
+};
+const APP_HOME_TOAST_KEY = 'appHomeToast';
+
 const copy = {
   uk: {
     eyebrow: 'Learning Hub',
@@ -65,6 +70,7 @@ const copy = {
     lectureDetailTitle: 'Логіка гри',
     lectureClose: 'Закрити',
     lectureStart: 'Почати гру',
+    lectureOpenGame: 'Відкрити гру',
     lectureComingSoon: 'Ігровий режим буде додано наступним кроком.',
     lectureDetailedReady: 'Логіка цієї гри вже детально продумана. Наступний крок: реалізація рівнів і перевірки.',
     gameBadgeLogic: 'Логіка гри',
@@ -143,6 +149,7 @@ const copy = {
     lectureDetailTitle: 'Game logic',
     lectureClose: 'Close',
     lectureStart: 'Start game',
+    lectureOpenGame: 'Open game',
     lectureComingSoon: 'The game mode will be added in the next step.',
     lectureDetailedReady: 'The logic of this game is already designed in detail. The next step is implementing levels and validation.',
     gameBadgeLogic: 'Game logic',
@@ -2059,6 +2066,13 @@ function showToast(message) {
   toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
 }
 
+function consumeHomeToast() {
+  const message = String(localStorage.getItem(APP_HOME_TOAST_KEY) || '').trim();
+  if (!message) return;
+  localStorage.removeItem(APP_HOME_TOAST_KEY);
+  showToast(message);
+}
+
 function getCategoryName(categoryId) {
   return text(categories[categoryId]?.name) || copy.strongestFallback;
 }
@@ -2307,6 +2321,7 @@ function renderLectureModal() {
   if (!state.activeLecture) return;
   const { game, categoryId, subcategoryId } = state.activeLecture;
   const lecture = getLectureContent(game.id, subcategoryId);
+  const externalRoute = getExternalGameRoute(game.id);
 
   lectureElements.badge.textContent = `${copy.lectureBadge} • ${getSubcategoryName(categoryId, subcategoryId)}`;
   lectureElements.title.textContent = game.name;
@@ -2317,7 +2332,7 @@ function renderLectureModal() {
   lectureElements.flowText.textContent = lecture.flow;
   lectureElements.resultText.textContent = lecture.result;
   lectureElements.closeBtn.textContent = copy.lectureClose;
-  lectureElements.startBtn.textContent = copy.lectureStart;
+  lectureElements.startBtn.textContent = externalRoute ? copy.lectureOpenGame : copy.lectureStart;
   lectureElements.points.innerHTML = lecture.points.map((point, index) => `
     <div class="lecture-point">
       <span class="lecture-point__index">${index + 1}</span>
@@ -2960,6 +2975,10 @@ function findGame(categoryId, subcategoryId, gameId) {
   return categories[categoryId]?.subcategories[subcategoryId]?.games.find((game) => game.id === gameId) || null;
 }
 
+function getExternalGameRoute(gameId) {
+  return EXTERNAL_GAME_ROUTES[gameId] || '';
+}
+
 function openLecture(categoryId, subcategoryId, gameId) {
   const game = findGame(categoryId, subcategoryId, gameId);
   if (!game) return;
@@ -2971,6 +2990,12 @@ function openLecture(categoryId, subcategoryId, gameId) {
 
 function startPlannedGame() {
   if (!state.activeLecture) return;
+  const externalRoute = getExternalGameRoute(state.activeLecture.game.id);
+  if (externalRoute) {
+    closeModal(lectureElements.modal);
+    window.location.href = externalRoute;
+    return;
+  }
   state.activeGame = { ...state.activeLecture, step: 'logic' };
   resetActiveGameProgress();
   closeModal(lectureElements.modal);
@@ -3073,6 +3098,7 @@ function init() {
   initLectureModal();
   initGameModal();
   initBottomNav();
+  consumeHomeToast();
 }
 
 init();
