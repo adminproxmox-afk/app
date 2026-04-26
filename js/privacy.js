@@ -12,13 +12,13 @@
       appGuest: 'Увійти',
       kicker: 'Life Capital Academy',
       title: 'Політика конфіденційності',
-      lead: 'Ця сторінка описує, як поточна вебверсія Life Capital Academy працює з даними профілю, локальним зберіганням і входом через зовнішніх провайдерів.',
+      lead: 'Ця політика описує, як застосунок Life Capital Academy та його спільна з сайтом фронтенд-основа працюють з профілем, прогресом, входом і технічними даними.',
       updatedLabel: 'Оновлено',
-      updatedValue: '21 квітня 2026',
+      updatedValue: '26 квітня 2026',
       storageLabel: 'Зберігання',
-      storageValue: 'Локально у браузері',
+      storageValue: 'На пристрої та через захищені сервісні канали',
       scopeLabel: 'Сфера дії',
-      scopeValue: 'Поточна вебверсія застосунку'
+      scopeValue: 'Застосунок і пов’язаний вебклієнт'
     },
     en: {
       pageTitle: 'Privacy Policy | Life Capital Academy',
@@ -30,13 +30,13 @@
       appGuest: 'Sign in',
       kicker: 'Life Capital Academy',
       title: 'Privacy Policy',
-      lead: 'This page describes how the current web version of Life Capital Academy handles profile data, local storage, and sign-in through external providers.',
+      lead: 'This policy explains how the Life Capital Academy app and its shared website-based frontend handle profile, progress, sign-in, and technical data.',
       updatedLabel: 'Updated',
-      updatedValue: 'April 21, 2026',
+      updatedValue: 'April 26, 2026',
       storageLabel: 'Storage',
-      storageValue: 'Local browser storage',
+      storageValue: 'On-device and via protected service channels',
       scopeLabel: 'Scope',
-      scopeValue: 'Current web app version'
+      scopeValue: 'The app and the related web client'
     }
   };
 
@@ -109,8 +109,11 @@
   }
 
   function applyTheme() {
-    document.body.classList.toggle('theme-light', !isDarkMode());
-    document.body.classList.toggle('theme-dark', isDarkMode());
+    const darkMode = isDarkMode();
+    document.documentElement.dataset.theme = darkMode ? 'dark' : 'light';
+    document.documentElement.style.colorScheme = darkMode ? 'dark' : 'light';
+    document.body.classList.toggle('theme-light', !darkMode);
+    document.body.classList.toggle('theme-dark', darkMode);
   }
 
   function applyPageCopy() {

@@ -13,6 +13,8 @@
 
   function applyTheme() {
     const { darkMode } = getSettings();
+    document.documentElement.dataset.theme = darkMode ? 'dark' : 'light';
+    document.documentElement.style.colorScheme = darkMode ? 'dark' : 'light';
     document.body.classList.toggle('theme-light', !darkMode);
     document.body.classList.toggle('theme-dark', darkMode);
   }
@@ -43,7 +45,7 @@
         section_actions: 'Дії',
         field_name: "Ім'я",
         field_phone: 'Номер',
-        field_username: "Ім'я користувача",
+        field_username: 'Тег профілю',
         field_email: 'Пошта',
         field_bio: 'Про себе',
         field_gender: 'Стать',
@@ -82,7 +84,7 @@
         section_actions: 'Actions',
         field_name: 'Name',
         field_phone: 'Phone',
-        field_username: 'Username',
+        field_username: 'Profile tag',
         field_email: 'Email',
         field_bio: 'About',
         field_gender: 'Gender',

@@ -103,6 +103,102 @@
     return Array.from(new Set((array || []).filter(Boolean)));
   }
 
+  function normalizePublicTag(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/^@+/, '')
+      .replace(/[\s.-]+/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^_+|_+$/g, '');
+  }
+
+  function validatePublicTagValue(value) {
+    const normalizedValue = normalizePublicTag(value);
+    return /^[a-z0-9_]{3,24}$/.test(normalizedValue);
+  }
+
+  function getTagCore(value) {
+    return normalizePublicTag(value).replace(/_/g, '');
+  }
+
+  function getUserPublicTag(user) {
+    return normalizePublicTag(user?.profile?.username || user?.login || '');
+  }
+
+  function levenshteinDistance(source, target) {
+    const a = String(source || '');
+    const b = String(target || '');
+    if (a === b) return 0;
+    if (!a.length) return b.length;
+    if (!b.length) return a.length;
+
+    const previous = new Array(b.length + 1).fill(0).map((_, index) => index);
+
+    for (let i = 1; i <= a.length; i += 1) {
+      let diagonal = previous[0];
+      previous[0] = i;
+
+      for (let j = 1; j <= b.length; j += 1) {
+        const cached = previous[j];
+        const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+        previous[j] = Math.min(
+          previous[j] + 1,
+          previous[j - 1] + 1,
+          diagonal + cost
+        );
+        diagonal = cached;
+      }
+    }
+
+    return previous[b.length];
+  }
+
+  function getSimilarPublicTagMatch(db, candidateTag, excludeLogin = '') {
+    const normalizedCandidate = normalizePublicTag(candidateTag);
+    const candidateCore = getTagCore(normalizedCandidate);
+    const excludedLogin = String(excludeLogin || '').trim().toLowerCase();
+
+    if (!normalizedCandidate || !candidateCore) return null;
+
+    return db.users.find((user) => {
+      if (!user) return false;
+      if (String(user.login || '').trim().toLowerCase() === excludedLogin) return false;
+
+      const existingTag = getUserPublicTag(user);
+      const existingCore = getTagCore(existingTag);
+      if (!existingTag || !existingCore) return false;
+
+      if (existingTag === normalizedCandidate) return true;
+      if (existingCore === candidateCore) return true;
+
+      if (candidateCore.length >= 5 && existingCore.length >= 5) {
+        return levenshteinDistance(existingCore, candidateCore) <= 1;
+      }
+
+      return false;
+    }) || null;
+  }
+
+  function checkPublicTagAvailability(db, tag, excludeLogin = '') {
+    const normalizedTag = normalizePublicTag(tag);
+    if (!validatePublicTagValue(normalizedTag)) {
+      return { ok: false, code: 'TAG_INVALID', normalizedTag };
+    }
+
+    const similarUser = getSimilarPublicTagMatch(db, normalizedTag, excludeLogin);
+    if (!similarUser) {
+      return { ok: true, normalizedTag };
+    }
+
+    const similarTag = getUserPublicTag(similarUser);
+    if (similarTag === normalizedTag) {
+      return { ok: false, code: 'TAG_EXISTS', normalizedTag, similarTag };
+    }
+
+    return { ok: false, code: 'TAG_TOO_SIMILAR', normalizedTag, similarTag };
+  }
+
   function normalizeProvider(value) {
     const normalizedValue = String(value || '').trim().toLowerCase();
     return SOCIAL_PROVIDERS.includes(normalizedValue) ? normalizedValue : 'local';
@@ -136,6 +232,27 @@
     while (db.users.some((user) => user.login.toLowerCase() === candidate.toLowerCase())) {
       const suffix = `_${index}`;
       candidate = `${safeBase.slice(0, Math.max(3, 20 - suffix.length))}${suffix}`;
+      index += 1;
+    }
+
+    return candidate;
+  }
+
+  function createUniquePublicTag(db, baseTag, excludeLogin = '') {
+    const latinFallback = String(slugifyLogin(baseTag) || '')
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^_+|_+$/g, '');
+    const normalizedBase = validatePublicTagValue(baseTag)
+      ? normalizePublicTag(baseTag)
+      : normalizePublicTag(latinFallback) || 'player';
+    const safeBase = normalizedBase.slice(0, 24) || 'player';
+    let candidate = safeBase;
+    let index = 1;
+
+    while (!checkPublicTagAvailability(db, candidate, excludeLogin).ok) {
+      const suffix = `_${index}`;
+      candidate = `${safeBase.slice(0, Math.max(3, 24 - suffix.length))}${suffix}`;
       index += 1;
     }
 
@@ -339,6 +456,11 @@
       normalizedUser.authProviders = getUserAuthProviders(normalizedUser);
       normalizedUser.lastAuthMethod = normalizeProvider(normalizedUser.lastAuthMethod || normalizedUser.authProvider);
       normalizedUser.profile = applyProfileGenderDefaults(mergeDefaults(DEFAULT_DB.profile, normalizedUser.profile || {}));
+      const preferredTag = normalizePublicTag(normalizedUser.profile.username || normalizedUser.login);
+      const preferredTagCheck = checkPublicTagAvailability(db, preferredTag, normalizedUser.login);
+      normalizedUser.profile.username = preferredTagCheck.ok
+        ? preferredTagCheck.normalizedTag
+        : createUniquePublicTag(db, normalizedUser.login, normalizedUser.login);
       normalizedUser.progress = mergeDefaults(DEFAULT_PROGRESS, normalizedUser.progress || {});
       normalizedUser.progress.recentGames = Array.isArray(normalizedUser.progress.recentGames) ? normalizedUser.progress.recentGames : [];
       normalizedUser.character = applyCharacterGenderDefaults(normalizedUser.character, normalizedUser.profile.gender);
@@ -410,7 +532,9 @@
     const gender = normalizeGender(input.gender || input.profile?.gender);
     const defaultAvatar = getDefaultAvatarForGender(gender);
     const displayName = String(input.displayName || input.name || login || email.split('@')[0] || 'Користувач').trim();
-    const username = slugifyLogin(login || email.split('@')[0] || displayName).replace(/-/g, '_').slice(0, 20) || 'player';
+    const username = normalizePublicTag(
+      input.username || slugifyLogin(login || email.split('@')[0] || displayName).replace(/-/g, '_')
+    ).slice(0, 24) || 'player';
     const now = new Date().toISOString();
 
     return {
@@ -456,7 +580,7 @@
     db.profile = {
       ...userProfile,
       name: userProfile.name || user.login,
-      username: userProfile.username || user.login.toLowerCase(),
+      username: normalizePublicTag(userProfile.username || user.login) || normalizePublicTag(user.login) || 'player',
       email: userProfile.email || user.email || '',
       avatar: userProfile.avatar || defaultAvatar,
       currentAvatar: userProfile.currentAvatar || userProfile.avatar || defaultAvatar,
@@ -485,7 +609,7 @@
       ...user.profile,
       ...db.profile,
       name: db.profile.name || user.login,
-      username: db.profile.username || user.login.toLowerCase(),
+      username: normalizePublicTag(db.profile.username || user.profile?.username || user.login) || normalizePublicTag(user.login) || 'player',
       email: db.profile.email || user.email || '',
       gender: profileGender,
       avatar: db.profile.avatar || defaultAvatar,
@@ -543,14 +667,19 @@
       const db = load();
       const normalizedLogin = String(input.login || '').trim().toLowerCase();
       const normalizedEmail = String(input.email || '').trim().toLowerCase();
+      const tagCheck = checkPublicTagAvailability(db, input.username || normalizedLogin);
       const hasLogin = db.users.some((user) => user.login.toLowerCase() === normalizedLogin);
       const hasEmail = db.users.some((user) => String(user.email || '').toLowerCase() === normalizedEmail);
 
       if (hasLogin) return { ok: false, code: 'LOGIN_EXISTS' };
       if (hasEmail) return { ok: false, code: 'EMAIL_EXISTS' };
+      if (!tagCheck.ok) {
+        return { ok: false, code: tagCheck.code, tag: tagCheck.normalizedTag, similarTag: tagCheck.similarTag };
+      }
 
       const user = createUserRecord({
         ...input,
+        username: tagCheck.normalizedTag,
         authProvider: 'local',
         authProviders: ['local']
       });
@@ -624,6 +753,13 @@
           db,
           `${slugifyLogin(displayName || normalizedEmail.split('@')[0] || normalizedProvider)}_${normalizedProvider}`
         );
+        const requestedTag = normalizePublicTag(input.username || displayName || normalizedEmail.split('@')[0] || login);
+        const tagCheck = requestedTag
+          ? checkPublicTagAvailability(db, requestedTag)
+          : { ok: true, normalizedTag: createUniquePublicTag(db, login) };
+        if (!tagCheck.ok) {
+          return { ok: false, code: tagCheck.code, tag: tagCheck.normalizedTag, similarTag: tagCheck.similarTag };
+        }
         user = createUserRecord({
           login,
           email: normalizedEmail || `${login}@${normalizedProvider}.local`,
@@ -632,6 +768,7 @@
           authProviders: [normalizedProvider],
           authIdentities: providerUserId ? { [normalizedProvider]: providerUserId } : {},
           displayName: displayName || login,
+          username: tagCheck.normalizedTag,
           gender: input.gender
         });
         db.users.push(user);
@@ -656,6 +793,13 @@
         if (normalizedEmail) {
           user.profile.email = normalizedEmail;
         }
+        if (input.username) {
+          const tagCheck = checkPublicTagAvailability(db, input.username, user.login);
+          if (!tagCheck.ok) {
+            return { ok: false, code: tagCheck.code, tag: tagCheck.normalizedTag, similarTag: tagCheck.similarTag };
+          }
+          user.profile.username = tagCheck.normalizedTag;
+        }
         if (incomingGender !== 'unknown' && normalizeGender(user.profile.gender) === 'unknown') {
           user.profile.gender = incomingGender;
         }
@@ -676,6 +820,13 @@
         linked,
         isNew
       };
+    },
+    normalizePublicTag(value) {
+      return normalizePublicTag(value);
+    },
+    checkPublicTagAvailability(tag, excludeLogin = '') {
+      const db = load();
+      return checkPublicTagAvailability(db, tag, excludeLogin);
     },
     reset() {
       cache = clone(DEFAULT_DB);

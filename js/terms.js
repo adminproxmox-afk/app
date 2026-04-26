@@ -12,13 +12,13 @@
       appGuest: 'Увійти',
       kicker: 'Life Capital Academy',
       title: 'Умови надання послуг',
-      lead: 'Ці умови регулюють доступ до поточної вебверсії Life Capital Academy, використання локального акаунта, інтерактивного контенту, навчальних матеріалів і підключених способів входу.',
+      lead: 'Ці умови регулюють доступ до застосунку Life Capital Academy, його спільної з сайтом фронтенд-основи, акаунта користувача, навчального контенту та підключених способів входу.',
       effectiveLabel: 'Чинні з',
-      effectiveValue: '21 квітня 2026',
+      effectiveValue: '26 квітня 2026',
       formatLabel: 'Формат',
-      formatValue: 'Поточна вебверсія сервісу',
+      formatValue: 'Застосунок та пов’язаний вебклієнт',
       accessLabel: 'Доступ',
-      accessValue: 'Локальний акаунт та підключені провайдери'
+      accessValue: 'Акаунт користувача, контент і сервісні інтеграції'
     },
     en: {
       pageTitle: 'Terms of Service | Life Capital Academy',
@@ -30,13 +30,13 @@
       appGuest: 'Sign in',
       kicker: 'Life Capital Academy',
       title: 'Terms of Service',
-      lead: 'These terms govern access to the current web version of Life Capital Academy, use of the local account, interactive content, learning materials, and connected sign-in methods.',
+      lead: 'These terms govern access to the Life Capital Academy app, its shared website-based frontend, the user account, learning content, and connected sign-in methods.',
       effectiveLabel: 'Effective',
-      effectiveValue: 'April 21, 2026',
+      effectiveValue: 'April 26, 2026',
       formatLabel: 'Format',
-      formatValue: 'Current web service version',
+      formatValue: 'App and related web client',
       accessLabel: 'Access',
-      accessValue: 'Local account and connected providers'
+      accessValue: 'User account, content, and service integrations'
     }
   };
 
@@ -109,8 +109,11 @@
   }
 
   function applyTheme() {
-    document.body.classList.toggle('theme-light', !isDarkMode());
-    document.body.classList.toggle('theme-dark', isDarkMode());
+    const darkMode = isDarkMode();
+    document.documentElement.dataset.theme = darkMode ? 'dark' : 'light';
+    document.documentElement.style.colorScheme = darkMode ? 'dark' : 'light';
+    document.body.classList.toggle('theme-light', !darkMode);
+    document.body.classList.toggle('theme-dark', darkMode);
   }
 
   function applyPageCopy() {

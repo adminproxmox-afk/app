@@ -5,12 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Terms of Service for the current web version of Life Capital Academy.">
   <title>Умови надання послуг | Life Capital Academy</title>
+  <script>
+    (() => {
+      try {
+        const rawDb = localStorage.getItem('miniAppDb');
+        const db = rawDb ? JSON.parse(rawDb) : null;
+        const darkMode = typeof db?.settings?.darkMode === 'boolean'
+          ? db.settings.darkMode
+          : localStorage.getItem('darkMode') !== 'false';
+        const theme = darkMode ? 'dark' : 'light';
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+        const style = document.createElement('style');
+        style.textContent = darkMode
+          ? 'html[data-theme="dark"] body{background:#09111d;color:#eff4ff}'
+          : 'html[data-theme="light"] body{background:#dfe6ea;color:#142436}';
+        document.head.appendChild(style);
+      } catch (error) {
+        document.documentElement.dataset.theme = 'dark';
+      }
+    })();
+  </script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css">
   <link rel="stylesheet" href="style/ui-preferences.css">
   <link rel="stylesheet" href="style/terms.css">
   <link rel="stylesheet" href="style/enhancements.css">
 </head>
-<body class="terms-page theme-dark">
+<body class="terms-page">
   <main class="terms-shell">
     <header class="terms-header">
       <a class="terms-link terms-link--ghost" id="termsBackLink" href="login.html">
@@ -29,22 +50,22 @@
       <p class="terms-kicker" id="termsKicker">Life Capital Academy</p>
       <h1 class="terms-title" id="termsTitle">Умови надання послуг</h1>
       <p class="terms-lead" id="termsLead">
-        Ці умови регулюють доступ до поточної вебверсії Life Capital Academy, використання локального акаунта,
-        інтерактивного контенту, навчальних матеріалів і підключених способів входу.
+        Ці умови регулюють доступ до застосунку Life Capital Academy, його спільної з сайтом фронтенд-основи,
+        акаунта користувача, навчального контенту та підключених способів входу.
       </p>
 
       <div class="terms-badges">
         <div class="terms-badge">
           <span class="terms-badge__label" id="termsEffectiveLabel">Чинні з</span>
-          <strong class="terms-badge__value" id="termsEffectiveValue">21 квітня 2026</strong>
+          <strong class="terms-badge__value" id="termsEffectiveValue">26 квітня 2026</strong>
         </div>
         <div class="terms-badge">
           <span class="terms-badge__label" id="termsFormatLabel">Формат</span>
-          <strong class="terms-badge__value" id="termsFormatValue">Поточна вебверсія сервісу</strong>
+          <strong class="terms-badge__value" id="termsFormatValue">Застосунок та пов’язаний вебклієнт</strong>
         </div>
         <div class="terms-badge">
           <span class="terms-badge__label" id="termsAccessLabel">Доступ</span>
-          <strong class="terms-badge__value" id="termsAccessValue">Локальний акаунт та підключені провайдери</strong>
+          <strong class="terms-badge__value" id="termsAccessValue">Акаунт користувача, контент і сервісні інтеграції</strong>
         </div>
       </div>
     </section>
@@ -54,15 +75,15 @@
         <div data-lang-block="uk">
           <h2>1. Прийняття умов</h2>
           <p>
-            Використовуючи цю вебверсію Life Capital Academy, ви погоджуєтеся з цими умовами надання послуг.
-            Якщо ви не погоджуєтеся з ними, не використовуйте сервіс.
+            Використовуючи застосунок Life Capital Academy або пов’язаний з ним вебклієнт, ви погоджуєтеся з
+            цими умовами надання послуг. Якщо ви не погоджуєтеся з ними, припиніть використання сервісу.
           </p>
         </div>
         <div data-lang-block="en" hidden>
           <h2>1. Acceptance of terms</h2>
           <p>
-            By using this web version of Life Capital Academy, you agree to these Terms of Service.
-            If you do not agree, do not use the service.
+            By using the Life Capital Academy app or its related web client, you agree to these Terms of Service.
+            If you do not agree, stop using the service.
           </p>
         </div>
       </article>
@@ -71,15 +92,15 @@
         <div data-lang-block="uk">
           <h2>2. Призначення сервісу</h2>
           <p>
-            Сервіс надає доступ до навчального інтерфейсу, профілю користувача, ігрових сценаріїв,
-            налаштувань і супровідного контенту для особистого використання в межах поточної реалізації.
+            Сервіс надає доступ до навчального інтерфейсу, профілю користувача, мініігор, персонажа,
+            магазину, налаштувань і супровідного контенту для особистого використання в межах продукту.
           </p>
         </div>
         <div data-lang-block="en" hidden>
           <h2>2. Service purpose</h2>
           <p>
-            The service provides access to a learning interface, user profile, game scenarios,
-            settings, and related content for personal use within the current implementation.
+            The service provides access to a learning interface, user profile, mini-games, character
+            page, shop, settings, and related content for personal use within the product.
           </p>
         </div>
       </article>
@@ -88,19 +109,19 @@
         <div data-lang-block="uk">
           <h2>3. Акаунт і доступ</h2>
           <ul>
-            <li>Ви відповідаєте за коректність даних, які вносите до свого профілю.</li>
-            <li>У поточній вебверсії частина облікових даних і прогресу зберігається локально у браузері користувача.</li>
-            <li>Якщо ви використовуєте Google або Telegram для входу, також застосовуються правила відповідного провайдера.</li>
-            <li>Ви не повинні намагатися отримати несанкціонований доступ до чужого профілю або змінювати дані інших користувачів.</li>
+            <li>Ви відповідаєте за точність і законність даних, які вносите до профілю та акаунта.</li>
+            <li>Ви зобов’язані зберігати конфіденційність своїх даних входу та не передавати доступ третім особам без необхідності.</li>
+            <li>Якщо ви використовуєте Google, Telegram або інших провайдерів входу, додатково застосовуються правила відповідного провайдера.</li>
+            <li>Заборонено намагатися отримати несанкціонований доступ до чужих профілів, інтеграцій або сервісних середовищ.</li>
           </ul>
         </div>
         <div data-lang-block="en" hidden>
           <h2>3. Account and access</h2>
           <ul>
-            <li>You are responsible for the accuracy of the data you enter into your profile.</li>
-            <li>In the current web version, part of your credentials and progress is stored locally in the user’s browser.</li>
-            <li>If you sign in with Google or Telegram, the corresponding provider’s rules also apply.</li>
-            <li>You must not attempt to gain unauthorized access to another user’s profile or modify another user’s data.</li>
+            <li>You are responsible for the accuracy and lawfulness of the data you place in your profile and account.</li>
+            <li>You must keep your sign-in data confidential and avoid sharing access with third parties unless required.</li>
+            <li>If you use Google, Telegram, or other sign-in providers, that provider’s own rules also apply.</li>
+            <li>You must not attempt to gain unauthorized access to other profiles, integrations, or service environments.</li>
           </ul>
         </div>
       </article>
@@ -109,73 +130,73 @@
         <div data-lang-block="uk">
           <h2>4. Дозволене використання</h2>
           <ul>
-            <li>Ви можете використовувати сервіс для навчання, перегляду контенту та персональної практики.</li>
-            <li>Забороняється використовувати сервіс для зловмисних дій, тестування без дозволу, обходу захисту або порушення роботи інтерфейсу.</li>
-            <li>Не дозволяється видавати себе за іншу особу, вводити неправдиві дані для шахрайства або експлуатувати помилки сервісу.</li>
+            <li>Ви можете використовувати сервіс для навчання, практики, перегляду контенту та персонального розвитку.</li>
+            <li>Забороняється використовувати сервіс для шкідливих дій, несанкціонованого тестування, обходу захисту або порушення стабільності інтерфейсу.</li>
+            <li>Не дозволяється видавати себе за іншу особу, використовувати оманливі теги чи дані для шахрайства або навмисно експлуатувати помилки сервісу.</li>
           </ul>
         </div>
         <div data-lang-block="en" hidden>
           <h2>4. Permitted use</h2>
           <ul>
-            <li>You may use the service for learning, content access, and personal practice.</li>
-            <li>You may not use the service for malicious activity, unauthorized testing, bypassing protections, or disrupting the interface.</li>
-            <li>You may not impersonate another person, enter false data for fraud, or exploit service errors.</li>
+            <li>You may use the service for learning, practice, content access, and personal growth.</li>
+            <li>You may not use the service for malicious activity, unauthorized testing, bypassing protections, or disrupting interface stability.</li>
+            <li>You may not impersonate another person, use misleading tags or data for fraud, or intentionally exploit service errors.</li>
           </ul>
         </div>
       </article>
 
       <article class="terms-card">
         <div data-lang-block="uk">
-          <h2>5. Контент і функціональність</h2>
+          <h2>5. Безпека та інфраструктура</h2>
           <p>
-            Функції, навчальні сценарії, категорії, винагороди, прогрес, інтерфейс і способи входу можуть
-            змінюватися, доповнюватися або видалятися без попереднього індивідуального повідомлення, якщо це
-            потрібно для розвитку продукту, стабільності або безпеки.
+            Оператор сервісу впроваджує технічні обмеження доступу, захищені канали з’єднання та інші
+            організаційні заходи для захисту інфраструктури. Ви погоджуєтеся не втручатися в ці механізми і
+            не намагатися їх обходити.
           </p>
         </div>
         <div data-lang-block="en" hidden>
-          <h2>5. Content and functionality</h2>
+          <h2>5. Security and infrastructure</h2>
           <p>
-            Features, learning scenarios, categories, rewards, progress mechanics, interface elements, and sign-in
-            methods may change, be expanded, or be removed without individual prior notice when needed for product
-            evolution, stability, or security.
+            The service operator uses technical access restrictions, protected connection channels, and other
+            organizational safeguards to protect the infrastructure. You agree not to interfere with or attempt
+            to bypass those mechanisms.
           </p>
         </div>
       </article>
 
       <article class="terms-card">
         <div data-lang-block="uk">
-          <h2>6. Локальні дані та обмеження</h2>
+          <h2>6. Контент і функціональність</h2>
           <p>
-            Оскільки поточна реалізація значною мірою спирається на локальне зберігання даних у браузері,
-            оператор сервісу не гарантує збереження локального прогресу після очищення браузерних даних,
-            перевстановлення браузера або зміни пристрою.
+            Функції, навчальні сценарії, категорії, винагороди, механіки прогресу, інтерфейс, інтеграції та
+            способи входу можуть оновлюватися, доповнюватися або змінюватися для розвитку продукту, стабільності
+            чи безпеки.
           </p>
         </div>
         <div data-lang-block="en" hidden>
-          <h2>6. Local data and limitations</h2>
+          <h2>6. Content and functionality</h2>
           <p>
-            Because the current implementation relies heavily on local browser storage, the service operator does not
-            guarantee preservation of local progress after clearing browser data, reinstalling a browser, or changing devices.
+            Features, learning scenarios, categories, rewards, progress mechanics, interface elements, integrations,
+            and sign-in methods may be updated, expanded, or changed for product growth, stability, or security.
           </p>
         </div>
       </article>
 
       <article class="terms-card terms-card--wide terms-card--accent">
         <div data-lang-block="uk">
-          <h2>7. Відмова від гарантій</h2>
+          <h2>7. Доступність, локальні дані та обмеження</h2>
           <p>
-            Сервіс надається у поточному вигляді. Наскільки це дозволено застосовним правом, Life Capital Academy
-            не гарантує безперервну роботу без помилок, повну сумісність з усіма пристроями або збереження всіх
-            локальних даних у кожному сценарії використання.
+            Частина даних або станів може залежати від локального сховища пристрою, браузера, оболонки застосунку
+            або доступності сторонніх сервісів. Через це оператор не гарантує безперервну роботу без збоїв чи
+            збереження кожного локального стану в усіх сценаріях використання.
           </p>
         </div>
         <div data-lang-block="en" hidden>
-          <h2>7. Disclaimer of warranties</h2>
+          <h2>7. Availability, local data, and limitations</h2>
           <p>
-            The service is provided as currently available. To the extent permitted by applicable law, Life Capital Academy
-            does not guarantee uninterrupted or error-free operation, full compatibility with every device, or preservation
-            of all local data in every usage scenario.
+            Some data or state may depend on device-local storage, the browser, the app shell, or the availability of
+            third-party services. Because of that, the operator does not guarantee uninterrupted operation or preservation
+            of every local state in every usage scenario.
           </p>
         </div>
       </article>
@@ -185,14 +206,14 @@
           <h2>8. Зміни до умов</h2>
           <p>
             Ці умови можуть оновлюватися. Актуальна редакція публікується на цій сторінці. Продовження використання
-            сервісу після оновлення означає прийняття нової редакції умов.
+            застосунку або вебклієнта після оновлення означає прийняття нової редакції умов.
           </p>
         </div>
         <div data-lang-block="en" hidden>
           <h2>8. Changes to the terms</h2>
           <p>
-            These terms may be updated. The current version is published on this page. Continued use of the service
-            after an update means acceptance of the revised terms.
+            These terms may be updated. The current version is published on this page. Continued use of the app or
+            web client after an update means acceptance of the revised terms.
           </p>
         </div>
       </article>
@@ -201,8 +222,9 @@
         <div data-lang-block="uk">
           <h2>9. Пов’язані документи</h2>
           <p>
-            Використання сервісу також регулюється політикою конфіденційності. Якщо сервіс використовує вхід через
-            Google або Telegram, на відповідну частину авторизації можуть додатково поширюватися умови провайдера.
+            Використання сервісу також регулюється політикою конфіденційності. Для питань щодо обробки даних,
+            інфраструктури або підключених провайдерів входу звертайтеся також до відповідних політик і правил
+            сторонніх сервісів, якщо вони застосовуються до конкретного сценарію.
           </p>
           <div class="terms-card__actions">
             <a class="terms-link" href="privacy.html">Відкрити privacy policy</a>
@@ -211,8 +233,9 @@
         <div data-lang-block="en" hidden>
           <h2>9. Related documents</h2>
           <p>
-            Use of the service is also governed by the privacy policy. If the service uses Google or Telegram sign-in,
-            the corresponding provider’s own terms may additionally apply to that part of the authentication flow.
+            Use of the service is also governed by the privacy policy. For questions related to data handling,
+            infrastructure, or connected sign-in providers, the relevant third-party policies and rules may also
+            apply to a particular flow.
           </p>
           <div class="terms-card__actions">
             <a class="terms-link" href="privacy.html">Open privacy policy</a>

@@ -67,6 +67,13 @@
     return typeof window.Howl === 'function' && window.Howler;
   }
 
+  function shouldReduceEffects() {
+    const prefersReducedMotion = Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
+    const coarsePointer = Boolean(window.matchMedia?.('(pointer: coarse)').matches);
+    const lowPowerDevice = Number(navigator.hardwareConcurrency || 0) > 0 && Number(navigator.hardwareConcurrency) <= 4;
+    return prefersReducedMotion || coarsePointer || lowPowerDevice;
+  }
+
   function scheduleRefresh() {
     clearTimeout(state.refreshTimer);
     state.refreshTimer = window.setTimeout(refresh, 80);
@@ -102,7 +109,7 @@
 
       this.sounds.ambient = new window.Howl({
         src: [assetUrl('ambient.wav')],
-        preload: true,
+        preload: false,
         loop: true,
         volume: 0.08
       });
@@ -132,6 +139,8 @@
       if (this.visibilityBound) return;
       this.visibilityBound = true;
       document.addEventListener('visibilitychange', () => this.refresh());
+      window.addEventListener('pageshow', () => this.refresh());
+      window.addEventListener('pagehide', () => this.refresh());
     },
     refresh() {
       if (!state.audioReady || !hasHowler()) return;
@@ -152,6 +161,10 @@
         return;
       }
 
+      if (this.sounds.ambient.state() === 'unloaded') {
+        this.sounds.ambient.load();
+      }
+
       if (!this.sounds.ambient.playing()) {
         this.sounds.ambient.play();
       }
@@ -164,12 +177,22 @@
       if (name !== 'ambient' && !settings.soundEnabled) return;
 
       const sound = this.sounds[name];
-      if (sound) sound.play();
+      if (!sound) return;
+
+      if (name === 'click') {
+        const now = Date.now();
+        const elapsed = now - Number(this.lastClickAt || 0);
+        if (elapsed < 70) return;
+        this.lastClickAt = now;
+        sound.stop();
+      }
+
+      sound.play();
     }
   };
 
   function animateIn(elements, options = {}) {
-    if (!hasGsap()) return;
+    if (!hasGsap() || shouldReduceEffects()) return;
 
     const nodes = Array.from(elements).filter((element) => (
       element
@@ -200,7 +223,7 @@
   }
 
   function animateModal(modal) {
-    if (!hasGsap()) return;
+    if (!hasGsap() || shouldReduceEffects()) return;
     const content = modal?.querySelector('.modal-content');
     if (!content) return;
 
@@ -222,7 +245,7 @@
     state.triggers.forEach((trigger) => trigger.kill());
     state.triggers = [];
 
-    if (!hasScrollTrigger()) return;
+    if (!hasScrollTrigger() || shouldReduceEffects()) return;
 
     const revealGroups = [];
     const contentPanel = document.querySelector('.content-panel');
@@ -400,7 +423,7 @@
         node.dataset.fxToastLast = signature;
         audio.play('success');
 
-        if (hasGsap()) {
+        if (hasGsap() && !shouldReduceEffects()) {
           window.gsap.fromTo(node, {
             autoAlpha: 0,
             y: -10
@@ -447,7 +470,7 @@
     if (state.globalBindingsReady) return;
     state.globalBindingsReady = true;
 
-    document.addEventListener('click', (event) => {
+    document.addEventListener('pointerdown', (event) => {
       const target = event.target instanceof Element ? event.target : null;
       if (!target) return;
 
@@ -456,6 +479,15 @@
         audio.play('click');
         window.setTimeout(() => audio.refresh(), 0);
       }
+    }, true);
+
+    document.addEventListener('keydown', (event) => {
+      if (event.repeat) return;
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      const target = event.target instanceof Element ? event.target : null;
+      if (!target?.closest('button, a')) return;
+      audio.play('click');
+      window.setTimeout(() => audio.refresh(), 0);
     }, true);
 
     document.addEventListener('input', (event) => {
@@ -470,6 +502,8 @@
   }
 
   function initPageAnimations() {
+    if (shouldReduceEffects()) return;
+
     animateIn(document.querySelectorAll('.app-topbar, .bottom-nav'), {
       y: 16,
       scale: 1,
@@ -499,7 +533,7 @@
   }
 
   function refresh() {
-    if (hasScrollTrigger()) {
+    if (hasScrollTrigger() && !shouldReduceEffects()) {
       window.gsap.registerPlugin(window.ScrollTrigger);
     }
 

@@ -12,13 +12,13 @@
       appGuest: 'Увійти',
       kicker: 'Life Capital Academy',
       title: 'Про додаток',
-      lead: 'Life Capital Academy це навчальний вебдодаток із мінііграми, профілем користувача, прогресом і тематичними добірками для практики навичок у зручному форматі.',
+      lead: 'Life Capital Academy це навчальний застосунок, клієнтська частина якого використовує спільну фронтенд-основу з сайтом для єдиного інтерфейсу, профілю, прогресу та мініігор.',
       metricOneLabel: 'Формат',
-      metricOneValue: 'Вебверсія з локальним профілем',
+      metricOneValue: 'Застосунок зі спільним фронтендом на базі сайту',
       metricTwoLabel: 'Навчання',
-      metricTwoValue: 'Мініігри, прогрес і практика',
-      metricThreeLabel: 'Доступ',
-      metricThreeValue: 'Локальний акаунт, Google, Telegram'
+      metricTwoValue: 'Мініігри, прогрес, персонаж і магазин',
+      metricThreeLabel: 'Безпека',
+      metricThreeValue: 'Захищені з’єднання та сервісні обмеження доступу'
     },
     en: {
       pageTitle: 'About App | Life Capital Academy',
@@ -30,13 +30,13 @@
       appGuest: 'Sign in',
       kicker: 'Life Capital Academy',
       title: 'About App',
-      lead: 'Life Capital Academy is a learning web app with mini-games, a user profile, progress tracking, and themed practice collections in a compact, friendly format.',
+      lead: 'Life Capital Academy is a learning app whose client layer uses the same frontend foundation as the website to keep the interface, profile, progress, and mini-games consistent.',
       metricOneLabel: 'Format',
-      metricOneValue: 'Web version with a local profile',
+      metricOneValue: 'App with a shared website-based frontend',
       metricTwoLabel: 'Learning',
-      metricTwoValue: 'Mini-games, progress, and practice',
-      metricThreeLabel: 'Access',
-      metricThreeValue: 'Local account, Google, Telegram'
+      metricTwoValue: 'Mini-games, progress, character, and shop',
+      metricThreeLabel: 'Security',
+      metricThreeValue: 'Protected connections and service access controls'
     }
   };
 
@@ -109,8 +109,11 @@
   }
 
   function applyTheme() {
-    document.body.classList.toggle('theme-light', !isDarkMode());
-    document.body.classList.toggle('theme-dark', isDarkMode());
+    const darkMode = isDarkMode();
+    document.documentElement.dataset.theme = darkMode ? 'dark' : 'light';
+    document.documentElement.style.colorScheme = darkMode ? 'dark' : 'light';
+    document.body.classList.toggle('theme-light', !darkMode);
+    document.body.classList.toggle('theme-dark', darkMode);
   }
 
   function applyPageCopy() {

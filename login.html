@@ -4,6 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign In</title>
+  <script>
+    (() => {
+      try {
+        const rawDb = localStorage.getItem('miniAppDb');
+        const db = rawDb ? JSON.parse(rawDb) : null;
+        const darkMode = typeof db?.settings?.darkMode === 'boolean'
+          ? db.settings.darkMode
+          : localStorage.getItem('darkMode') !== 'false';
+        const theme = darkMode ? 'dark' : 'light';
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+        const style = document.createElement('style');
+        style.textContent = darkMode
+          ? 'html[data-theme="dark"] body{background:#09111d;color:#eff4ff}html[data-theme="dark"] .auth-card{background:linear-gradient(180deg,rgba(15,22,38,.94),rgba(9,14,25,.98))}'
+          : 'html[data-theme="light"] body{background:#dfe6ea;color:#142436}html[data-theme="light"] .auth-card{background:linear-gradient(180deg,rgba(245,248,250,.96),rgba(228,235,240,.98))}';
+        document.head.appendChild(style);
+      } catch (error) {
+        document.documentElement.dataset.theme = 'dark';
+      }
+    })();
+  </script>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css">

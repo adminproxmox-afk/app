@@ -21,6 +21,7 @@
     uk: {
       login_hint: 'Введіть логін або email',
       register_login_hint: '3-20 символів: літери, цифри, _ . -',
+      register_tag_hint: '3-24 символи: латиниця, цифри та _',
       password_requirements: 'Мінімум 8 символів, велика літера та цифра',
       password_strength_weak: 'Слабкий пароль',
       password_strength_medium: 'Нормальний пароль',
@@ -30,8 +31,13 @@
       social_description: 'Вкажіть ім’я та пошту. Якщо акаунт уже існує, ми увійдемо в нього. Якщо ні, створимо новий.',
       social_name_placeholder: "Ім'я в профілі",
       social_email_placeholder: 'Пошта провайдера',
+      social_tag_placeholder: 'Тег профілю',
       social_name_required: "Введіть ім'я для продовження",
       social_email_required: 'Введіть коректну пошту',
+      social_tag_required: 'Введіть тег профілю',
+      tag_invalid: 'Тег має містити 3-24 символи: латиниця, цифри та _',
+      tag_exists: 'Такий тег уже зайнятий',
+      tag_too_similar: 'Цей тег надто схожий на вже існуючий @{tag}',
       social_cancel: 'Скасувати',
       social_continue_signin: 'Увійти',
       social_continue_signup: 'Створити акаунт',
@@ -45,6 +51,7 @@
     en: {
       login_hint: 'Use username or email',
       register_login_hint: '3-20 chars: letters, numbers, _ . -',
+      register_tag_hint: '3-24 chars: letters, numbers and _',
       password_requirements: 'At least 8 characters, one uppercase letter and one number',
       password_strength_weak: 'Weak password',
       password_strength_medium: 'Good password',
@@ -54,8 +61,13 @@
       social_description: 'Enter your name and email. If the account exists, we will sign you in. Otherwise we will create a new one.',
       social_name_placeholder: 'Profile name',
       social_email_placeholder: 'Provider email',
+      social_tag_placeholder: 'Profile tag',
       social_name_required: 'Enter a name to continue',
       social_email_required: 'Enter a valid email address',
+      social_tag_required: 'Enter a profile tag',
+      tag_invalid: 'Tag must be 3-24 chars: letters, numbers and _',
+      tag_exists: 'This tag is already taken',
+      tag_too_similar: 'This tag is too similar to existing @{tag}',
       social_cancel: 'Cancel',
       social_continue_signin: 'Sign In',
       social_continue_signup: 'Create Account',
@@ -118,6 +130,37 @@
   function validateEmailValue(value) {
     const trimmedValue = String(value || '').trim().toLowerCase();
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedValue);
+  }
+
+  function normalizePublicTagValue(value) {
+    if (typeof window.AppDB?.normalizePublicTag === 'function') {
+      return window.AppDB.normalizePublicTag(value);
+    }
+
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/^@+/, '')
+      .replace(/[\s.-]+/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^_+|_+$/g, '');
+  }
+
+  function validatePublicTagValue(value) {
+    return /^[a-z0-9_]{3,24}$/.test(normalizePublicTagValue(value));
+  }
+
+  function getPublicTagState(value, excludeLogin = '') {
+    const normalizedTag = normalizePublicTagValue(value);
+    if (!validatePublicTagValue(normalizedTag)) {
+      return { ok: false, code: 'TAG_INVALID', normalizedTag };
+    }
+
+    if (typeof window.AppDB?.checkPublicTagAvailability === 'function') {
+      return window.AppDB.checkPublicTagAvailability(normalizedTag, excludeLogin);
+    }
+
+    return { ok: true, normalizedTag };
   }
 
   function assessPassword(value) {
@@ -243,6 +286,7 @@
         <p class="auth-modal__description" id="socialAuthDescription"></p>
         <input class="auth-modal__input" id="socialAuthName" type="text" maxlength="40">
         <input class="auth-modal__input" id="socialAuthEmail" type="email" maxlength="80">
+        <input class="auth-modal__input" id="socialAuthTag" type="text" maxlength="24" hidden>
         <div class="auth-message auth-message--modal" id="socialAuthMessage"></div>
         <div class="auth-modal__actions">
           <button class="auth-modal__button auth-modal__button--ghost" id="socialAuthCancel" type="button"></button>
@@ -266,6 +310,11 @@
       }
     });
     modal.querySelector('#socialAuthEmail').addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        submitSocialModal();
+      }
+    });
+    modal.querySelector('#socialAuthTag').addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
         submitSocialModal();
       }
@@ -300,9 +349,12 @@
 
     const nameInput = document.getElementById('socialAuthName');
     const emailInput = document.getElementById('socialAuthEmail');
+    const tagInput = document.getElementById('socialAuthTag');
     const modalMessage = document.getElementById('socialAuthMessage');
     const displayName = String(nameInput?.value || '').trim();
     const email = String(emailInput?.value || '').trim().toLowerCase();
+    const rawTag = String(tagInput?.value || '').trim();
+    const shouldValidateTag = currentState.mode === 'signup' || rawTag;
 
     if (displayName.length < 2) {
       setMessage(modalMessage, t('social_name_required'), 'error');
@@ -314,14 +366,43 @@
       return;
     }
 
+    let normalizedTag = '';
+    if (shouldValidateTag) {
+      if (!rawTag) {
+        setMessage(modalMessage, t('social_tag_required'), 'error');
+        return;
+      }
+
+      const tagState = getPublicTagState(rawTag);
+      if (!tagState.ok) {
+        const messageKey = tagState.code === 'TAG_EXISTS'
+          ? 'tag_exists'
+          : tagState.code === 'TAG_TOO_SIMILAR'
+            ? 'tag_too_similar'
+            : 'tag_invalid';
+        setMessage(modalMessage, t(messageKey, { tag: tagState.similarTag }), 'error');
+        return;
+      }
+
+      normalizedTag = tagState.normalizedTag;
+    }
+
     const result = window.AppDB?.registerOrLoginWithProvider?.(currentState.provider, {
       displayName,
       email,
+      username: normalizedTag,
       gender: currentState.gender || ''
     });
 
     if (!result?.ok) {
-      setMessage(modalMessage, t('social_error'), 'error');
+      const messageKey = result.code === 'TAG_EXISTS'
+        ? 'tag_exists'
+        : result.code === 'TAG_TOO_SIMILAR'
+          ? 'tag_too_similar'
+          : result.code === 'TAG_INVALID'
+            ? 'tag_invalid'
+            : 'social_error';
+      setMessage(modalMessage, t(messageKey, { tag: result.similarTag }), 'error');
       return;
     }
 
@@ -354,12 +435,17 @@
     document.getElementById('socialAuthDescription').textContent = t('social_description');
     document.getElementById('socialAuthName').placeholder = t('social_name_placeholder');
     document.getElementById('socialAuthEmail').placeholder = t('social_email_placeholder');
+    document.getElementById('socialAuthTag').placeholder = t('social_tag_placeholder');
     document.getElementById('socialAuthCancel').textContent = t('social_cancel');
     document.getElementById('socialAuthSubmit').textContent = t(
       modalState.mode === 'signup' ? 'social_continue_signup' : 'social_continue_signin'
     );
+    document.getElementById('socialAuthTag').hidden = modalState.mode !== 'signup';
     document.getElementById('socialAuthName').value = String(prefill.displayName || '').trim();
     document.getElementById('socialAuthEmail').value = String(prefill.email || '').trim();
+    document.getElementById('socialAuthTag').value = String(
+      prefill.tag || normalizePublicTagValue(prefill.displayName || prefill.email || '')
+    ).trim();
     setMessage(document.getElementById('socialAuthMessage'), '', 'info');
 
     modal.classList.add('is-open');
@@ -367,7 +453,9 @@
 
     setTimeout(() => {
       const target = document.getElementById(
-        document.getElementById('socialAuthName').value ? 'socialAuthEmail' : 'socialAuthName'
+        document.getElementById('socialAuthName').value
+          ? (modalState.mode === 'signup' && !document.getElementById('socialAuthTag').value ? 'socialAuthTag' : 'socialAuthEmail')
+          : 'socialAuthName'
       );
       target?.focus();
     }, 20);
@@ -400,6 +488,9 @@
     formatProviderList,
     validateLoginValue,
     validateEmailValue,
+    validatePublicTagValue,
+    normalizePublicTagValue,
+    getPublicTagState,
     assessPassword,
     getPasswordStrengthText,
     setMessage,

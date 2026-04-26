@@ -749,3 +749,65 @@ body.auth-modal-open {
     padding: 24px 18px calc(22px + env(safe-area-inset-bottom));
   }
 }
+
+body.theme-light,
+html[data-theme='light'] body {
+  background:
+    radial-gradient(circle at top left, rgba(108, 150, 203, 0.14), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(102, 174, 150, 0.12), transparent 32%),
+    linear-gradient(160deg, #dfe6ea 0%, #d7dfe5 54%, #cfd8df 100%);
+  color: #122033;
+}
+
+body.theme-light .auth-glow--one,
+html[data-theme='light'] .auth-glow--one {
+  background: rgba(64, 132, 214, 0.58);
+}
+
+body.theme-light .auth-glow--two,
+html[data-theme='light'] .auth-glow--two {
+  background: rgba(83, 177, 150, 0.5);
+}
+
+body.theme-light .auth-card,
+html[data-theme='light'] .auth-card {
+  background: linear-gradient(180deg, rgba(244, 248, 251, 0.95) 0%, rgba(228, 235, 240, 0.98) 100%);
+  border-color: rgba(58, 79, 103, 0.12);
+  box-shadow: 0 24px 64px rgba(38, 55, 78, 0.12);
+  color: #122033;
+}
+
+body.theme-light .auth-card .icon,
+html[data-theme='light'] .auth-card .icon {
+  color: #0b1d31;
+}
+
+body.theme-light .subtitle,
+body.theme-light .field-hint,
+body.theme-light .bottom-text,
+body.theme-light .provider-auth__note,
+html[data-theme='light'] .subtitle,
+html[data-theme='light'] .field-hint,
+html[data-theme='light'] .bottom-text,
+html[data-theme='light'] .provider-auth__note {
+  color: rgba(18, 32, 51, 0.7);
+}
+
+body.theme-light input,
+html[data-theme='light'] input {
+  background: linear-gradient(180deg, #ebf1f5 0%, #dde5ec 100%);
+  color: #122033;
+  border: 1px solid rgba(58, 79, 103, 0.12);
+}
+
+body.theme-light input::placeholder,
+html[data-theme='light'] input::placeholder {
+  color: rgba(18, 32, 51, 0.52);
+}
+
+body.theme-light .social-btn,
+body.theme-light button,
+html[data-theme='light'] .social-btn,
+html[data-theme='light'] button {
+  color: #102235;
+}

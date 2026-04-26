@@ -2879,14 +2879,46 @@ function renderHome() {
     <section class="home-dashboard">
       ${renderHomeProfileCard(profile, progress)}
       ${renderHomeStatsCard(progress)}
-      ${renderHomeLeaderboardCard()}
-      ${renderLeaderboardSection()}
+      <div id="homeCompactLeaderboardSlot">${renderHomeLeaderboardCard()}</div>
+      <div id="homeLeaderboardSectionSlot">${renderLeaderboardSection()}</div>
       ${renderHomePopularGames()}
-      ${renderCategoryExplorer()}
-      ${renderHomeGamesPreview(selectedCategory, selectedSubcategory, availableGames)}
+      <div id="homeCategoryExplorerSlot">${renderCategoryExplorer()}</div>
+      <div id="homeSelectedGamesSlot">${renderHomeGamesPreview(selectedCategory, selectedSubcategory, availableGames)}</div>
     </section>
   `;
 
+  window.AppEnhancements?.refresh?.();
+}
+
+function renderCategorySelectionState() {
+  const selectedCategory = getSelectedCategory();
+  const selectedSubcategory = getSelectedSubcategory();
+  const availableGames = (selectedSubcategory?.games || []).map((game) => ({
+    ...game,
+    categoryId: selectedCategory.id,
+    subcategoryId: selectedSubcategory.id
+  }));
+  const explorerSlot = document.getElementById('homeCategoryExplorerSlot');
+  const gamesSlot = document.getElementById('homeSelectedGamesSlot');
+
+  if (!explorerSlot || !gamesSlot) {
+    renderHome();
+    return;
+  }
+
+  explorerSlot.innerHTML = renderCategoryExplorer();
+  gamesSlot.innerHTML = renderHomeGamesPreview(selectedCategory, selectedSubcategory, availableGames);
+  window.AppEnhancements?.refresh?.();
+}
+
+function renderLeaderboardSelectionState() {
+  const leaderboardSlot = document.getElementById('homeLeaderboardSectionSlot');
+  if (!leaderboardSlot) {
+    renderHome();
+    return;
+  }
+
+  leaderboardSlot.innerHTML = renderLeaderboardSection();
   window.AppEnhancements?.refresh?.();
 }
 
@@ -2909,19 +2941,19 @@ function selectCategory(categoryId) {
   if (!category) return;
   state.selectedCategory = categoryId;
   state.selectedSubcategory = Object.values(category.subcategories)[0].id;
-  renderHome();
+  renderCategorySelectionState();
 }
 
 function selectSubcategory(categoryId, subcategoryId) {
   if (!categories[categoryId]?.subcategories[subcategoryId]) return;
   state.selectedCategory = categoryId;
   state.selectedSubcategory = subcategoryId;
-  renderHome();
+  renderCategorySelectionState();
 }
 
 function setLeaderboardFilter(filterId) {
   state.leaderboardFilter = filterId;
-  renderHome();
+  renderLeaderboardSelectionState();
 }
 
 function findGame(categoryId, subcategoryId, gameId) {

@@ -102,7 +102,9 @@
       languageEn: 'English',
       validationName: "Ім'я має містити хоча б 2 символи",
       validationPhone: 'Введіть коректний номер',
-      validationUsername: 'Username: 3-20 символів, латиниця, цифри або _',
+      validationUsername: 'Тег: 3-24 символи, латиниця, цифри та _',
+      validationUsernameExists: 'Такий тег уже зайнятий',
+      validationUsernameSimilar: 'Цей тег надто схожий на вже існуючий @{tag}',
       validationEmail: 'Введіть правильну пошту',
       validationBio: 'Напишіть короткий опис профілю',
       genderFemale: 'Жінка',
@@ -116,7 +118,7 @@
       fieldMeta: {
         name: { title: "Ім'я", hint: "Введіть відображуване ім'я" },
         phone: { title: 'Номер', hint: 'Телефон для профілю' },
-        username: { title: "Ім'я користувача", hint: 'Латиниця, цифри та _' },
+        username: { title: 'Тег профілю', hint: 'Без @, 3-24 символи: латиниця, цифри та _' },
         email: { title: 'Пошта', hint: 'Електронна адреса акаунта' },
         bio: { title: 'Про себе', hint: 'Короткий опис профілю' },
         gender: { title: 'Стать', hint: 'Оберіть значення' },
@@ -161,7 +163,9 @@
       languageEn: 'English',
       validationName: 'Name must be at least 2 characters',
       validationPhone: 'Enter a valid phone number',
-      validationUsername: 'Username: 3-20 chars, letters, numbers or _',
+      validationUsername: 'Tag: 3-24 chars, letters, numbers and _',
+      validationUsernameExists: 'This tag is already taken',
+      validationUsernameSimilar: 'This tag is too similar to existing @{tag}',
       validationEmail: 'Enter a valid email address',
       validationBio: 'Write a short profile description',
       genderFemale: 'Female',
@@ -175,7 +179,7 @@
       fieldMeta: {
         name: { title: 'Name', hint: 'Enter a display name' },
         phone: { title: 'Phone', hint: 'Phone number for the profile' },
-        username: { title: 'Username', hint: 'Letters, numbers and _' },
+        username: { title: 'Profile tag', hint: 'No @, 3-24 chars: letters, numbers and _' },
         email: { title: 'Email', hint: 'Account email address' },
         bio: { title: 'About', hint: 'Short profile description' },
         gender: { title: 'Gender', hint: 'Choose an option' },
@@ -281,7 +285,7 @@
     return {
       name: { ...localized.name, type: 'text', max: 24 },
       phone: { ...localized.phone, type: 'tel', max: 22 },
-      username: { ...localized.username, type: 'text', max: 20 },
+      username: { ...localized.username, type: 'text', max: 24 },
       email: { ...localized.email, type: 'email', max: 50 },
       bio: { ...localized.bio, type: 'text', max: 60 },
       gender: { ...localized.gender, type: 'select' },
@@ -457,7 +461,12 @@
     }
 
     if (field === 'username') {
-      if (!/^[a-zA-Z0-9_]{3,20}$/.test(cleanValue)) return tr('validationUsername');
+      const tagState = window.AppDB?.checkPublicTagAvailability?.(cleanValue, currentUser) || { ok: false, code: 'TAG_INVALID' };
+      if (!tagState.ok) {
+        if (tagState.code === 'TAG_EXISTS') return tr('validationUsernameExists');
+        if (tagState.code === 'TAG_TOO_SIMILAR') return tr('validationUsernameSimilar').replace('{tag}', tagState.similarTag || '');
+        return tr('validationUsername');
+      }
     }
 
     if (field === 'email') {
@@ -517,7 +526,11 @@
     }
 
     updateProfile((profile, db) => {
-      profile[activeField] = activeField === 'gender' ? normalizeGender(value) : value;
+      profile[activeField] = activeField === 'gender'
+        ? normalizeGender(value)
+        : activeField === 'username'
+          ? (window.AppDB?.normalizePublicTag?.(value) || value)
+          : value;
       if (activeField === 'gender') {
         applyGenderProfileDefaults(profile, db, true);
       }

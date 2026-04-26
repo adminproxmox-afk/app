@@ -5,12 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Privacy Policy for the current web version of Life Capital Academy.">
   <title>Політика конфіденційності | Life Capital Academy</title>
+  <script>
+    (() => {
+      try {
+        const rawDb = localStorage.getItem('miniAppDb');
+        const db = rawDb ? JSON.parse(rawDb) : null;
+        const darkMode = typeof db?.settings?.darkMode === 'boolean'
+          ? db.settings.darkMode
+          : localStorage.getItem('darkMode') !== 'false';
+        const theme = darkMode ? 'dark' : 'light';
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+        const style = document.createElement('style');
+        style.textContent = darkMode
+          ? 'html[data-theme="dark"] body{background:#09111d;color:#eff4ff}'
+          : 'html[data-theme="light"] body{background:#dfe6ea;color:#142436}';
+        document.head.appendChild(style);
+      } catch (error) {
+        document.documentElement.dataset.theme = 'dark';
+      }
+    })();
+  </script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css">
   <link rel="stylesheet" href="style/ui-preferences.css">
   <link rel="stylesheet" href="style/privacy.css">
   <link rel="stylesheet" href="style/enhancements.css">
 </head>
-<body class="policy-page theme-dark">
+<body class="policy-page">
   <main class="policy-shell">
     <header class="policy-header">
       <a class="policy-link policy-link--ghost" id="policyBackLink" href="login.html">
@@ -29,22 +50,22 @@
       <p class="policy-kicker" id="policyKicker">Life Capital Academy</p>
       <h1 class="policy-title" id="policyTitle">Політика конфіденційності</h1>
       <p class="policy-lead" id="policyLead">
-        Ця сторінка описує, як поточна вебверсія Life Capital Academy працює з даними профілю, локальним
-        зберіганням і входом через зовнішніх провайдерів.
+        Ця політика описує, як застосунок Life Capital Academy та його спільна з сайтом фронтенд-основа
+        працюють з профілем, прогресом, входом і технічними даними.
       </p>
 
       <div class="policy-badges">
         <div class="policy-badge">
           <span class="policy-badge__label" id="updatedLabel">Оновлено</span>
-          <strong class="policy-badge__value" id="updatedValue">21 квітня 2026</strong>
+          <strong class="policy-badge__value" id="updatedValue">26 квітня 2026</strong>
         </div>
         <div class="policy-badge">
           <span class="policy-badge__label" id="storageLabel">Зберігання</span>
-          <strong class="policy-badge__value" id="storageValue">Локально у браузері</strong>
+          <strong class="policy-badge__value" id="storageValue">На пристрої та через захищені сервісні канали</strong>
         </div>
         <div class="policy-badge">
           <span class="policy-badge__label" id="scopeLabel">Сфера дії</span>
-          <strong class="policy-badge__value" id="scopeValue">Поточна вебверсія застосунку</strong>
+          <strong class="policy-badge__value" id="scopeValue">Застосунок і пов’язаний вебклієнт</strong>
         </div>
       </div>
     </section>
@@ -54,19 +75,19 @@
         <div data-lang-block="uk">
           <h2>1. Які дані ми обробляємо</h2>
           <ul>
-            <li>Дані профілю, які ви вводите самі: ім’я, username, номер телефону, email, короткий опис, статус, аватар або фото профілю.</li>
-            <li>Дані локального входу: логін та пароль локального акаунта у поточній версії зберігаються у сховищі браузера на вашому пристрої.</li>
-            <li>Дані прогресу в застосунку: монети, історія гри, досягнення, налаштування, інвентар магазину, вибрані елементи персонажа, мова, тема, звук і гучність.</li>
-            <li>Дані входу через провайдерів: для Google інтеграція може отримувати ім’я, email, ідентифікатор акаунта та фото; для Telegram можуть передаватися ID, ім’я, username і photo URL.</li>
+            <li>Дані профілю, які ви вводите самостійно: ім’я, тег профілю, телефон, email, біо, статус, аватар або фото.</li>
+            <li>Дані акаунта і входу: логін, технічні ідентифікатори сесії, підключені способи авторизації та пов’язані службові атрибути.</li>
+            <li>Дані використання застосунку: прогрес, XP, монети, історія ігор, інвентар, налаштування, вибрані елементи персонажа, мова, тема, звук і гучність.</li>
+            <li>Технічні дані інтеграцій: службові ідентифікатори провайдерів входу, базові облікові відомості, потрібні для авторизації або прив’язки профілю.</li>
           </ul>
         </div>
         <div data-lang-block="en" hidden>
           <h2>1. What data we process</h2>
           <ul>
-            <li>Profile data you enter yourself: name, username, phone number, email, short bio, status, avatar, or profile photo.</li>
-            <li>Local sign-in data: in the current version, a local account login and password are stored in browser storage on your device.</li>
-            <li>App progress data: coins, game history, achievements, settings, shop inventory, selected character items, language, theme, sound, and volume.</li>
-            <li>Provider sign-in data: for Google, the integration may receive a name, email, account ID, and picture; for Telegram it may receive an ID, name, username, and photo URL.</li>
+            <li>Profile data you enter yourself: name, profile tag, phone number, email, bio, status, avatar, or profile photo.</li>
+            <li>Account and sign-in data: login, technical session identifiers, connected sign-in methods, and related service attributes.</li>
+            <li>App usage data: progress, XP, coins, game history, inventory, settings, selected character items, language, theme, sound, and volume.</li>
+            <li>Integration data: service-side provider identifiers and the basic account details required for sign-in or profile linking.</li>
           </ul>
         </div>
       </article>
@@ -75,79 +96,79 @@
         <div data-lang-block="uk">
           <h2>2. Для чого використовуються ці дані</h2>
           <ul>
-            <li>Щоб створити або відкрити ваш локальний профіль у застосунку.</li>
-            <li>Щоб зберігати ваш прогрес, налаштування та стан інтерфейсу між сесіями.</li>
-            <li>Щоб показувати аватар, профіль, баланс, прогрес і пов’язані персональні налаштування.</li>
-            <li>Щоб зв’язати вхід через Google або Telegram з уже існуючим локальним користувачем за email або provider ID.</li>
+            <li>Щоб створити, відкрити та підтримувати ваш профіль у застосунку.</li>
+            <li>Щоб зберігати прогрес, персональні налаштування, інвентар, персонажа та інші пов’язані стани.</li>
+            <li>Щоб забезпечити авторизацію, відновлення сесій, роботу підключених провайдерів входу та технічну стабільність сервісу.</li>
+            <li>Щоб відображати контент, баланс, навчальні результати, а також персоналізовані частини інтерфейсу.</li>
           </ul>
         </div>
         <div data-lang-block="en" hidden>
           <h2>2. Why this data is used</h2>
           <ul>
-            <li>To create or open your local profile inside the app.</li>
-            <li>To keep your progress, settings, and interface state between sessions.</li>
-            <li>To display your avatar, profile, balance, progress, and related personal settings.</li>
-            <li>To link Google or Telegram sign-in to an existing local user by email or provider ID.</li>
+            <li>To create, open, and maintain your profile inside the app.</li>
+            <li>To preserve progress, preferences, inventory, character state, and related personalized data.</li>
+            <li>To support authentication, session restoration, connected sign-in providers, and technical service stability.</li>
+            <li>To display content, balance, learning results, and other personalized interface elements.</li>
           </ul>
         </div>
       </article>
 
       <article class="policy-card">
         <div data-lang-block="uk">
-          <h2>3. Де зберігаються дані</h2>
-          <p>У поточній версії більшість даних зберігається локально у вашому браузері, переважно через localStorage на цьому пристрої.</p>
+          <h2>3. Де і як можуть зберігатися дані</h2>
+          <p>Залежно від функції, дані можуть зберігатися локально на пристрої користувача або передаватися через захищені сервісні канали для роботи окремих компонентів.</p>
           <ul>
-            <li>Поточна версія не використовує окрему серверну базу даних для основного профілю, прогресу та налаштувань.</li>
-            <li>Якщо ви очистите дані сайту або storage у браузері, локальний профіль, пароль, налаштування та прогрес можуть бути видалені.</li>
-            <li>Кнопка очищення кешу в застосунку видаляє лише частину тимчасових даних. Для повного локального видалення потрібно очистити дані сайту в браузері.</li>
+            <li>Частина локальних даних може залишатися у сховищі браузера або контейнера застосунку на вашому пристрої.</li>
+            <li>Якщо певний сценарій використовує серверні або інтеграційні компоненти, передача даних відбувається через захищені з’єднання.</li>
+            <li>Якщо ви очищаєте локальні дані застосунку або браузера, частина персональних налаштувань і прогресу може бути втрачена в межах локального середовища.</li>
           </ul>
         </div>
         <div data-lang-block="en" hidden>
-          <h2>3. Where data is stored</h2>
-          <p>In the current version, most data is stored locally in your browser, mainly through localStorage on this device.</p>
+          <h2>3. Where and how data may be stored</h2>
+          <p>Depending on the feature, data may stay on the user’s device or move through protected service channels to support specific components.</p>
           <ul>
-            <li>The current version does not use a dedicated server-side database for the main profile, progress, and settings.</li>
-            <li>If you clear site data or browser storage, your local profile, password, settings, and progress may be removed.</li>
-            <li>The app’s clear cache action removes only part of the temporary data. Full local deletion requires clearing site data in the browser.</li>
+            <li>Some local data may remain in browser storage or the app container on your device.</li>
+            <li>When a feature uses server-side or integration components, data transfer happens through protected connections.</li>
+            <li>If you clear local app or browser data, part of your preferences and progress may be lost within that local environment.</li>
           </ul>
         </div>
       </article>
 
       <article class="policy-card">
         <div data-lang-block="uk">
-          <h2>4. Google і Telegram</h2>
-          <p>Коли ви самі обираєте вхід через провайдера, застосунок підключає офіційні скрипти Google Identity Services або Telegram Login Widget.</p>
+          <h2>4. Захист інфраструктури</h2>
+          <p>Life Capital Academy застосовує технічні та організаційні заходи для обмеження несанкціонованого доступу до сервісних компонентів.</p>
           <ul>
-            <li>Процес авторизації на стороні провайдера регулюється власними правилами Google або Telegram.</li>
-            <li>Застосунок використовує тільки ті дані, які повертає поточна інтеграція для входу та базового профілю.</li>
-            <li>Google або Telegram можуть самостійно використовувати власні cookies, сесії та механізми безпеки поза межами локального сховища цього сайту.</li>
+            <li>Передача даних між клієнтом і підключеними сервісами має відбуватися через захищені транспортні канали.</li>
+            <li>Доступ до службових середовищ, інтеграцій і конфігурацій обмежується технічними правами та внутрішніми правилами.</li>
+            <li>Критичні сценарії авторизації покладаються на перевірені механізми постачальників ідентифікації та сервісів входу.</li>
           </ul>
         </div>
         <div data-lang-block="en" hidden>
-          <h2>4. Google and Telegram</h2>
-          <p>When you choose provider sign-in yourself, the app loads the official Google Identity Services or Telegram Login Widget scripts.</p>
+          <h2>4. Infrastructure protection</h2>
+          <p>Life Capital Academy applies technical and organizational measures to limit unauthorized access to service components.</p>
           <ul>
-            <li>Authentication on the provider side is governed by Google’s or Telegram’s own rules and policies.</li>
-            <li>The app uses only the data returned by the current integration for sign-in and a basic profile.</li>
-            <li>Google or Telegram may use their own cookies, sessions, and security mechanisms outside this site’s local storage.</li>
+            <li>Data transfer between the client and connected services is expected to use protected transport channels.</li>
+            <li>Access to service environments, integrations, and configuration areas is restricted by technical permissions and internal rules.</li>
+            <li>Critical authentication flows rely on verified identity-provider and sign-in service mechanisms.</li>
           </ul>
         </div>
       </article>
 
       <article class="policy-card policy-card--wide policy-card--accent">
         <div data-lang-block="uk">
-          <h2>5. Важливе зауваження щодо безпеки</h2>
+          <h2>5. Google, Telegram та інші провайдери входу</h2>
           <p>
-            У поточній браузерній версії локальні облікові дані зберігаються на пристрої користувача. Тому не
-            використовуйте для локального входу чутливі або повторно використані паролі, особливо на спільних чи
-            публічних пристроях.
+            Якщо ви самі обираєте вхід через провайдера, частина даних обробляється відповідно до правил
+            цього провайдера. Застосунок використовує лише ті дані, які потрібні для входу, прив’язки
+            профілю та базового відображення акаунта.
           </p>
         </div>
         <div data-lang-block="en" hidden>
-          <h2>5. Important security notice</h2>
+          <h2>5. Google, Telegram, and other sign-in providers</h2>
           <p>
-            In the current browser version, local account credentials are stored on the user’s device. Because of that,
-            do not use sensitive or reused passwords for local sign-in, especially on shared or public devices.
+            If you choose provider sign-in yourself, part of the data is handled according to that provider’s
+            own rules. The app uses only the data required for sign-in, profile linking, and basic account display.
           </p>
         </div>
       </article>
@@ -156,19 +177,19 @@
         <div data-lang-block="uk">
           <h2>6. Ваші можливості</h2>
           <ul>
-            <li>Ви можете змінювати ім’я, email, статус, біо та аватар у налаштуваннях застосунку.</li>
-            <li>Ви можете вийти з акаунта у будь-який момент.</li>
-            <li>Ви можете частково очистити тимчасові дані через кнопку очищення кешу.</li>
-            <li>Для повного видалення локальних даних використовуйте очищення даних сайту у вашому браузері.</li>
+            <li>Ви можете змінювати ім’я, тег, email, статус, біо, аватар та інші параметри профілю.</li>
+            <li>Ви можете вийти з акаунта, оновити налаштування та керувати локальними даними в межах доступних функцій.</li>
+            <li>Ви можете очищати частину тимчасових даних через інтерфейс застосунку або локальні інструменти пристрою.</li>
+            <li>Для повного локального видалення використовуйте очищення даних застосунку або браузера на своєму пристрої.</li>
           </ul>
         </div>
         <div data-lang-block="en" hidden>
           <h2>6. Your choices</h2>
           <ul>
-            <li>You can edit your name, email, status, bio, and avatar in the app settings.</li>
-            <li>You can sign out of the account at any time.</li>
-            <li>You can partially clear temporary data through the clear cache action.</li>
-            <li>For full local deletion, use your browser’s site-data clearing controls.</li>
+            <li>You can edit your name, tag, email, status, bio, avatar, and other profile parameters.</li>
+            <li>You can sign out, update settings, and manage local data through the available app controls.</li>
+            <li>You can clear part of the temporary data through the app interface or device-local tools.</li>
+            <li>For full local removal, use app or browser data-clearing controls on your device.</li>
           </ul>
         </div>
       </article>
@@ -177,17 +198,17 @@
         <div data-lang-block="uk">
           <h2>7. Оновлення політики</h2>
           <p>
-            Якщо спосіб роботи з даними зміниться, ця сторінка буде оновлена. Для питань щодо конфіденційності
-            використовуйте офіційний канал підтримки, який оператор Life Capital Academy публікує у застосунку,
-            на сайті або в налаштуваннях Google OAuth Branding.
+            Якщо спосіб роботи застосунку, фронтенд-основи або сервісних компонентів зміниться, ця сторінка
+            буде оновлена. Для питань щодо конфіденційності використовуйте офіційний канал підтримки, який
+            оператор Life Capital Academy публікує у застосунку або на сайті.
           </p>
         </div>
         <div data-lang-block="en" hidden>
           <h2>7. Policy updates</h2>
           <p>
-            If the way this app handles data changes, this page will be updated. For privacy questions, use the official
-            support channel published by the Life Capital Academy operator in the app, on the website, or in Google OAuth
-            Branding settings.
+            If the app, the shared frontend foundation, or the service components change the way data is handled,
+            this page will be updated. For privacy questions, use the official support channel published by the
+            Life Capital Academy operator in the app or on the website.
           </p>
         </div>
       </article>
