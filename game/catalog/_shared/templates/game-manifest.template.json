@@ -1,0 +1,27 @@
+{
+  "id": "new-game-id",
+  "slug": "new-game-id",
+  "categoryId": "it",
+  "subcategoryId": "webdev",
+  "title": {
+    "uk": "Нова гра",
+    "en": "New Game"
+  },
+  "description": {
+    "uk": "Короткий опис гри.",
+    "en": "Short game description."
+  },
+  "entry": {
+    "type": "html",
+    "path": "games/new-game/index.html"
+  },
+  "difficulty": "beginner",
+  "durationMinutes": 10,
+  "rewards": {
+    "xp": 20,
+    "coins": 15
+  },
+  "status": "draft",
+  "tags": [],
+  "lessonIds": []
+}

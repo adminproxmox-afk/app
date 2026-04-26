@@ -1,6 +1,6 @@
 ﻿{
   "meta": {
-    "version": 1,
+    "version": 3,
     "name": "mini-app-db"
   },
   "session": {
@@ -23,13 +23,26 @@
       }
     }
   ],
+  "catalog": {
+    "source": "data/app-catalog.json",
+    "version": 1,
+    "leafDirectories": [
+      "games",
+      "courses",
+      "assets",
+      "docs"
+    ],
+    "categoriesCount": 4,
+    "subcategoriesCount": 16
+  },
   "profile": {
     "name": "Авантюрист",
     "username": "adventurer",
     "phone": "",
+    "phoneCountry": "UA",
     "email": "",
     "bio": "Web Developer",
-    "gender": "Не вказано",
+    "gender": "unknown",
     "statusText": "Online",
     "avatarImage": "",
     "avatar": "👨‍🎓",
@@ -61,6 +74,7 @@
     "selected": {
       "skin": "skin-soft",
       "hair": "hair-classic",
+      "accessory": "accessory-none",
       "shirt": "shirt-red",
       "pants": "pants-navy",
       "shoes": "shoes-black",
@@ -69,16 +83,151 @@
     "owned": [
       "skin-soft",
       "hair-classic",
+      "accessory-none",
       "shirt-red",
       "pants-navy",
       "shoes-black",
       "extra-soft"
     ]
   },
+  "tables": {
+    "characters": [],
+    "categories": [
+      {
+        "id": "it",
+        "slug": "it",
+        "icon": "💻",
+        "tone": "it",
+        "legacyFolder": null,
+        "catalogFolder": "game/catalog/it",
+        "name": {
+          "uk": "IT",
+          "en": "IT"
+        },
+        "description": {
+          "uk": "Веб, код, безпека і тестування",
+          "en": "Web, code, security and testing"
+        },
+        "orderIndex": 1,
+        "createdAt": null
+      },
+      {
+        "id": "economy",
+        "slug": "economy",
+        "icon": "📈",
+        "tone": "economy",
+        "legacyFolder": null,
+        "catalogFolder": "game/catalog/economy",
+        "name": {
+          "uk": "Економіка",
+          "en": "Economy"
+        },
+        "description": {
+          "uk": "Ринок, фінанси, стратегія",
+          "en": "Markets, finance, strategy"
+        },
+        "orderIndex": 2,
+        "createdAt": null
+      },
+      {
+        "id": "softskills",
+        "slug": "softskills",
+        "icon": "🤝",
+        "tone": "soft",
+        "legacyFolder": null,
+        "catalogFolder": "game/catalog/softskills",
+        "name": {
+          "uk": "Soft Skills",
+          "en": "Soft Skills"
+        },
+        "description": {
+          "uk": "Комунікація, лідерство, час та емоції",
+          "en": "Communication, leadership, time and emotions"
+        },
+        "orderIndex": 3,
+        "createdAt": null
+      },
+      {
+        "id": "agro",
+        "slug": "agro",
+        "icon": "🌾",
+        "tone": "agro",
+        "legacyFolder": null,
+        "catalogFolder": "game/catalog/agro",
+        "name": {
+          "uk": "Аграрне",
+          "en": "Agriculture"
+        },
+        "description": {
+          "uk": "Рослини, тварини, бізнес і техніка",
+          "en": "Crops, livestock, business and technology"
+        },
+        "orderIndex": 4,
+        "createdAt": null
+      }
+    ],
+    "subcategories": [
+      { "id": "webdev", "categoryId": "it", "slug": "webdev", "icon": "🌐", "catalogFolder": "game/catalog/it/webdev", "name": { "uk": "Веб-розробка", "en": "Web Development" }, "orderIndex": 1, "createdAt": null },
+      { "id": "programming", "categoryId": "it", "slug": "programming", "icon": "⌨️", "catalogFolder": "game/catalog/it/programming", "name": { "uk": "Програмування", "en": "Programming" }, "orderIndex": 2, "createdAt": null },
+      { "id": "cybersecurity", "categoryId": "it", "slug": "cybersecurity", "icon": "🛡️", "catalogFolder": "game/catalog/it/cybersecurity", "name": { "uk": "Кібербезпека", "en": "Cybersecurity" }, "orderIndex": 3, "createdAt": null },
+      { "id": "testing", "categoryId": "it", "slug": "testing", "icon": "🧪", "catalogFolder": "game/catalog/it/testing", "name": { "uk": "Тестування", "en": "Testing" }, "orderIndex": 4, "createdAt": null },
+      { "id": "financialLiteracy", "categoryId": "economy", "slug": "financialLiteracy", "icon": "💰", "catalogFolder": "game/catalog/economy/financialLiteracy", "name": { "uk": "Фінансова грамотність", "en": "Financial Literacy" }, "orderIndex": 1, "createdAt": null },
+      { "id": "entrepreneurship", "categoryId": "economy", "slug": "entrepreneurship", "icon": "🚀", "catalogFolder": "game/catalog/economy/entrepreneurship", "name": { "uk": "Підприємництво", "en": "Entrepreneurship" }, "orderIndex": 2, "createdAt": null },
+      { "id": "marketing", "categoryId": "economy", "slug": "marketing", "icon": "📣", "catalogFolder": "game/catalog/economy/marketing", "name": { "uk": "Маркетинг", "en": "Marketing" }, "orderIndex": 3, "createdAt": null },
+      { "id": "investments", "categoryId": "economy", "slug": "investments", "icon": "📉", "catalogFolder": "game/catalog/economy/investments", "name": { "uk": "Інвестиції", "en": "Investments" }, "orderIndex": 4, "createdAt": null },
+      { "id": "communication", "categoryId": "softskills", "slug": "communication", "icon": "💬", "catalogFolder": "game/catalog/softskills/communication", "name": { "uk": "Комунікація", "en": "Communication" }, "orderIndex": 1, "createdAt": null },
+      { "id": "leadership", "categoryId": "softskills", "slug": "leadership", "icon": "👑", "catalogFolder": "game/catalog/softskills/leadership", "name": { "uk": "Лідерство", "en": "Leadership" }, "orderIndex": 2, "createdAt": null },
+      { "id": "timeManagement", "categoryId": "softskills", "slug": "timeManagement", "icon": "⏳", "catalogFolder": "game/catalog/softskills/timeManagement", "name": { "uk": "Тайм-менеджмент", "en": "Time Management" }, "orderIndex": 3, "createdAt": null },
+      { "id": "emotionalIntelligence", "categoryId": "softskills", "slug": "emotionalIntelligence", "icon": "🧠", "catalogFolder": "game/catalog/softskills/emotionalIntelligence", "name": { "uk": "Емоційний інтелект", "en": "Emotional Intelligence" }, "orderIndex": 4, "createdAt": null },
+      { "id": "farming", "categoryId": "agro", "slug": "farming", "icon": "🌱", "catalogFolder": "game/catalog/agro/farming", "name": { "uk": "Рослинництво", "en": "Crop Production" }, "orderIndex": 1, "createdAt": null },
+      { "id": "livestock", "categoryId": "agro", "slug": "livestock", "icon": "🐄", "catalogFolder": "game/catalog/agro/livestock", "name": { "uk": "Тваринництво", "en": "Livestock" }, "orderIndex": 2, "createdAt": null },
+      { "id": "agribusiness", "categoryId": "agro", "slug": "agribusiness", "icon": "📦", "catalogFolder": "game/catalog/agro/agribusiness", "name": { "uk": "Агробізнес", "en": "Agribusiness" }, "orderIndex": 3, "createdAt": null },
+      { "id": "techInnovations", "categoryId": "agro", "slug": "techInnovations", "icon": "🤖", "catalogFolder": "game/catalog/agro/techInnovations", "name": { "uk": "Техніка та інновації", "en": "Machinery and Innovation" }, "orderIndex": 4, "createdAt": null }
+    ],
+    "games": [
+      {
+        "id": "html-crash",
+        "slug": "html-crash-course",
+        "categoryId": "it",
+        "subcategoryId": "webdev",
+        "title": {
+          "uk": "HTML Crash Course",
+          "en": "HTML Crash Course"
+        },
+        "description": {
+          "uk": "Збери сторінку з блоків",
+          "en": "Build a page from blocks"
+        },
+        "catalogFolder": "game/catalog/it/webdev/games/html-crash-course",
+        "entryPath": "game/catalog/it/webdev/games/html-crash-course/index.html",
+        "manifestPath": "game/catalog/it/webdev/games/html-crash-course/manifest.json",
+        "difficulty": "beginner",
+        "durationMinutes": 18,
+        "rewards": {
+          "xp": 38,
+          "coins": 35
+        },
+        "status": "active",
+        "createdAt": null
+      }
+    ],
+    "courses": [],
+    "modules": [],
+    "lessons": [],
+    "userProgress": [],
+    "lessonProgress": [],
+    "gameSessions": [],
+    "achievements": [],
+    "userAchievements": [],
+    "transactions": [],
+    "shopItems": [],
+    "userPurchases": []
+  },
   "shop": {
     "inventory": [],
     "avatars": [
-      "👨‍🎓"
+      "👨‍🎓",
+      "👩‍🎓"
     ],
     "achievements": [],
     "lastDaily": 0,

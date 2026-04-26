@@ -1,0 +1,35 @@
+{
+  "id": "html-crash",
+  "slug": "html-crash-course",
+  "categoryId": "it",
+  "subcategoryId": "webdev",
+  "title": {
+    "uk": "HTML Crash Course",
+    "en": "HTML Crash Course"
+  },
+  "description": {
+    "uk": "Збери сторінку з блоків",
+    "en": "Build a page from blocks"
+  },
+  "entry": {
+    "type": "html",
+    "path": "index.html"
+  },
+  "runtime": {
+    "path": "runtime/index.html"
+  },
+  "difficulty": "beginner",
+  "durationMinutes": 18,
+  "rewards": {
+    "xp": 38,
+    "coins": 35
+  },
+  "status": "active",
+  "tags": [
+    "html",
+    "web",
+    "drag-drop",
+    "builder"
+  ],
+  "lessonIds": []
+}

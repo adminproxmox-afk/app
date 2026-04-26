@@ -1,0 +1,18 @@
+{
+  "id": "new-course-id",
+  "categoryId": "it",
+  "subcategoryId": "webdev",
+  "title": {
+    "uk": "Новий курс",
+    "en": "New Course"
+  },
+  "description": {
+    "uk": "Опис курсу.",
+    "en": "Course description."
+  },
+  "difficulty": "beginner",
+  "price": 0,
+  "status": "draft",
+  "moduleIds": [],
+  "gameIds": []
+}

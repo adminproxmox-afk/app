@@ -1,0 +1,11 @@
+{
+  "id": "new-module-id",
+  "courseId": "new-course-id",
+  "title": {
+    "uk": "Новий модуль",
+    "en": "New Module"
+  },
+  "orderIndex": 1,
+  "status": "draft",
+  "lessonIds": []
+}

@@ -1,0 +1,14 @@
+{
+  "id": "new-lesson-id",
+  "moduleId": "new-module-id",
+  "title": {
+    "uk": "Новий урок",
+    "en": "New Lesson"
+  },
+  "contentType": "interactive",
+  "contentPath": "courses/new-course/lessons/new-lesson.html",
+  "xpReward": 10,
+  "orderIndex": 1,
+  "interactiveGameId": "",
+  "status": "draft"
+}

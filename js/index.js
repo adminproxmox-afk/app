@@ -18,7 +18,7 @@ const PROGRESS_TEMPLATE = {
 };
 
 const EXTERNAL_GAME_ROUTES = {
-  'html-crash': 'game/html-crash-course.html'
+  'html-crash': 'game/catalog/it/webdev/games/html-crash-course/index.html'
 };
 const APP_HOME_TOAST_KEY = 'appHomeToast';
 

@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "version": 1,
+    "name": "game-folder-registry"
+  },
+  "source": "../../data/app-catalog.json",
+  "sharedRoot": "_shared",
+  "leafDirectories": [
+    "games",
+    "courses",
+    "assets",
+    "docs"
+  ],
+  "categories": [
+    {
+      "id": "it",
+      "folder": "it",
+      "legacyFolder": null,
+      "subcategories": [
+        { "id": "webdev", "folder": "webdev", "games": [{ "id": "html-crash", "folder": "games/html-crash-course" }] },
+        { "id": "programming", "folder": "programming" },
+        { "id": "cybersecurity", "folder": "cybersecurity" },
+        { "id": "testing", "folder": "testing" }
+      ]
+    },
+    {
+      "id": "economy",
+      "folder": "economy",
+      "legacyFolder": null,
+      "subcategories": [
+        { "id": "financialLiteracy", "folder": "financialLiteracy" },
+        { "id": "entrepreneurship", "folder": "entrepreneurship" },
+        { "id": "marketing", "folder": "marketing" },
+        { "id": "investments", "folder": "investments" }
+      ]
+    },
+    {
+      "id": "softskills",
+      "folder": "softskills",
+      "legacyFolder": null,
+      "subcategories": [
+        { "id": "communication", "folder": "communication" },
+        { "id": "leadership", "folder": "leadership" },
+        { "id": "timeManagement", "folder": "timeManagement" },
+        { "id": "emotionalIntelligence", "folder": "emotionalIntelligence" }
+      ]
+    },
+    {
+      "id": "agro",
+      "folder": "agro",
+      "legacyFolder": null,
+      "subcategories": [
+        { "id": "farming", "folder": "farming" },
+        { "id": "livestock", "folder": "livestock" },
+        { "id": "agribusiness", "folder": "agribusiness" },
+        { "id": "techInnovations", "folder": "techInnovations" }
+      ]
+    }
+  ]
+}

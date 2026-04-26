@@ -42,11 +42,73 @@
     favoriteCategory: 'it',
     recentGames: []
   };
+  const CATALOG_SOURCE = 'data/app-catalog.json';
+  const CATALOG_LEAF_DIRS = ['games', 'courses', 'assets', 'docs'];
+  const DEFAULT_TAXONOMY = [
+    {
+      id: 'it',
+      icon: '💻',
+      tone: 'it',
+      legacyFolder: null,
+      name: { uk: 'IT', en: 'IT' },
+      description: { uk: 'Веб, код, безпека і тестування', en: 'Web, code, security and testing' },
+      subcategories: [
+        { id: 'webdev', icon: '🌐', name: { uk: 'Веб-розробка', en: 'Web Development' } },
+        { id: 'programming', icon: '⌨️', name: { uk: 'Програмування', en: 'Programming' } },
+        { id: 'cybersecurity', icon: '🛡️', name: { uk: 'Кібербезпека', en: 'Cybersecurity' } },
+        { id: 'testing', icon: '🧪', name: { uk: 'Тестування', en: 'Testing' } }
+      ]
+    },
+    {
+      id: 'economy',
+      icon: '📈',
+      tone: 'economy',
+      legacyFolder: null,
+      name: { uk: 'Економіка', en: 'Economy' },
+      description: { uk: 'Ринок, фінанси, стратегія', en: 'Markets, finance, strategy' },
+      subcategories: [
+        { id: 'financialLiteracy', icon: '💰', name: { uk: 'Фінансова грамотність', en: 'Financial Literacy' } },
+        { id: 'entrepreneurship', icon: '🚀', name: { uk: 'Підприємництво', en: 'Entrepreneurship' } },
+        { id: 'marketing', icon: '📣', name: { uk: 'Маркетинг', en: 'Marketing' } },
+        { id: 'investments', icon: '📉', name: { uk: 'Інвестиції', en: 'Investments' } }
+      ]
+    },
+    {
+      id: 'softskills',
+      icon: '🤝',
+      tone: 'soft',
+      legacyFolder: null,
+      name: { uk: 'Soft Skills', en: 'Soft Skills' },
+      description: { uk: 'Комунікація, лідерство, час та емоції', en: 'Communication, leadership, time and emotions' },
+      subcategories: [
+        { id: 'communication', icon: '💬', name: { uk: 'Комунікація', en: 'Communication' } },
+        { id: 'leadership', icon: '👑', name: { uk: 'Лідерство', en: 'Leadership' } },
+        { id: 'timeManagement', icon: '⏳', name: { uk: 'Тайм-менеджмент', en: 'Time Management' } },
+        { id: 'emotionalIntelligence', icon: '🧠', name: { uk: 'Емоційний інтелект', en: 'Emotional Intelligence' } }
+      ]
+    },
+    {
+      id: 'agro',
+      icon: '🌾',
+      tone: 'agro',
+      legacyFolder: null,
+      name: { uk: 'Аграрне', en: 'Agriculture' },
+      description: { uk: 'Рослини, тварини, бізнес і техніка', en: 'Crops, livestock, business and technology' },
+      subcategories: [
+        { id: 'farming', icon: '🌱', name: { uk: 'Рослинництво', en: 'Crop Production' } },
+        { id: 'livestock', icon: '🐄', name: { uk: 'Тваринництво', en: 'Livestock' } },
+        { id: 'agribusiness', icon: '📦', name: { uk: 'Агробізнес', en: 'Agribusiness' } },
+        { id: 'techInnovations', icon: '🤖', name: { uk: 'Техніка та інновації', en: 'Machinery and Innovation' } }
+      ]
+    }
+  ];
+  const DEFAULT_TABLES = buildDefaultTables();
   const SOCIAL_PROVIDERS = ['google', 'telegram', 'discord', 'facebook'];
   const DEFAULT_DB = {
-    meta: { version: 2, name: 'mini-app-db' },
+    meta: { version: 3, name: 'mini-app-db' },
     session: { user: null },
     users: [],
+    catalog: buildDefaultCatalogMeta(),
     profile: {
       name: 'Авантюрист',
       username: 'adventurer',
@@ -75,6 +137,7 @@
       selected: { ...DEFAULT_CHARACTER.selected },
       owned: [...DEFAULT_CHARACTER.owned]
     },
+    tables: clone(DEFAULT_TABLES),
     shop: {
       inventory: [],
       avatars: [DEFAULT_AVATAR, FEMALE_AVATAR],
@@ -373,6 +436,126 @@
     return base;
   }
 
+  function buildDefaultCatalogMeta() {
+    return {
+      source: CATALOG_SOURCE,
+      version: 1,
+      leafDirectories: [...CATALOG_LEAF_DIRS],
+      categoriesCount: DEFAULT_TAXONOMY.length,
+      subcategoriesCount: DEFAULT_TAXONOMY.reduce((total, category) => total + category.subcategories.length, 0)
+    };
+  }
+
+  function buildDefaultTables() {
+    const now = null;
+    return {
+      characters: [],
+      categories: DEFAULT_TAXONOMY.map((category, index) => ({
+        id: category.id,
+        slug: category.id,
+        icon: category.icon,
+        tone: category.tone,
+        legacyFolder: category.legacyFolder,
+        catalogFolder: `game/catalog/${category.id}`,
+        name: clone(category.name),
+        description: clone(category.description),
+        orderIndex: index + 1,
+        createdAt: now
+      })),
+      subcategories: DEFAULT_TAXONOMY.flatMap((category) => (
+        category.subcategories.map((subcategory, index) => ({
+          id: subcategory.id,
+          categoryId: category.id,
+          slug: subcategory.id,
+          icon: subcategory.icon,
+          catalogFolder: `game/catalog/${category.id}/${subcategory.id}`,
+          name: clone(subcategory.name),
+          orderIndex: index + 1,
+          createdAt: now
+        }))
+      )),
+      games: [
+        {
+          id: 'html-crash',
+          slug: 'html-crash-course',
+          categoryId: 'it',
+          subcategoryId: 'webdev',
+          title: { uk: 'HTML Crash Course', en: 'HTML Crash Course' },
+          description: { uk: 'Збери сторінку з блоків', en: 'Build a page from blocks' },
+          catalogFolder: 'game/catalog/it/webdev/games/html-crash-course',
+          entryPath: 'game/catalog/it/webdev/games/html-crash-course/index.html',
+          manifestPath: 'game/catalog/it/webdev/games/html-crash-course/manifest.json',
+          difficulty: 'beginner',
+          durationMinutes: 18,
+          rewards: { xp: 38, coins: 35 },
+          status: 'active',
+          createdAt: now
+        }
+      ],
+      courses: [],
+      modules: [],
+      lessons: [],
+      userProgress: [],
+      lessonProgress: [],
+      gameSessions: [],
+      achievements: [],
+      userAchievements: [],
+      transactions: [],
+      shopItems: [],
+      userPurchases: []
+    };
+  }
+
+  function mergeRowsById(seedRows, currentRows) {
+    const rowMap = new Map();
+
+    (Array.isArray(seedRows) ? seedRows : []).forEach((row) => {
+      if (!row || typeof row !== 'object' || !row.id) return;
+      rowMap.set(row.id, clone(row));
+    });
+
+    (Array.isArray(currentRows) ? currentRows : []).forEach((row) => {
+      if (!row || typeof row !== 'object' || !row.id) return;
+      rowMap.set(row.id, mergeDefaults(rowMap.get(row.id) || {}, row));
+    });
+
+    return Array.from(rowMap.values());
+  }
+
+  function getLevelFromXp(value) {
+    const xp = Math.max(0, Number.parseInt(value, 10) || 0);
+    return Math.max(1, Math.floor(xp / 100) + 1);
+  }
+
+  function syncCharacterTable(db) {
+    const existingRows = Array.isArray(db?.tables?.characters) ? db.tables.characters : [];
+    const rowsByUserId = new Map(
+      existingRows
+        .filter((row) => row && typeof row === 'object' && row.userId)
+        .map((row) => [String(row.userId), row])
+    );
+
+    db.tables.characters = (Array.isArray(db.users) ? db.users : [])
+      .filter((user) => user && user.id)
+      .map((user) => {
+        const userId = String(user.id);
+        const existingRow = rowsByUserId.get(userId) || {};
+        const profile = mergeDefaults(DEFAULT_DB.profile, user.profile || {});
+        const progress = mergeDefaults(DEFAULT_PROGRESS, user.progress || {});
+
+        return {
+          id: existingRow.id || `character_${userId}`,
+          userId,
+          level: getLevelFromXp(progress.xp),
+          xp: Math.max(0, Number.parseInt(progress.xp, 10) || 0),
+          currencyBalance: Number.isFinite(Number(profile.coins)) ? Number(profile.coins) : DEFAULT_COINS,
+          avatar: String(profile.avatarImage || profile.currentAvatar || profile.avatar || '').trim(),
+          createdAt: existingRow.createdAt || user.createdAt || new Date().toISOString(),
+          updatedAt: user.updatedAt || new Date().toISOString()
+        };
+      });
+  }
+
   function migrateLegacy(db) {
     const legacyUsers = safeParse(localStorage.getItem('users'));
     if (Array.isArray(legacyUsers) && legacyUsers.length) {
@@ -449,6 +632,24 @@
     db.character.owned = unique(db.character.owned);
     db.progress = mergeDefaults(DEFAULT_PROGRESS, db.progress || {});
     db.progress.recentGames = Array.isArray(db.progress.recentGames) ? db.progress.recentGames : [];
+    db.catalog = mergeDefaults(buildDefaultCatalogMeta(), db.catalog || {});
+    db.catalog.leafDirectories = Array.isArray(db.catalog.leafDirectories) && db.catalog.leafDirectories.length
+      ? unique(db.catalog.leafDirectories)
+      : [...CATALOG_LEAF_DIRS];
+    db.catalog.categoriesCount = DEFAULT_TAXONOMY.length;
+    db.catalog.subcategoriesCount = DEFAULT_TAXONOMY.reduce((total, category) => total + category.subcategories.length, 0);
+    db.tables = mergeDefaults(DEFAULT_TABLES, db.tables || {});
+    Object.keys(DEFAULT_TABLES).forEach((tableName) => {
+      db.tables[tableName] = Array.isArray(db.tables[tableName]) ? db.tables[tableName] : clone(DEFAULT_TABLES[tableName]);
+    });
+    db.tables.categories = mergeRowsById(DEFAULT_TABLES.categories, db.tables.categories)
+      .sort((left, right) => (left.orderIndex || 0) - (right.orderIndex || 0) || String(left.id).localeCompare(String(right.id)));
+    db.tables.subcategories = mergeRowsById(DEFAULT_TABLES.subcategories, db.tables.subcategories)
+      .sort((left, right) => (
+        String(left.categoryId || '').localeCompare(String(right.categoryId || ''))
+        || (left.orderIndex || 0) - (right.orderIndex || 0)
+        || String(left.id).localeCompare(String(right.id))
+      ));
 
     db.users = db.users.map((user) => {
       const normalizedUser = mergeDefaults(createUserRecord(user), user);
@@ -473,6 +674,7 @@
       normalizedUser.character.owned = unique(normalizedUser.character.owned);
       return normalizedUser;
     }).filter((user) => user.login);
+    syncCharacterTable(db);
   }
 
   function mirrorLegacy(db) {
@@ -643,6 +845,19 @@
     },
     getUsers() {
       return clone(load().users);
+    },
+    getTables() {
+      return clone(load().tables);
+    },
+    updateTables(mutator) {
+      const db = load();
+      db.tables = mergeDefaults(DEFAULT_TABLES, db.tables || {});
+      mutator(db.tables, db);
+      save();
+      return clone(db.tables);
+    },
+    getCatalogMeta() {
+      return clone(load().catalog);
     },
     findUserByLogin(login) {
       const normalizedLogin = String(login || '').trim().toLowerCase();

@@ -1,0 +1,110 @@
+{
+  "meta": {
+    "version": 1,
+    "name": "learning-content-catalog",
+    "source": "project-foundation"
+  },
+  "structure": {
+    "root": "game/catalog",
+    "sharedRoot": "game/catalog/_shared",
+    "leafDirectories": [
+      "games",
+      "courses",
+      "assets",
+      "docs"
+    ]
+  },
+  "categories": [
+    {
+      "id": "it",
+      "icon": "💻",
+      "tone": "it",
+      "legacyFolder": null,
+      "catalogFolder": "game/catalog/it",
+      "name": { "uk": "IT", "en": "IT" },
+      "description": { "uk": "Веб, код, безпека і тестування", "en": "Web, code, security and testing" },
+      "subcategories": [
+        { "id": "webdev", "icon": "🌐", "catalogFolder": "game/catalog/it/webdev", "name": { "uk": "Веб-розробка", "en": "Web Development" } },
+        { "id": "programming", "icon": "⌨️", "catalogFolder": "game/catalog/it/programming", "name": { "uk": "Програмування", "en": "Programming" } },
+        { "id": "cybersecurity", "icon": "🛡️", "catalogFolder": "game/catalog/it/cybersecurity", "name": { "uk": "Кібербезпека", "en": "Cybersecurity" } },
+        { "id": "testing", "icon": "🧪", "catalogFolder": "game/catalog/it/testing", "name": { "uk": "Тестування", "en": "Testing" } }
+      ]
+    },
+    {
+      "id": "economy",
+      "icon": "📈",
+      "tone": "economy",
+      "legacyFolder": null,
+      "catalogFolder": "game/catalog/economy",
+      "name": { "uk": "Економіка", "en": "Economy" },
+      "description": { "uk": "Ринок, фінанси, стратегія", "en": "Markets, finance, strategy" },
+      "subcategories": [
+        { "id": "financialLiteracy", "icon": "💰", "catalogFolder": "game/catalog/economy/financialLiteracy", "name": { "uk": "Фінансова грамотність", "en": "Financial Literacy" } },
+        { "id": "entrepreneurship", "icon": "🚀", "catalogFolder": "game/catalog/economy/entrepreneurship", "name": { "uk": "Підприємництво", "en": "Entrepreneurship" } },
+        { "id": "marketing", "icon": "📣", "catalogFolder": "game/catalog/economy/marketing", "name": { "uk": "Маркетинг", "en": "Marketing" } },
+        { "id": "investments", "icon": "📉", "catalogFolder": "game/catalog/economy/investments", "name": { "uk": "Інвестиції", "en": "Investments" } }
+      ]
+    },
+    {
+      "id": "softskills",
+      "icon": "🤝",
+      "tone": "soft",
+      "legacyFolder": null,
+      "catalogFolder": "game/catalog/softskills",
+      "name": { "uk": "Soft Skills", "en": "Soft Skills" },
+      "description": { "uk": "Комунікація, лідерство, час та емоції", "en": "Communication, leadership, time and emotions" },
+      "subcategories": [
+        { "id": "communication", "icon": "💬", "catalogFolder": "game/catalog/softskills/communication", "name": { "uk": "Комунікація", "en": "Communication" } },
+        { "id": "leadership", "icon": "👑", "catalogFolder": "game/catalog/softskills/leadership", "name": { "uk": "Лідерство", "en": "Leadership" } },
+        { "id": "timeManagement", "icon": "⏳", "catalogFolder": "game/catalog/softskills/timeManagement", "name": { "uk": "Тайм-менеджмент", "en": "Time Management" } },
+        { "id": "emotionalIntelligence", "icon": "🧠", "catalogFolder": "game/catalog/softskills/emotionalIntelligence", "name": { "uk": "Емоційний інтелект", "en": "Emotional Intelligence" } }
+      ]
+    },
+    {
+      "id": "agro",
+      "icon": "🌾",
+      "tone": "agro",
+      "legacyFolder": null,
+      "catalogFolder": "game/catalog/agro",
+      "name": { "uk": "Аграрне", "en": "Agriculture" },
+      "description": { "uk": "Рослини, тварини, бізнес і техніка", "en": "Crops, livestock, business and technology" },
+      "subcategories": [
+        { "id": "farming", "icon": "🌱", "catalogFolder": "game/catalog/agro/farming", "name": { "uk": "Рослинництво", "en": "Crop Production" } },
+        { "id": "livestock", "icon": "🐄", "catalogFolder": "game/catalog/agro/livestock", "name": { "uk": "Тваринництво", "en": "Livestock" } },
+        { "id": "agribusiness", "icon": "📦", "catalogFolder": "game/catalog/agro/agribusiness", "name": { "uk": "Агробізнес", "en": "Agribusiness" } },
+        { "id": "techInnovations", "icon": "🤖", "catalogFolder": "game/catalog/agro/techInnovations", "name": { "uk": "Техніка та інновації", "en": "Machinery and Innovation" } }
+      ]
+    }
+  ],
+  "games": [
+    {
+      "id": "html-crash",
+      "slug": "html-crash-course",
+      "categoryId": "it",
+      "subcategoryId": "webdev",
+      "catalogFolder": "game/catalog/it/webdev/games/html-crash-course",
+      "entryPath": "game/catalog/it/webdev/games/html-crash-course/index.html",
+      "manifestPath": "game/catalog/it/webdev/games/html-crash-course/manifest.json",
+      "title": {
+        "uk": "HTML Crash Course",
+        "en": "HTML Crash Course"
+      },
+      "description": {
+        "uk": "Збери сторінку з блоків",
+        "en": "Build a page from blocks"
+      },
+      "status": "active",
+      "difficulty": "beginner",
+      "durationMinutes": 18,
+      "rewards": {
+        "xp": 38,
+        "coins": 35
+      }
+    }
+  ],
+  "courses": [],
+  "modules": [],
+  "lessons": [],
+  "achievements": [],
+  "shopItems": []
+}
