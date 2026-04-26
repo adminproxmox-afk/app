@@ -811,3 +811,39 @@ html[data-theme='light'] .social-btn,
 html[data-theme='light'] button {
   color: #102235;
 }
+
+body.theme-light .auth-modal__card,
+html[data-theme='light'] .auth-modal__card {
+  background: linear-gradient(180deg, rgba(244, 248, 251, 0.98) 0%, rgba(228, 235, 240, 1) 100%);
+  border-color: rgba(58, 79, 103, 0.12);
+  box-shadow: 0 24px 54px rgba(38, 55, 78, 0.12);
+  color: #122033;
+}
+
+body.theme-light .auth-modal__close,
+body.theme-light .auth-modal__description,
+html[data-theme='light'] .auth-modal__close,
+html[data-theme='light'] .auth-modal__description {
+  color: rgba(18, 32, 51, 0.72);
+}
+
+body.theme-light .auth-modal__provider,
+html[data-theme='light'] .auth-modal__provider {
+  border-color: rgba(91, 141, 255, 0.24);
+  background: rgba(91, 141, 255, 0.12);
+  color: #1b4f97;
+}
+
+body.theme-light .auth-modal__input,
+html[data-theme='light'] .auth-modal__input {
+  border-color: rgba(58, 79, 103, 0.12);
+  background: linear-gradient(180deg, #ebf1f5 0%, #dde5ec 100%);
+  color: #122033;
+}
+
+body.theme-light .auth-modal__button--ghost,
+html[data-theme='light'] .auth-modal__button--ghost {
+  background: rgba(58, 79, 103, 0.08);
+  color: #122033;
+  border-color: rgba(58, 79, 103, 0.12);
+}

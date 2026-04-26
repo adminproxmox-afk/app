@@ -9,6 +9,8 @@
     audioUnlocked: false
   };
 
+  const AMBIENT_TRACK_ENABLED = false;
+
   function getPath() {
     return window.location.pathname.replace(/\\/g, '/');
   }
@@ -80,6 +82,8 @@
   }
 
   function shouldUseAmbient() {
+    if (!AMBIENT_TRACK_ENABLED) return false;
+
     const path = getPath();
     return (
       path.endsWith('/index.html')
@@ -107,12 +111,14 @@
         volume: 0.26
       });
 
-      this.sounds.ambient = new window.Howl({
-        src: [assetUrl('ambient.wav')],
-        preload: false,
-        loop: true,
-        volume: 0.08
-      });
+      if (AMBIENT_TRACK_ENABLED) {
+        this.sounds.ambient = new window.Howl({
+          src: [assetUrl('ambient.wav')],
+          preload: false,
+          loop: true,
+          volume: 0.08
+        });
+      }
 
       state.audioReady = true;
       this.bindUnlock();
@@ -151,7 +157,7 @@
       if (this.sounds.click) this.sounds.click.volume(clamp(0.12 + masterVolume * 0.18, 0.12, 0.32));
       if (this.sounds.success) this.sounds.success.volume(clamp(0.16 + masterVolume * 0.22, 0.16, 0.38));
 
-      if (!this.sounds.ambient) return;
+      if (!AMBIENT_TRACK_ENABLED || !this.sounds.ambient) return;
 
       const ambientVolume = clamp(masterVolume * 0.14, 0.03, 0.14);
       this.sounds.ambient.volume(ambientVolume);
