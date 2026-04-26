@@ -553,6 +553,56 @@ input {
   line-height: 1.5;
 }
 
+.modal-content--phone {
+  text-align: left;
+}
+
+.phone-editor {
+  margin-top: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.modal-label {
+  display: block;
+  color: var(--text-faint);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.modal-content--phone .modal-input {
+  margin-top: 0;
+}
+
+.phone-preview {
+  margin-top: 6px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(17, 24, 38, 0.96), rgba(12, 17, 28, 0.98));
+  display: grid;
+  gap: 4px;
+}
+
+.phone-preview span {
+  color: var(--text-faint);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.phone-preview strong {
+  font-size: 21px;
+  line-height: 1.2;
+}
+
+.phone-preview small {
+  color: var(--text-soft);
+  font-size: 12px;
+}
+
 .modal-buttons {
   margin-top: 18px;
   display: grid;

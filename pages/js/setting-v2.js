@@ -19,7 +19,8 @@
 
   const DEFAULT_PROFILE = {
     name: currentUser,
-    phone: '+380',
+    phone: '',
+    phoneCountry: 'UA',
     username: currentUser.toLowerCase(),
     email: '',
     bio: 'Web Developer',
@@ -58,6 +59,30 @@
     },
     owned: ['skin-soft', 'hair-blonde', 'accessory-none', 'shirt-violet', 'pants-navy', 'shoes-white', 'extra-soft']
   };
+
+  const PHONE_COUNTRIES = [
+    { code: 'UA', dialCode: '+380', trunkPrefix: '0', minDigits: 9, maxDigits: 9, groups: [2, 3, 2, 2], names: { uk: 'Україна', en: 'Ukraine' }, example: '67 123 45 67' },
+    { code: 'PL', dialCode: '+48', trunkPrefix: '0', minDigits: 9, maxDigits: 9, groups: [3, 3, 3], names: { uk: 'Польща', en: 'Poland' }, example: '512 345 678' },
+    { code: 'DE', dialCode: '+49', trunkPrefix: '0', minDigits: 10, maxDigits: 11, groups: [3, 3, 4], names: { uk: 'Німеччина', en: 'Germany' }, example: '151 234 5678' },
+    { code: 'GB', dialCode: '+44', trunkPrefix: '0', minDigits: 10, maxDigits: 10, groups: [4, 3, 3], names: { uk: 'Велика Британія', en: 'United Kingdom' }, example: '7400 123 456' },
+    { code: 'US', dialCode: '+1', minDigits: 10, maxDigits: 10, groups: [3, 3, 4], names: { uk: 'США', en: 'United States' }, example: '202 555 0147' },
+    { code: 'CA', dialCode: '+1', minDigits: 10, maxDigits: 10, groups: [3, 3, 4], names: { uk: 'Канада', en: 'Canada' }, example: '416 555 0188' },
+    { code: 'CZ', dialCode: '+420', minDigits: 9, maxDigits: 9, groups: [3, 3, 3], names: { uk: 'Чехія', en: 'Czechia' }, example: '601 234 567' },
+    { code: 'SK', dialCode: '+421', trunkPrefix: '0', minDigits: 9, maxDigits: 9, groups: [3, 3, 3], names: { uk: 'Словаччина', en: 'Slovakia' }, example: '901 234 567' },
+    { code: 'RO', dialCode: '+40', trunkPrefix: '0', minDigits: 9, maxDigits: 9, groups: [3, 3, 3], names: { uk: 'Румунія', en: 'Romania' }, example: '721 234 567' },
+    { code: 'MD', dialCode: '+373', trunkPrefix: '0', minDigits: 8, maxDigits: 8, groups: [2, 3, 3], names: { uk: 'Молдова', en: 'Moldova' }, example: '60 123 456' },
+    { code: 'LT', dialCode: '+370', trunkPrefix: '0', minDigits: 8, maxDigits: 8, groups: [3, 2, 3], names: { uk: 'Литва', en: 'Lithuania' }, example: '612 34 567' },
+    { code: 'LV', dialCode: '+371', minDigits: 8, maxDigits: 8, groups: [2, 3, 3], names: { uk: 'Латвія', en: 'Latvia' }, example: '21 234 567' },
+    { code: 'EE', dialCode: '+372', minDigits: 7, maxDigits: 8, groups: [4, 4], names: { uk: 'Естонія', en: 'Estonia' }, example: '5123 4567' },
+    { code: 'FR', dialCode: '+33', trunkPrefix: '0', minDigits: 9, maxDigits: 9, groups: [1, 2, 2, 2, 2], names: { uk: 'Франція', en: 'France' }, example: '6 12 34 56 78' },
+    { code: 'ES', dialCode: '+34', minDigits: 9, maxDigits: 9, groups: [3, 2, 2, 2], names: { uk: 'Іспанія', en: 'Spain' }, example: '612 34 56 78' },
+    { code: 'IT', dialCode: '+39', minDigits: 10, maxDigits: 10, groups: [3, 3, 4], names: { uk: 'Італія', en: 'Italy' }, example: '312 345 6789' },
+    { code: 'TR', dialCode: '+90', trunkPrefix: '0', minDigits: 10, maxDigits: 10, groups: [3, 3, 4], names: { uk: 'Туреччина', en: 'Turkey' }, example: '532 123 4567' },
+    { code: 'GE', dialCode: '+995', trunkPrefix: '0', minDigits: 9, maxDigits: 9, groups: [3, 2, 2, 2], names: { uk: 'Грузія', en: 'Georgia' }, example: '555 12 34 56' }
+  ].map((country) => ({
+    ...country,
+    dialDigits: country.dialCode.replace(/\D/g, '')
+  }));
 
   function getLanguage() {
     return window.AppUI?.getLanguage?.() === 'en' ? 'en' : 'uk';
@@ -101,12 +126,21 @@
       languageUk: 'Українська',
       languageEn: 'English',
       validationName: "Ім'я має містити хоча б 2 символи",
-      validationPhone: 'Введіть коректний номер',
+      validationPhone: 'Введіть коректний номер. Напр.: {example}',
       validationUsername: 'Тег: 3-24 символи, латиниця, цифри та _',
       validationUsernameExists: 'Такий тег уже зайнятий',
       validationUsernameSimilar: 'Цей тег надто схожий на вже існуючий @{tag}',
       validationEmail: 'Введіть правильну пошту',
+      validationEmailExists: 'Користувач з такою поштою вже існує',
       validationBio: 'Напишіть короткий опис профілю',
+      phoneModalTitle: 'Номер телефону',
+      phoneModalHint: 'Оберіть країну та введіть номер у національному форматі. Ми одразу покажемо міжнародний вигляд.',
+      phoneCountryLabel: 'Країна',
+      phoneLocalLabel: 'Номер',
+      phonePreviewLabel: 'Міжнародний формат',
+      phoneExample: 'Напр.: {example}',
+      phoneSave: 'Зберегти',
+      phoneCancel: 'Скасувати',
       genderFemale: 'Жінка',
       genderMale: 'Чоловік',
       genderUnknown: 'Не вказано',
@@ -162,12 +196,21 @@
       languageUk: 'Ukrainian',
       languageEn: 'English',
       validationName: 'Name must be at least 2 characters',
-      validationPhone: 'Enter a valid phone number',
+      validationPhone: 'Enter a valid phone number. Example: {example}',
       validationUsername: 'Tag: 3-24 chars, letters, numbers and _',
       validationUsernameExists: 'This tag is already taken',
       validationUsernameSimilar: 'This tag is too similar to existing @{tag}',
       validationEmail: 'Enter a valid email address',
+      validationEmailExists: 'An account with this email already exists',
       validationBio: 'Write a short profile description',
+      phoneModalTitle: 'Phone number',
+      phoneModalHint: 'Choose a country and enter the number in local format. We will show the international version instantly.',
+      phoneCountryLabel: 'Country',
+      phoneLocalLabel: 'Number',
+      phonePreviewLabel: 'International format',
+      phoneExample: 'Example: {example}',
+      phoneSave: 'Save',
+      phoneCancel: 'Cancel',
       genderFemale: 'Female',
       genderMale: 'Male',
       genderUnknown: 'Not specified',
@@ -201,6 +244,119 @@
     if (normalizedValue === 'female' || normalizedValue === 'жінка') return 'female';
     if (normalizedValue === 'male' || normalizedValue === 'чоловік') return 'male';
     return 'unknown';
+  }
+
+  function getPhoneCountry(code = 'UA') {
+    return PHONE_COUNTRIES.find((country) => country.code === String(code || '').trim().toUpperCase()) || PHONE_COUNTRIES[0];
+  }
+
+  function getPhoneCountryLabel(country) {
+    const language = getLanguage();
+    return country?.names?.[language] || country?.names?.uk || country?.code || '';
+  }
+
+  function getPhoneExample(country) {
+    return `${country.dialCode} ${country.example}`.trim();
+  }
+
+  function formatTemplate(template, params = {}) {
+    let output = template;
+    Object.keys(params).forEach((key) => {
+      output = output.replace(`{${key}}`, String(params[key]));
+    });
+    return output;
+  }
+
+  function keepDigits(value) {
+    return String(value || '').replace(/\D/g, '');
+  }
+
+  function formatPhoneByGroups(digits, groups = []) {
+    const cleanDigits = keepDigits(digits);
+    if (!cleanDigits) return '';
+
+    const parts = [];
+    let offset = 0;
+
+    groups.forEach((groupSize) => {
+      if (offset >= cleanDigits.length) return;
+      parts.push(cleanDigits.slice(offset, offset + groupSize));
+      offset += groupSize;
+    });
+
+    if (offset < cleanDigits.length) {
+      parts.push(cleanDigits.slice(offset));
+    }
+
+    return parts.filter(Boolean).join(' ');
+  }
+
+  function normalizePhoneNationalDigits(rawValue, country) {
+    const targetCountry = getPhoneCountry(country?.code || 'UA');
+    let digits = keepDigits(rawValue);
+
+    if (!digits) return '';
+
+    if (digits.startsWith(targetCountry.dialDigits)) {
+      digits = digits.slice(targetCountry.dialDigits.length);
+    }
+
+    if (targetCountry.trunkPrefix && digits.startsWith(targetCountry.trunkPrefix) && digits.length > targetCountry.maxDigits) {
+      digits = digits.slice(targetCountry.trunkPrefix.length);
+    }
+
+    return digits.slice(0, targetCountry.maxDigits);
+  }
+
+  function buildInternationalPhone(country, digits) {
+    const targetCountry = getPhoneCountry(country?.code || 'UA');
+    const normalizedDigits = normalizePhoneNationalDigits(digits, targetCountry);
+    const formattedNational = formatPhoneByGroups(normalizedDigits, targetCountry.groups);
+    return normalizedDigits ? `${targetCountry.dialCode} ${formattedNational}`.trim() : targetCountry.dialCode;
+  }
+
+  function parseStoredPhone(phoneValue, countryCode = 'UA') {
+    const fallbackCountry = getPhoneCountry(countryCode);
+    const rawPhone = String(phoneValue || '').trim();
+    const allDigits = keepDigits(rawPhone);
+
+    if (!allDigits) {
+      return {
+        country: fallbackCountry,
+        nationalDigits: '',
+        localValue: '',
+        internationalValue: ''
+      };
+    }
+
+    const matchedCountry = PHONE_COUNTRIES
+      .slice()
+      .sort((left, right) => right.dialDigits.length - left.dialDigits.length)
+      .find((country) => allDigits.startsWith(country.dialDigits));
+    const resolvedCountry = matchedCountry || fallbackCountry;
+    const nationalDigits = normalizePhoneNationalDigits(allDigits, resolvedCountry);
+
+    return {
+      country: resolvedCountry,
+      nationalDigits,
+      localValue: formatPhoneByGroups(nationalDigits, resolvedCountry.groups),
+      internationalValue: buildInternationalPhone(resolvedCountry, nationalDigits)
+    };
+  }
+
+  function validatePhoneDraft(countryCode, rawValue) {
+    const country = getPhoneCountry(countryCode);
+    const nationalDigits = normalizePhoneNationalDigits(rawValue, country);
+    const isLengthValid = nationalDigits.length >= country.minDigits && nationalDigits.length <= country.maxDigits;
+
+    return {
+      ok: isLengthValid,
+      country,
+      nationalDigits,
+      localValue: formatPhoneByGroups(nationalDigits, country.groups),
+      internationalValue: buildInternationalPhone(country, nationalDigits),
+      example: getPhoneExample(country)
+    };
   }
 
   function getDefaultAvatarForGender(gender) {
@@ -315,6 +471,16 @@
     editFieldSelect: document.getElementById('editFieldSelect'),
     avatarModal: document.getElementById('avatarModal'),
     avatarUploadInput: document.getElementById('avatarUploadInput'),
+    phoneModal: document.getElementById('phoneModal'),
+    phoneModalTitle: document.getElementById('phoneModalTitle'),
+    phoneModalHint: document.getElementById('phoneModalHint'),
+    phoneCountryLabel: document.getElementById('phoneCountryLabel'),
+    phoneCountrySelect: document.getElementById('phoneCountrySelect'),
+    phoneLocalLabel: document.getElementById('phoneLocalLabel'),
+    phoneLocalInput: document.getElementById('phoneLocalInput'),
+    phonePreviewLabel: document.getElementById('phonePreviewLabel'),
+    phonePreviewValue: document.getElementById('phonePreviewValue'),
+    phoneExampleText: document.getElementById('phoneExampleText'),
     confirmModal: document.getElementById('confirmModal'),
     confirmTitle: document.getElementById('confirmTitle'),
     confirmMessage: document.getElementById('confirmMessage'),
@@ -334,6 +500,7 @@
   };
 
   let activeField = null;
+  let activePhoneCountryCode = 'UA';
   let confirmAction = null;
   let toastTimer = null;
 
@@ -353,6 +520,73 @@
       ...settings,
       language: settings.language === 'en' ? 'en' : 'uk'
     };
+  }
+
+  function getPhoneValidationMessage(country) {
+    return formatTemplate(tr('validationPhone'), {
+      example: getPhoneExample(country)
+    });
+  }
+
+  function syncPhoneModalCopy() {
+    if (elements.phoneModalTitle) elements.phoneModalTitle.textContent = tr('phoneModalTitle');
+    if (elements.phoneModalHint) elements.phoneModalHint.textContent = tr('phoneModalHint');
+    if (elements.phoneCountryLabel) elements.phoneCountryLabel.textContent = tr('phoneCountryLabel');
+    if (elements.phoneLocalLabel) elements.phoneLocalLabel.textContent = tr('phoneLocalLabel');
+    if (elements.phonePreviewLabel) elements.phonePreviewLabel.textContent = tr('phonePreviewLabel');
+    const cancelButton = document.getElementById('cancelPhoneBtn');
+    const saveButton = document.getElementById('savePhoneBtn');
+    if (cancelButton) cancelButton.textContent = tr('phoneCancel');
+    if (saveButton) saveButton.textContent = tr('phoneSave');
+  }
+
+  function populatePhoneCountryOptions(selectedCode = 'UA') {
+    const targetCode = getPhoneCountry(selectedCode).code;
+    elements.phoneCountrySelect.innerHTML = PHONE_COUNTRIES.map((country) => {
+      const isSelected = country.code === targetCode ? ' selected' : '';
+      return `<option value="${country.code}"${isSelected}>${getPhoneCountryLabel(country)} (${country.dialCode})</option>`;
+    }).join('');
+    activePhoneCountryCode = targetCode;
+  }
+
+  function updatePhonePreview() {
+    const validation = validatePhoneDraft(activePhoneCountryCode, elements.phoneLocalInput.value || '');
+    elements.phoneLocalInput.value = validation.localValue;
+    elements.phonePreviewValue.textContent = validation.internationalValue || validation.country.dialCode;
+    elements.phoneExampleText.textContent = formatTemplate(tr('phoneExample'), {
+      example: validation.example
+    });
+    return validation;
+  }
+
+  function openPhoneModal() {
+    const profile = getProfile();
+    const parsedPhone = parseStoredPhone(profile.phone, profile.phoneCountry || 'UA');
+
+    syncPhoneModalCopy();
+    populatePhoneCountryOptions(parsedPhone.country.code);
+    elements.phoneLocalInput.value = parsedPhone.localValue;
+    updatePhonePreview();
+    openModal(elements.phoneModal);
+    setTimeout(() => elements.phoneLocalInput.focus(), 30);
+  }
+
+  function savePhone() {
+    const validation = validatePhoneDraft(activePhoneCountryCode, elements.phoneLocalInput.value || '');
+    if (!validation.ok) {
+      showToast(getPhoneValidationMessage(validation.country));
+      return;
+    }
+
+    updateProfile((profile) => {
+      profile.phone = validation.internationalValue;
+      profile.phoneCountry = validation.country.code;
+    });
+
+    closeModal(elements.phoneModal);
+    renderAll();
+    window.AppUI?.refresh?.();
+    showToast(tr('profileUpdated'));
   }
 
   function showToast(message) {
@@ -389,12 +623,14 @@
 
   function renderProfile() {
     const profile = getProfile();
+    const parsedPhone = parseStoredPhone(profile.phone, profile.phoneCountry || 'UA');
+    const phoneText = parsedPhone.internationalValue || formatValue(profile.phone, tr('fallbackUnknown'));
     elements.coinBalance.textContent = String(profile.coins || 125);
     elements.profileDisplayName.textContent = formatValue(profile.name, currentUser);
     elements.profileStatusText.textContent = formatValue(profile.statusText, tr('fallbackStatus'));
 
     document.getElementById('fieldName').textContent = formatValue(profile.name, tr('fallbackUnknown'));
-    document.getElementById('fieldPhone').textContent = formatValue(profile.phone, tr('fallbackUnknown'));
+    document.getElementById('fieldPhone').textContent = phoneText || tr('fallbackUnknown');
     document.getElementById('fieldUsername').textContent = `@${formatValue(profile.username, currentUser.toLowerCase())}`;
     document.getElementById('fieldEmail').textContent = formatValue(profile.email, tr('fallbackUnknown'));
     document.getElementById('fieldBio').textContent = formatValue(profile.bio, tr('fallbackUnknown'));
@@ -437,6 +673,13 @@
   function renderAll() {
     renderProfile();
     renderSettings();
+    syncPhoneModalCopy();
+    if (elements.phoneCountrySelect) {
+      const currentLocalValue = elements.phoneLocalInput?.value || '';
+      populatePhoneCountryOptions(activePhoneCountryCode);
+      elements.phoneLocalInput.value = currentLocalValue;
+      updatePhonePreview();
+    }
     window.AppEnhancements?.refresh?.();
     window.AppEnhancements?.refreshAudio?.();
   }
@@ -457,7 +700,8 @@
     }
 
     if (field === 'phone') {
-      if (!/^[+\d()\-\s]{6,22}$/.test(cleanValue)) return tr('validationPhone');
+      const phoneValidation = validatePhoneDraft(getProfile().phoneCountry || 'UA', cleanValue);
+      if (!phoneValidation.ok) return getPhoneValidationMessage(phoneValidation.country);
     }
 
     if (field === 'username') {
@@ -471,6 +715,11 @@
 
     if (field === 'email') {
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanValue)) return tr('validationEmail');
+      const emailExists = (window.AppDB?.getUsers?.() || []).some((user) => (
+        user.login !== currentUser
+        && String(user.email || '').trim().toLowerCase() === cleanValue.toLowerCase()
+      ));
+      if (emailExists) return tr('validationEmailExists');
     }
 
     if (field === 'bio' && cleanValue.length < 2) {
@@ -481,6 +730,12 @@
   }
 
   function openEditModal(field) {
+    if (field === 'phone') {
+      activeField = null;
+      openPhoneModal();
+      return;
+    }
+
     const profile = getProfile();
     const meta = getFieldMeta()[field];
     if (!meta) return;
@@ -733,6 +988,18 @@
     document.getElementById('cancelEditBtn').addEventListener('click', () => closeModal(elements.editModal));
     document.getElementById('saveEditBtn').addEventListener('click', saveActiveField);
     document.getElementById('closeAvatarModal').addEventListener('click', () => closeModal(elements.avatarModal));
+    document.getElementById('cancelPhoneBtn').addEventListener('click', () => closeModal(elements.phoneModal));
+    document.getElementById('savePhoneBtn').addEventListener('click', savePhone);
+    elements.phoneCountrySelect.addEventListener('change', (event) => {
+      activePhoneCountryCode = getPhoneCountry(event.target.value).code;
+      updatePhonePreview();
+    });
+    elements.phoneLocalInput.addEventListener('input', updatePhonePreview);
+    elements.phoneLocalInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        savePhone();
+      }
+    });
 
     document.getElementById('changePasswordItem').addEventListener('click', openPasswordModal);
     document.getElementById('cancelPasswordBtn').addEventListener('click', () => closeModal(elements.passwordModal));
@@ -794,6 +1061,7 @@
         ...DEFAULT_PROFILE,
         ...profile,
         name: profile.name || currentUser,
+        phoneCountry: profile.phoneCountry || 'UA',
         username: profile.username || currentUser.toLowerCase(),
         gender: normalizeGender(profile.gender),
         email: profile.email || db.users.find((entry) => entry.login === currentUser)?.email || ''

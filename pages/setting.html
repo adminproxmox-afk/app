@@ -98,7 +98,7 @@
         <section class="detail-card settings-account">
           <div class="detail-card__header"><span>Акаунт</span></div>
           <button class="detail-row" data-field="name" type="button"><span class="detail-row__label">Ім'я</span><span class="detail-row__value" id="fieldName">Сергій</span></button>
-          <button class="detail-row" data-field="phone" type="button"><span class="detail-row__label">Номер</span><span class="detail-row__value" id="fieldPhone">+380</span></button>
+          <button class="detail-row" data-field="phone" type="button"><span class="detail-row__label">Номер</span><span class="detail-row__value" id="fieldPhone">Не вказано</span></button>
           <button class="detail-row" data-field="username" type="button"><span class="detail-row__label">Тег профілю</span><span class="detail-row__value" id="fieldUsername">@user</span></button>
           <button class="detail-row" data-field="email" type="button"><span class="detail-row__label">Пошта</span><span class="detail-row__value" id="fieldEmail">mail@example.com</span></button>
           <button class="detail-row" data-field="bio" type="button"><span class="detail-row__label">Про себе</span><span class="detail-row__value" id="fieldBio">Web Developer</span></button>
@@ -166,6 +166,30 @@
       <button class="modal-save" id="uploadAvatarBtn" type="button">Завантажити фото</button>
       <button class="modal-cancel" id="resetAvatarBtn" type="button">Стандартна ава</button>
       <button class="modal-cancel" id="closeAvatarModal" type="button">Закрити</button>
+    </div>
+  </div>
+</div>
+
+<div id="phoneModal" class="modal">
+  <div class="modal-content modal-content--phone">
+    <h3 id="phoneModalTitle">Номер телефону</h3>
+    <p id="phoneModalHint">Оберіть країну та введіть номер у локальному форматі без зайвих символів.</p>
+    <div class="phone-editor">
+      <label class="modal-label" for="phoneCountrySelect" id="phoneCountryLabel">Країна</label>
+      <select id="phoneCountrySelect" class="modal-input modal-select"></select>
+
+      <label class="modal-label" for="phoneLocalInput" id="phoneLocalLabel">Номер</label>
+      <input type="tel" id="phoneLocalInput" class="modal-input" inputmode="tel" autocomplete="tel-national" maxlength="24">
+
+      <div class="phone-preview">
+        <span id="phonePreviewLabel">Міжнародний формат</span>
+        <strong id="phonePreviewValue">+380</strong>
+        <small id="phoneExampleText">Напр.: +380 67 123 45 67</small>
+      </div>
+    </div>
+    <div class="modal-buttons">
+      <button class="modal-cancel" id="cancelPhoneBtn" type="button">Скасувати</button>
+      <button class="modal-save" id="savePhoneBtn" type="button">Зберегти</button>
     </div>
   </div>
 </div>

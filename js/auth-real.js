@@ -3,8 +3,10 @@
   const TELEGRAM_REDIRECT_PROVIDER_KEY = 'auth_provider';
   const TELEGRAM_REDIRECT_PROVIDER_VALUE = 'telegram';
   const TELEGRAM_AUTH_PARAM_KEYS = ['id', 'first_name', 'last_name', 'username', 'photo_url', 'auth_date', 'hash'];
+  const PROVIDER_PREFILL_KEY = 'auth_provider_prefill_v1';
   const scriptCache = {};
   let modalState = null;
+  let profileCompletionState = null;
   let googleClientId = '';
 
   const copy = {
@@ -30,7 +32,19 @@
       linked: 'Провайдер {provider} прив’язано. Вхід виконано.',
       signed: 'Вхід через {provider} виконано.',
       cancel: 'Скасувати',
-      noIdentity: 'Провайдер не повернув достатньо даних для входу.'
+      noIdentity: 'Провайдер не повернув достатньо даних для входу.',
+      completeProfileTitle: 'Завершіть профіль',
+      completeProfileDesc: '{provider} не завжди повертає стать, тег або повну пошту. Підтвердіть дані один раз, і ми збережемо їх у профілі.',
+      completeProfileNote: 'Ці дані потрібні для коректного профілю, аватара та відображення акаунта в застосунку.',
+      completeProfileSave: 'Зберегти профіль',
+      completeProfileSkip: 'Пізніше',
+      completeProfileGenderLabel: 'Оберіть стать',
+      completeProfileGenderUnknown: 'Стать',
+      completeProfileGenderMale: 'Чоловік',
+      completeProfileGenderFemale: 'Жінка',
+      completeProfileEmailExists: 'Користувач з такою поштою вже існує',
+      completeProfileNameRequired: "Введіть ім'я для профілю",
+      completeProfileGenderRequired: 'Оберіть стать, щоб завершити профіль'
     },
     en: {
       googleTitleIn: 'Sign in with Google',
@@ -54,7 +68,19 @@
       linked: '{provider} linked. Signed in.',
       signed: 'Signed in with {provider}.',
       cancel: 'Cancel',
-      noIdentity: 'The provider did not return enough identity data.'
+      noIdentity: 'The provider did not return enough identity data.',
+      completeProfileTitle: 'Complete your profile',
+      completeProfileDesc: '{provider} does not always return gender, tag, or a full email. Confirm your details once and we will save them to your profile.',
+      completeProfileNote: 'These details help keep your avatar, account card, and profile data consistent across the app.',
+      completeProfileSave: 'Save profile',
+      completeProfileSkip: 'Later',
+      completeProfileGenderLabel: 'Choose gender',
+      completeProfileGenderUnknown: 'Gender',
+      completeProfileGenderMale: 'Male',
+      completeProfileGenderFemale: 'Female',
+      completeProfileEmailExists: 'An account with this email already exists',
+      completeProfileNameRequired: 'Enter a profile name',
+      completeProfileGenderRequired: 'Choose a gender to finish your profile'
     }
   };
 
@@ -125,6 +151,307 @@
     } catch (error) {
       return null;
     }
+  }
+
+  function normalizeGenderValue(value) {
+    const normalizedValue = String(value || '').trim().toLowerCase();
+    if (normalizedValue === 'female' || normalizedValue === 'жінка') return 'female';
+    if (normalizedValue === 'male' || normalizedValue === 'чоловік') return 'male';
+    return 'unknown';
+  }
+
+  function validateEmailValue(value) {
+    if (typeof window.AuthUX?.validateEmailValue === 'function') {
+      return window.AuthUX.validateEmailValue(value);
+    }
+
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || '').trim().toLowerCase());
+  }
+
+  function isSyntheticProviderEmail(value) {
+    return /@(google|telegram|discord|facebook)\.local$/i.test(String(value || '').trim());
+  }
+
+  function getPrefillSnapshot(opts = {}) {
+    try {
+      const rawValue = typeof opts.getPrefill === 'function'
+        ? opts.getPrefill()
+        : (opts.prefill || {});
+      return rawValue && typeof rawValue === 'object' ? { ...rawValue } : {};
+    } catch (error) {
+      return {};
+    }
+  }
+
+  function savePendingProviderContext(provider, opts = {}) {
+    try {
+      sessionStorage.setItem(PROVIDER_PREFILL_KEY, JSON.stringify({
+        provider,
+        mode: opts.mode === 'signup' ? 'signup' : 'signin',
+        prefill: getPrefillSnapshot(opts),
+        savedAt: Date.now()
+      }));
+    } catch (error) {
+      // Ignore storage failures; auth can still continue.
+    }
+  }
+
+  function readPendingProviderContext(provider = '') {
+    try {
+      const rawValue = sessionStorage.getItem(PROVIDER_PREFILL_KEY);
+      if (!rawValue) return null;
+
+      const parsedValue = JSON.parse(rawValue);
+      if (!parsedValue || typeof parsedValue !== 'object') return null;
+      if (provider && parsedValue.provider !== provider) return null;
+      return parsedValue;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function clearPendingProviderContext() {
+    try {
+      sessionStorage.removeItem(PROVIDER_PREFILL_KEY);
+    } catch (error) {
+      // Ignore storage failures; auth can still continue.
+    }
+  }
+
+  function finalizeProviderSuccess(result, opts) {
+    opts?.onSuccess?.(result);
+  }
+
+  function getProfileCompletionError(code, similarTag = '') {
+    if (code === 'NAME_INVALID') return text('completeProfileNameRequired');
+    if (code === 'EMAIL_INVALID') return window.AuthUX?.t?.('social_email_required') || text('completeProfileEmailExists');
+    if (code === 'EMAIL_EXISTS') return text('completeProfileEmailExists');
+    if (code === 'TAG_EXISTS') return window.AuthUX?.t?.('tag_exists') || code;
+    if (code === 'TAG_TOO_SIMILAR') {
+      return window.AuthUX?.t?.('tag_too_similar', { tag: similarTag }) || code;
+    }
+    if (code === 'TAG_INVALID') return window.AuthUX?.t?.('tag_invalid') || code;
+    if (code === 'GENDER_REQUIRED') return text('completeProfileGenderRequired');
+    return text('unavailable', { provider: label(profileCompletionState?.provider || 'google') });
+  }
+
+  function getCompletionDraft(result, prefill = {}) {
+    const user = result?.user || {};
+    const profile = user.profile || {};
+    const rawRequestedTag = String(prefill.tag || prefill.username || '').trim();
+    const normalizedTag = window.AuthUX?.normalizePublicTagValue?.(
+      rawRequestedTag || profile.username || user.login || ''
+    ) || '';
+    const rawEmail = isSyntheticProviderEmail(profile.email || user.email)
+      ? String(prefill.email || '').trim().toLowerCase()
+      : String(profile.email || user.email || prefill.email || '').trim().toLowerCase();
+    const name = String(profile.name || prefill.displayName || user.login || '').trim();
+    const gender = normalizeGenderValue(profile.gender || prefill.gender);
+    const hasRequestedTag = Boolean(window.AuthUX?.validatePublicTagValue?.(rawRequestedTag || ''));
+
+    const flags = {
+      name: name.length < 2,
+      username: !window.AuthUX?.validatePublicTagValue?.(normalizedTag) || (Boolean(result?.isNew) && !hasRequestedTag),
+      email: !validateEmailValue(rawEmail),
+      gender: gender === 'unknown'
+    };
+
+    return {
+      name,
+      username: normalizedTag,
+      email: rawEmail,
+      gender,
+      flags,
+      needsCompletion: Object.values(flags).some(Boolean)
+    };
+  }
+
+  function ensureProfileCompletionModal() {
+    let modal = document.getElementById('providerProfileModal');
+    if (modal) return modal;
+
+    modal = document.createElement('div');
+    modal.id = 'providerProfileModal';
+    modal.className = 'auth-modal';
+    modal.innerHTML = `
+      <div class="auth-modal__backdrop" data-close-profile-completion="true"></div>
+      <div class="auth-modal__card" role="dialog" aria-modal="true" aria-labelledby="providerProfileTitle">
+        <button class="auth-modal__close" id="providerProfileClose" type="button" aria-label="Close">×</button>
+        <div class="auth-modal__provider" id="providerProfileBadge"></div>
+        <h3 class="auth-modal__title" id="providerProfileTitle"></h3>
+        <p class="auth-modal__description" id="providerProfileDescription"></p>
+        <input class="auth-modal__input" id="providerProfileName" type="text" maxlength="40">
+        <input class="auth-modal__input" id="providerProfileTag" type="text" maxlength="24">
+        <input class="auth-modal__input" id="providerProfileEmail" type="email" maxlength="80">
+        <select class="auth-modal__input" id="providerProfileGender">
+          <option value="unknown"></option>
+          <option value="male"></option>
+          <option value="female"></option>
+        </select>
+        <p class="provider-auth__note" id="providerProfileNote"></p>
+        <div class="auth-message auth-message--modal" id="providerProfileMessage"></div>
+        <div class="auth-modal__actions">
+          <button class="auth-modal__button auth-modal__button--ghost" id="providerProfileSkip" type="button"></button>
+          <button class="auth-modal__button auth-modal__button--primary" id="providerProfileSave" type="button"></button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    const attemptClose = () => {
+      if (!profileCompletionState?.allowSkip) return;
+      const fallbackResult = profileCompletionState.result;
+      const fallbackOptions = profileCompletionState.opts;
+      closeProfileCompletionModal();
+      finalizeProviderSuccess(fallbackResult, fallbackOptions);
+    };
+
+    modal.querySelectorAll('[data-close-profile-completion="true"]').forEach((node) => {
+      node.addEventListener('click', attemptClose);
+    });
+    modal.querySelector('#providerProfileClose').addEventListener('click', attemptClose);
+    modal.querySelector('#providerProfileSkip').addEventListener('click', attemptClose);
+    modal.querySelector('#providerProfileSave').addEventListener('click', submitProfileCompletion);
+    modal.querySelector('#providerProfileName').addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') submitProfileCompletion();
+    });
+    modal.querySelector('#providerProfileTag').addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') submitProfileCompletion();
+    });
+    modal.querySelector('#providerProfileEmail').addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') submitProfileCompletion();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && modal.classList.contains('is-open') && profileCompletionState?.allowSkip) {
+        attemptClose();
+      }
+    });
+
+    return modal;
+  }
+
+  function closeProfileCompletionModal() {
+    const modal = ensureProfileCompletionModal();
+    modal.classList.remove('is-open');
+    document.body.classList.remove('auth-modal-open');
+    window.AuthUX?.setMessage?.(document.getElementById('providerProfileMessage'), '', 'info');
+    profileCompletionState = null;
+  }
+
+  function openProfileCompletionModal(provider, result, opts, draft) {
+    const modal = ensureProfileCompletionModal();
+    profileCompletionState = {
+      provider,
+      result,
+      opts,
+      allowSkip: false
+    };
+
+    document.getElementById('providerProfileBadge').textContent = label(provider);
+    document.getElementById('providerProfileTitle').textContent = text('completeProfileTitle');
+    document.getElementById('providerProfileDescription').textContent = text('completeProfileDesc', {
+      provider: label(provider)
+    });
+    document.getElementById('providerProfileName').placeholder = window.AuthUX?.t?.('social_name_placeholder') || 'Name';
+    document.getElementById('providerProfileTag').placeholder = window.AuthUX?.t?.('social_tag_placeholder') || 'Tag';
+    document.getElementById('providerProfileEmail').placeholder = window.AuthUX?.t?.('social_email_placeholder') || 'Email';
+    document.getElementById('providerProfileName').value = draft.name || '';
+    document.getElementById('providerProfileTag').value = draft.username || '';
+    document.getElementById('providerProfileEmail').value = draft.email || '';
+
+    const genderSelect = document.getElementById('providerProfileGender');
+    genderSelect.options[0].textContent = text('completeProfileGenderUnknown');
+    genderSelect.options[1].textContent = text('completeProfileGenderMale');
+    genderSelect.options[2].textContent = text('completeProfileGenderFemale');
+    genderSelect.setAttribute('aria-label', text('completeProfileGenderLabel'));
+    genderSelect.value = draft.gender || 'unknown';
+
+    document.getElementById('providerProfileNote').textContent = text('completeProfileNote');
+    document.getElementById('providerProfileSave').textContent = text('completeProfileSave');
+    document.getElementById('providerProfileSkip').textContent = text('completeProfileSkip');
+    document.getElementById('providerProfileSkip').hidden = true;
+    document.getElementById('providerProfileClose').hidden = true;
+    window.AuthUX?.setMessage?.(document.getElementById('providerProfileMessage'), '', 'info');
+
+    modal.classList.add('is-open');
+    document.body.classList.add('auth-modal-open');
+
+    const focusTarget = draft.flags.name
+      ? document.getElementById('providerProfileName')
+      : draft.flags.username
+        ? document.getElementById('providerProfileTag')
+        : draft.flags.email
+          ? document.getElementById('providerProfileEmail')
+          : draft.flags.gender
+            ? document.getElementById('providerProfileGender')
+            : document.getElementById('providerProfileTag');
+
+    setTimeout(() => focusTarget?.focus(), 20);
+  }
+
+  function submitProfileCompletion() {
+    if (!profileCompletionState) return;
+
+    const name = String(document.getElementById('providerProfileName')?.value || '').trim();
+    const username = String(document.getElementById('providerProfileTag')?.value || '').trim();
+    const email = String(document.getElementById('providerProfileEmail')?.value || '').trim().toLowerCase();
+    const gender = normalizeGenderValue(document.getElementById('providerProfileGender')?.value || '');
+    const responseMessage = document.getElementById('providerProfileMessage');
+    const currentLogin = window.AppDB?.getCurrentUser?.() || '';
+
+    if (name.length < 2) {
+      window.AuthUX?.setMessage?.(responseMessage, text('completeProfileNameRequired'), 'error');
+      return;
+    }
+
+    const tagState = window.AuthUX?.getPublicTagState?.(username, currentLogin);
+    if (!tagState?.ok) {
+      window.AuthUX?.setMessage?.(
+        responseMessage,
+        getProfileCompletionError(tagState.code, tagState.similarTag),
+        'error'
+      );
+      return;
+    }
+
+    if (!validateEmailValue(email)) {
+      window.AuthUX?.setMessage?.(
+        responseMessage,
+        window.AuthUX?.t?.('social_email_required') || text('completeProfileEmailExists'),
+        'error'
+      );
+      return;
+    }
+
+    if (gender === 'unknown') {
+      window.AuthUX?.setMessage?.(responseMessage, text('completeProfileGenderRequired'), 'error');
+      return;
+    }
+
+    const saveResult = window.AppDB?.completeCurrentUserProfile?.({
+      displayName: name,
+      username: tagState.normalizedTag,
+      email,
+      gender
+    });
+
+    if (!saveResult?.ok) {
+      window.AuthUX?.setMessage?.(
+        responseMessage,
+        getProfileCompletionError(saveResult.code, saveResult.similarTag),
+        'error'
+      );
+      return;
+    }
+
+    const nextResult = {
+      ...profileCompletionState.result,
+      user: saveResult.user
+    };
+    const nextOpts = profileCompletionState.opts;
+    closeProfileCompletionModal();
+    finalizeProviderSuccess(nextResult, nextOpts);
   }
 
   function ensureModal() {
@@ -245,11 +572,12 @@
       showProviderFeedback(text('noIdentity'), 'error');
       return;
     }
-    const prefill = typeof opts?.getPrefill === 'function' ? opts.getPrefill() : {};
+    const prefill = getPrefillSnapshot(opts);
     const result = window.AppDB?.registerOrLoginWithProvider?.(provider, {
-      displayName: profile.displayName || '',
-      email: profile.email || '',
+      displayName: profile.displayName || prefill.displayName || '',
+      email: profile.email || prefill.email || '',
       providerUserId: profile.providerUserId || '',
+      username: prefill.tag || prefill.username || '',
       gender: prefill.gender || ''
     });
     if (!result?.ok) {
@@ -260,8 +588,20 @@
       window.AppDB?.update?.((db) => { db.profile.avatarImage = profile.avatarImage; });
     }
     closeModal();
-    const message = result.isNew ? text('created', { provider: label(provider) }) : result.linked ? text('linked', { provider: label(provider) }) : text('signed', { provider: label(provider) });
-    opts?.onSuccess?.({ ...result, message });
+    const message = result.isNew
+      ? text('created', { provider: label(provider) })
+      : result.linked
+        ? text('linked', { provider: label(provider) })
+        : text('signed', { provider: label(provider) });
+    const finalResult = { ...result, message };
+    const completionDraft = getCompletionDraft(finalResult, prefill);
+
+    if (completionDraft.needsCompletion) {
+      openProfileCompletionModal(provider, finalResult, opts, completionDraft);
+      return;
+    }
+
+    finalizeProviderSuccess(finalResult, opts);
   }
 
   function openGoogle(opts = {}) {
@@ -299,6 +639,7 @@
     const note = `${text('telegramNote')} ${secureContextLike() ? '' : text('wrongEnv')}`.trim();
     openModal('telegram', text(opts.mode === 'signup' ? 'telegramTitleUp' : 'telegramTitleIn'), text('telegramDesc'), note, '<div class="provider-widget provider-widget--telegram" id="telegramProviderWidget"></div>', opts);
     modalMessage(text('loading', { provider: label('telegram') }), 'info');
+    savePendingProviderContext('telegram', opts);
     const config = cfg('telegram');
     const widgetRoot = document.getElementById('telegramProviderWidget');
     if (!widgetRoot) return;
@@ -323,8 +664,14 @@
   window.AuthUX = window.AuthUX || {};
   const telegramRedirectProfile = getTelegramRedirectProfile();
   if (telegramRedirectProfile) {
+    const pendingContext = readPendingProviderContext('telegram');
+    clearPendingProviderContext();
     clearTelegramRedirectParams();
-    finish('telegram', telegramRedirectProfile, { onSuccess: handleTelegramRedirectResult });
+    finish('telegram', telegramRedirectProfile, {
+      mode: pendingContext?.mode,
+      getPrefill: () => pendingContext?.prefill || {},
+      onSuccess: handleTelegramRedirectResult
+    });
   }
   window.AuthUX.bindSocialButtons = function (container, options = {}) {
     const root = typeof container === 'string' ? document.querySelector(container) : container;

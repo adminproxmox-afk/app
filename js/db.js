@@ -51,6 +51,7 @@
       name: 'Авантюрист',
       username: 'adventurer',
       phone: '',
+      phoneCountry: 'UA',
       email: '',
       bio: 'Web Developer',
       gender: 'unknown',
@@ -116,6 +117,11 @@
   function validatePublicTagValue(value) {
     const normalizedValue = normalizePublicTag(value);
     return /^[a-z0-9_]{3,24}$/.test(normalizedValue);
+  }
+
+  function validateEmailValue(value) {
+    const trimmedValue = String(value || '').trim().toLowerCase();
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedValue);
   }
 
   function getTagCore(value) {
@@ -553,6 +559,7 @@
         name: displayName || login,
         username,
         phone: '',
+        phoneCountry: 'UA',
         email,
         bio: authProvider === 'local' ? 'Новий користувач' : `Вхід через ${authProvider}`,
         gender,
@@ -820,6 +827,70 @@
         linked,
         isNew
       };
+    },
+    completeCurrentUserProfile(input = {}) {
+      const db = load();
+      const currentLogin = String(db.session.user || '').trim();
+      if (!currentLogin) return { ok: false, code: 'NO_CURRENT_USER' };
+
+      const user = db.users.find((entry) => entry.login === currentLogin);
+      if (!user) return { ok: false, code: 'USER_NOT_FOUND' };
+
+      const displayName = String(
+        input.displayName ?? input.name ?? user.profile?.name ?? user.login
+      ).trim();
+      const email = String(
+        input.email ?? user.profile?.email ?? user.email ?? ''
+      ).trim().toLowerCase();
+      const usernameSource = String(
+        input.username ?? user.profile?.username ?? user.login
+      ).trim();
+      const gender = normalizeGender(input.gender ?? user.profile?.gender);
+
+      if (displayName.length < 2) return { ok: false, code: 'NAME_INVALID' };
+      if (!validateEmailValue(email)) return { ok: false, code: 'EMAIL_INVALID' };
+
+      const hasEmailConflict = db.users.some((entry) => (
+        entry.login !== user.login
+        && String(entry.email || '').trim().toLowerCase() === email
+      ));
+      if (hasEmailConflict) return { ok: false, code: 'EMAIL_EXISTS' };
+
+      const tagCheck = checkPublicTagAvailability(db, usernameSource, user.login);
+      if (!tagCheck.ok) {
+        return {
+          ok: false,
+          code: tagCheck.code,
+          tag: tagCheck.normalizedTag,
+          similarTag: tagCheck.similarTag
+        };
+      }
+
+      if (gender === 'unknown') return { ok: false, code: 'GENDER_REQUIRED' };
+
+      user.email = email;
+      user.profile = mergeDefaults(DEFAULT_DB.profile, user.profile || {});
+      user.profile.name = displayName;
+      user.profile.username = tagCheck.normalizedTag;
+      user.profile.email = email;
+      user.profile.gender = gender;
+
+      if (typeof input.phone === 'string') {
+        user.profile.phone = String(input.phone || '').trim();
+      }
+      if (typeof input.phoneCountry === 'string') {
+        user.profile.phoneCountry = String(input.phoneCountry || '').trim().toUpperCase() || 'UA';
+      }
+      if (typeof input.bio === 'string') {
+        user.profile.bio = String(input.bio || '').trim();
+      }
+
+      applyProfileGenderDefaults(user.profile);
+      user.updatedAt = new Date().toISOString();
+      applyUserProfile(db, user);
+      save();
+
+      return { ok: true, user: clone(user) };
     },
     normalizePublicTag(value) {
       return normalizePublicTag(value);

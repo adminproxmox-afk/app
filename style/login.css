@@ -606,6 +606,11 @@ body {
   box-shadow: 0 0 0 4px rgba(29, 140, 252, 0.18);
 }
 
+.auth-modal__input option {
+  color: #eff4ff;
+  background: #101827;
+}
+
 .auth-modal__actions {
   display: flex;
   gap: 10px;
@@ -839,6 +844,12 @@ html[data-theme='light'] .auth-modal__input {
   border-color: rgba(58, 79, 103, 0.12);
   background: linear-gradient(180deg, #ebf1f5 0%, #dde5ec 100%);
   color: #122033;
+}
+
+body.theme-light .auth-modal__input option,
+html[data-theme='light'] .auth-modal__input option {
+  color: #122033;
+  background: #f4f8fb;
 }
 
 body.theme-light .auth-modal__button--ghost,
