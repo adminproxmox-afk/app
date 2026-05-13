@@ -812,9 +812,9 @@ function nodeToHTML(node, depth = 0) {
   if (VOID_TAGS.has(node.tag)) return `${indent}<${node.tag}${attrString}>`;
   if (node.ch.length === 0) return `${indent}<${node.tag}${attrString}>${text}</${node.tag}>`;
 
-  const textLine = text ? `${text}\n` : '';
+  const textLine = text ? `\n${indent}  ${text}` : '';
   const inner = node.ch.map(child => nodeToHTML(child, depth + 1)).join('\n');
-  return `${indent}<${node.tag}${attrString}>${textLine}${inner}\n${indent}</${node.tag}>`;
+  return `${indent}<${node.tag}${attrString}>${textLine}\n${inner}\n${indent}</${node.tag}>`;
 }
 
 function buildHTML() {
@@ -878,11 +878,6 @@ function buildCodePanelMarkup(html) {
   return `
     <div class="code-shell">
       <div class="code-shell__top">
-        <div class="code-shell__activity" aria-hidden="true">
-          <span class="code-shell__activity-bar"></span>
-          <span class="code-shell__activity-bar"></span>
-          <span class="code-shell__activity-bar"></span>
-        </div>
         <div class="code-shell__tab">
           <span class="code-shell__tab-dot"></span>
           <span class="code-shell__title">index.html</span>
@@ -890,12 +885,12 @@ function buildCodePanelMarkup(html) {
         <div class="code-shell__meta">HTML CRASH COURSE · level ${level.id}</div>
       </div>
       <div class="code-shell__body">
-        ${lines.map((line, index) => `
-          <div class="code-line">
-            <span class="code-line__no">${index + 1}</span>
-            <span class="code-line__content">${syntaxHL(line)}</span>
-          </div>
-        `).join('')}
+        <div class="code-gutter" aria-hidden="true">
+          ${lines.map((_, index) => `<span class="code-line__no">${index + 1}</span>`).join('')}
+        </div>
+        <div class="code-scroll">
+          ${lines.map(line => `<div class="code-line"><span class="code-line__content">${syntaxHL(line)}</span></div>`).join('')}
+        </div>
       </div>
       <div class="code-shell__status">
         <span class="code-shell__status-item code-shell__status-item--brand">HTML</span>
