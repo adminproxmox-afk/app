@@ -211,7 +211,7 @@ const categories = {
         name: { uk: 'Веб-розробка', en: 'Web Development' },
         games: [
           { id: 'character-layout', icon: '🧍', name: 'Персонаж і розкладка', desc: { uk: 'Створи персонажа й розстав речі на екрані за правилами HTML/CSS', en: 'Create a character and place items on the screen with HTML/CSS rules' }, xp: 36, reward: 32, rating: 4.9, duration: { uk: '12 хв', en: '12 min' } },
-          { id: 'html-crash', icon: '📄', name: 'HTML Crash Course', desc: { uk: 'Збери сторінку з блоків', en: 'Build a page from blocks' }, xp: 38, reward: 35, rating: 4.9, duration: { uk: '18 хв', en: '18 min' } },
+          { id: 'html-crash', icon: '📄', name: 'HTML Crash Course', desc: { uk: 'Drag-and-drop HTML-конструктор з live preview', en: 'Drag-and-drop HTML builder with live preview' }, xp: 90, reward: 83, rating: 4.9, duration: { uk: '20 хв', en: '20 min' } },
           { id: 'css-diner', icon: '🍽️', name: 'CSS Diner', desc: { uk: 'Селектори CSS через гру', en: 'CSS selectors through play' }, xp: 28, reward: 25, rating: 4.6, duration: { uk: '10 хв', en: '10 min' } },
           { id: 'flexbox-rush', icon: '🧩', name: 'Flexbox Rush', desc: { uk: 'Розкладай блоки через Flexbox', en: 'Arrange blocks with Flexbox' }, xp: 31, reward: 28, rating: 4.7, duration: { uk: '11 хв', en: '11 min' } }
         ]

@@ -8,8 +8,8 @@
     "en": "HTML Crash Course"
   },
   "description": {
-    "uk": "Збери сторінку з блоків",
-    "en": "Build a page from blocks"
+    "uk": "Drag-and-drop HTML-конструктор з 10 короткими рівнями, preview, XP і монетами",
+    "en": "A drag-and-drop HTML builder with 10 short levels, preview, XP, and coins"
   },
   "entry": {
     "type": "html",
@@ -19,16 +19,17 @@
     "path": "runtime/index.html"
   },
   "difficulty": "beginner",
-  "durationMinutes": 18,
+  "durationMinutes": 20,
   "rewards": {
-    "xp": 38,
-    "coins": 35
+    "xp": 90,
+    "coins": 83
   },
   "status": "active",
   "tags": [
     "html",
     "web",
     "drag-drop",
+    "html-builder",
     "builder"
   ],
   "lessonIds": []

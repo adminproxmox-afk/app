@@ -3,96 +3,129 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="color-scheme" content="light dark">
-  <title>HTML Builder - Learn by Building</title>
-  <link rel="stylesheet" href="style/html-crash-course-game.css">
+  <meta name="color-scheme" content="dark light">
+  <title>HTML Crash Course</title>
+  <link rel="stylesheet" href="style/html-crash-course-game.css?v=20260513-dnd3">
 </head>
 <body>
-<div id="app">
-  <header id="topbar">
-    <div class="logo">
-      <span>&lt;</span>html<span>/&gt;</span>
-      <span class="logo-text">builder</span>
-    </div>
-    <div class="sep"></div>
-    <div id="level-tabs"></div>
-    <div class="xp-group">
-      <span class="xp-num" id="xp-num">0 XP</span>
-      <div class="xp-track">
-        <div class="xp-fill" id="xp-fill" style="width:0%"></div>
+  <div class="game" id="game">
+    <header class="topbar">
+      <button class="icon-button" id="backBtn" type="button" aria-label="Назад">←</button>
+      <div class="title-block">
+        <strong>HTML Crash Course</strong>
+        <span id="levelMeta">Рівень 1 / 10</span>
       </div>
-    </div>
-    <button id="btn-reset" title="Очистити робочу зону">↺</button>
-    <button id="btn-check">Перевірити ✓</button>
-  </header>
-
-  <aside id="sidebar"></aside>
-
-  <main id="canvas-wrap">
-    <div id="task-card">
-      <span class="task-icon">🎯</span>
-      <div class="task-body">
-        <div class="task-title" id="task-title"></div>
-        <div class="task-desc" id="task-desc"></div>
-        <div class="task-template" id="task-template"></div>
+      <div class="scorebar" aria-label="Прогрес">
+        <span id="xpValue">0 XP</span>
+        <span id="coinValue">0 монет</span>
       </div>
+    </header>
+
+    <nav class="mobile-tabs" aria-label="Розділи гри">
+      <button class="mobile-tab active" type="button" data-mobile-view="task">Завдання</button>
+      <button class="mobile-tab" type="button" data-mobile-view="blocks">Блоки</button>
+      <button class="mobile-tab" type="button" data-mobile-view="builder">Поле</button>
+      <button class="mobile-tab" type="button" data-mobile-view="preview">Preview</button>
+    </nav>
+
+    <div class="progress-line">
+      <div id="progressFill"></div>
     </div>
 
-    <div id="drop-root">
-      <div class="empty-hint" id="empty-hint">
-        <div class="empty-hint-icon">⬡</div>
-        <div class="empty-hint-text">Перетягни HTML-блоки сюди</div>
-      </div>
-    </div>
-  </main>
+    <main class="layout" id="layout">
+      <section class="panel task-panel" data-view="task" aria-labelledby="taskTitle">
+        <div class="level-tabs" id="levelTabs"></div>
+        <p class="eyebrow">Завдання</p>
+        <h1 id="taskTitle"></h1>
+        <div class="mission-strip" aria-label="Дані місії">
+          <span id="missionBadge">Місія</span>
+          <span id="missionReward">+0 XP</span>
+        </div>
+        <p class="mission-line" id="missionLine"></p>
+        <p class="task-text" id="taskText"></p>
+        <div class="needed">
+          <span>Потрібні теги:</span>
+          <div id="neededTags"></div>
+        </div>
+        <p class="hint" id="taskHint"></p>
+      </section>
 
-  <aside id="panel">
-    <div class="panel-tabs">
-      <button class="ptab active" data-tab="preview">Preview</button>
-      <button class="ptab" data-tab="code">Код</button>
-      <button class="ptab" data-tab="validate">Помилки</button>
-    </div>
-    <div class="panel-body">
-      <div class="panel-view active" id="tab-preview">
-        <div class="preview-label">live preview</div>
-        <iframe id="preview-frame" sandbox="allow-same-origin"></iframe>
-      </div>
+      <section class="panel blocks-panel" data-view="blocks" aria-labelledby="blocksTitle">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Блоки</p>
+            <h2 id="blocksTitle">HTML-теги</h2>
+          </div>
+          <button class="small-button" id="clearBtn" type="button">Очистити</button>
+        </div>
+        <p class="target-line">Додаємо в: <strong id="targetName">корінь</strong></p>
+        <div class="tag-grid" id="tagGrid"></div>
+      </section>
 
-      <div class="panel-view" id="tab-code">
-        <div id="code-output" aria-live="polite"></div>
-      </div>
+      <section class="panel builder-panel" data-view="builder" aria-labelledby="builderTitle">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Поле</p>
+            <h2 id="builderTitle">Структура HTML</h2>
+          </div>
+          <button class="small-button" id="selectRootBtn" type="button">Корінь</button>
+        </div>
+        <div class="workspace drop-zone" id="workspace" data-drop-root tabindex="0" aria-label="Робоча зона HTML">
+          <div class="empty-state" id="emptyState">Обери тег з панелі блоків.</div>
+        </div>
+      </section>
 
-      <div class="panel-view" id="tab-validate">
-        <div id="val-output">
-          <div class="val-idle">Натисни "Перевірити", щоб побачити результат</div>
+      <aside class="panel output-panel" data-view="preview" aria-label="Preview і код">
+        <div class="output-tabs">
+          <button class="output-tab active" type="button" data-output="preview">Preview</button>
+          <button class="output-tab" type="button" data-output="code">Код</button>
+        </div>
+        <button class="copy-code" id="copyCodeBtn" type="button" hidden>Копіювати код</button>
+        <iframe id="previewFrame" title="Live preview" sandbox="allow-same-origin"></iframe>
+        <pre id="codeOutput" hidden></pre>
+      </aside>
+    </main>
+
+    <footer class="actionbar">
+      <button class="primary-button" id="checkBtn" type="button">Перевірити</button>
+      <div class="feedback" id="feedback" role="status" aria-live="polite">Збери структуру і натисни “Перевірити”.</div>
+      <button class="next-button" id="nextBtn" type="button" hidden>Наступний рівень</button>
+    </footer>
+
+    <section class="finish-screen" id="finishScreen" hidden>
+      <div class="finish-card">
+        <p class="eyebrow">Курс завершено</p>
+        <h2>Ти зібрав першу HTML-сторінку LCA</h2>
+        <p>Усі 10 місій пройдено. Прогрес і нагорода збережені.</p>
+        <div class="finish-stats">
+          <span id="finishXp">90 XP</span>
+          <span id="finishCoins">83 монети</span>
+        </div>
+        <div class="finish-actions">
+          <button class="primary-button" id="replayBtn" type="button">Повторити рівень 10</button>
+          <button class="next-button" id="homeBtn" type="button">На головну</button>
         </div>
       </div>
-    </div>
-  </aside>
-
-  <footer id="bottombar">
-    <div class="status-dot" id="status-dot"></div>
-    <span id="status-text">Готово - перетягуй теги, щоб будувати DOM</span>
-    <span>·</span>
-    <span>Вузлів: <span class="node-count" id="node-count">0</span></span>
-  </footer>
-</div>
-
-<div id="levelup-overlay">
-  <div class="lu-card">
-    <span class="lu-emoji" id="lu-emoji">🎉</span>
-    <div class="lu-title" id="lu-title">Рівень пройдено!</div>
-    <div class="lu-subtitle" id="lu-subtitle"></div>
-    <div class="lu-xp" id="lu-xp"></div>
-    <button class="lu-btn" id="lu-btn">Наступний рівень →</button>
+    </section>
   </div>
-</div>
 
-<div id="toast-wrap"></div>
-<div id="drag-ghost"></div>
+  <div class="editor" id="editor" hidden>
+    <div class="editor-backdrop" data-close-editor></div>
+    <section class="editor-card" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
+      <header>
+        <h2 id="editorTitle">Редагувати тег</h2>
+        <button class="icon-button" type="button" data-close-editor aria-label="Закрити">×</button>
+      </header>
+      <div class="editor-fields" id="editorFields"></div>
+      <footer>
+        <button class="small-button" type="button" data-close-editor>Скасувати</button>
+        <button class="primary-button" id="saveEditorBtn" type="button">Зберегти</button>
+      </footer>
+    </section>
+  </div>
 
-<script src="../../../../../../../js/db.js"></script>
-<script src="../../../../../../../js/ui-preferences.js"></script>
-<script src="js/html-crash-course-game.js"></script>
+  <script src="../../../../../../../js/db.js"></script>
+  <script src="../../../../../../../js/ui-preferences.js"></script>
+  <script src="js/html-crash-course-game.js?v=20260513-dnd3"></script>
 </body>
 </html>

@@ -481,13 +481,13 @@
           categoryId: 'it',
           subcategoryId: 'webdev',
           title: { uk: 'HTML Crash Course', en: 'HTML Crash Course' },
-          description: { uk: 'Збери сторінку з блоків', en: 'Build a page from blocks' },
+          description: { uk: 'Drag-and-drop HTML-конструктор з 10 короткими рівнями і live preview', en: 'A drag-and-drop HTML builder with 10 short levels and live preview' },
           catalogFolder: 'game/catalog/it/webdev/games/html-crash-course',
           entryPath: 'game/catalog/it/webdev/games/html-crash-course/index.html',
           manifestPath: 'game/catalog/it/webdev/games/html-crash-course/manifest.json',
           difficulty: 'beginner',
-          durationMinutes: 18,
-          rewards: { xp: 38, coins: 35 },
+          durationMinutes: 20,
+          rewards: { xp: 90, coins: 83 },
           status: 'active',
           createdAt: now
         }
