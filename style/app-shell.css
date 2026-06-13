@@ -26,6 +26,13 @@
   --app-shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.16);
 }
 
+html,
+body {
+  min-height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   color: var(--app-text);
   background: var(--app-bg);
@@ -1279,7 +1286,7 @@ body.theme-light .toast {
   }
 
   body.character-page .phone-frame {
-    width: 100vw;
+    width: 100%;
     min-height: 100dvh;
     border-radius: 0;
     background:
@@ -1521,7 +1528,7 @@ body.theme-light .toast {
   }
 
   body.character-page .phone-frame {
-    width: min(calc(100vw - 12px), 430px);
+    width: min(calc(100% - 12px), 430px);
     min-height: 100dvh;
     border-radius: 0;
     background: var(--app-frame);
@@ -1676,7 +1683,7 @@ body.theme-light .toast {
   }
 
   body.character-page .phone-frame {
-    width: min(calc(100vw - 12px), 430px);
+    width: min(calc(100% - 12px), 430px);
     min-height: 100dvh;
     border-radius: 0;
     background: var(--app-frame);

@@ -971,30 +971,7 @@
       }
 
       if (!user) {
-        const login = createUniqueLogin(
-          db,
-          `${slugifyLogin(displayName || normalizedEmail.split('@')[0] || normalizedProvider)}_${normalizedProvider}`
-        );
-        const requestedTag = normalizePublicTag(input.username || displayName || normalizedEmail.split('@')[0] || login);
-        const tagCheck = requestedTag
-          ? checkPublicTagAvailability(db, requestedTag)
-          : { ok: true, normalizedTag: createUniquePublicTag(db, login) };
-        if (!tagCheck.ok) {
-          return { ok: false, code: tagCheck.code, tag: tagCheck.normalizedTag, similarTag: tagCheck.similarTag };
-        }
-        user = createUserRecord({
-          login,
-          email: normalizedEmail || `${login}@${normalizedProvider}.local`,
-          password: '',
-          authProvider: normalizedProvider,
-          authProviders: [normalizedProvider],
-          authIdentities: providerUserId ? { [normalizedProvider]: providerUserId } : {},
-          displayName: displayName || login,
-          username: tagCheck.normalizedTag,
-          gender: input.gender
-        });
-        db.users.push(user);
-        isNew = true;
+        return { ok: false, code: 'SOCIAL_REQUIRES_LOCAL_ACCOUNT' };
       } else {
         const incomingGender = normalizeGender(input.gender);
         const currentProviders = getUserAuthProviders(user);

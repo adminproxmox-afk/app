@@ -2,40 +2,79 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="color-scheme" content="light dark">
-  <title>HTML Builder - Learn by Building</title>
+  <meta name="theme-color" content="#0d1b2a">
+  <title>Life Capital Academy — HTML Builder Quest</title>
   <link rel="stylesheet" href="style/html-crash-course-game.css?v=20260513-pretty-html">
 </head>
-<body>
+<body data-theme="dark">
 <div id="app">
   <header id="topbar">
-    <div class="logo">
-      <span>&lt;</span>html<span>/&gt;</span>
-      <span class="logo-text">builder</span>
-    </div>
-    <div class="sep"></div>
-    <div id="level-tabs"></div>
-    <div class="xp-group">
-      <span class="xp-num" id="xp-num">0 XP</span>
-      <div class="xp-track">
-        <div class="xp-fill" id="xp-fill" style="width:0%"></div>
+    <div class="topbar-main">
+      <div class="topbar-brand">
+        <div class="logo">
+          <span>&lt;</span>html<span>/&gt;</span>
+          <span class="logo-text">quest</span>
+        </div>
+        <div class="topbar-copy">
+          <span class="topbar-eyebrow">HTML builder mission</span>
+          <strong id="topbar-level-title">Рівень 1</strong>
+          <span class="topbar-summary" id="topbar-summary">Збери правильну структуру та перевір її на сцені.</span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="btn-back" title="Вихід" aria-label="Вихід" onclick="window.location.href='../../../../../../../index.html'">Вийти</button>
       </div>
     </div>
-    <button id="btn-reset" title="Очистити робочу зону">↺</button>
-    <button id="btn-check">Перевірити ✓</button>
   </header>
 
-  <aside id="sidebar"></aside>
+  <aside id="sidebar" aria-label="Теги рівня"></aside>
 
   <main id="canvas-wrap">
     <div id="task-card">
-      <span class="task-icon">🎯</span>
+      <div class="task-aura" aria-hidden="true"></div>
+      <div class="task-icon-wrap">
+        <span class="task-icon" id="task-icon">🎯</span>
+      </div>
       <div class="task-body">
+        <div class="task-kicker" id="task-kicker">Mission briefing</div>
         <div class="task-title" id="task-title"></div>
         <div class="task-desc" id="task-desc"></div>
         <div class="task-template" id="task-template"></div>
       </div>
+      <div class="task-rail" aria-label="Level stats">
+        <div class="task-stat">
+          <span class="task-stat-label">Прогрес</span>
+          <strong class="task-stat-value" id="task-progress">1 / 5</strong>
+        </div>
+        <div class="task-stat">
+          <span class="task-stat-label">Теги</span>
+          <strong class="task-stat-value" id="task-reward">&lt;html&gt;</strong>
+        </div>
+        <div class="task-stat">
+          <span class="task-stat-label">Готовність</span>
+          <strong class="task-stat-value" id="task-completion">0%</strong>
+        </div>
+      </div>
+    </div>
+
+    <div id="level-tabs" aria-label="Рівні"></div>
+
+    <div class="builder-guide" aria-label="How to play">
+      <div class="builder-guide-step"><strong>1</strong><span>Вибери тег</span></div>
+      <div class="builder-guide-step"><strong>2</strong><span>Додай на сцену</span></div>
+      <div class="builder-guide-step"><strong>3</strong><span>Звір з шаблоном</span></div>
+      <div class="builder-guide-step"><strong>4</strong><span>Натисни перевірку</span></div>
+    </div>
+
+    <div class="builder-stage-head">
+      <div>
+        <div class="builder-stage-kicker">Builder arena</div>
+        <div class="builder-stage-title">Збирай структуру зверху вниз</div>
+      </div>
+      <button id="btn-reset" title="Очистити робочу зону">Очистити</button>
+      <button id="btn-check">Перевірити ✓</button>
     </div>
 
     <div id="drop-root">
@@ -48,13 +87,13 @@
 
   <aside id="panel">
     <div class="panel-tabs">
-      <button class="ptab active" data-tab="preview">Preview</button>
+      <button class="ptab active" data-tab="preview">Live</button>
       <button class="ptab" data-tab="code">Код</button>
-      <button class="ptab" data-tab="validate">Помилки</button>
+      <button class="ptab" data-tab="validate">Перевірка</button>
     </div>
     <div class="panel-body">
       <div class="panel-view active" id="tab-preview">
-        <div class="preview-label">live preview</div>
+        <div class="preview-label">live page preview</div>
         <iframe id="preview-frame" sandbox="allow-same-origin"></iframe>
       </div>
 
@@ -63,19 +102,36 @@
       </div>
 
       <div class="panel-view" id="tab-validate">
-        <div id="val-output">
+        <div id="val-output" aria-live="polite">
           <div class="val-idle">Натисни "Перевірити", щоб побачити результат</div>
         </div>
       </div>
     </div>
   </aside>
 
-  <footer id="bottombar">
+  <footer id="bottombar" role="status" aria-live="polite">
     <div class="status-dot" id="status-dot"></div>
     <span id="status-text">Готово - перетягуй теги, щоб будувати DOM</span>
     <span>·</span>
     <span>Вузлів: <span class="node-count" id="node-count">0</span></span>
   </footer>
+</div>
+
+<div id="onboarding-overlay">
+  <div class="onboarding-card">
+    <div class="onboarding-badge">🎓</div>
+    <h2>Почни HTML-рейд</h2>
+    <p>Вибирай теги, збирай сцену і проходь рівні так, ніби це маленький builder-квест.</p>
+    <ol class="onboarding-steps">
+      <li><strong>1</strong> Вибери тег у панелі</li>
+      <li><strong>2</strong> Перетягни або торкнись, щоб додати його на сцену</li>
+      <li><strong>3</strong> Натисни «Перевірити», щоб пройти рівень</li>
+    </ol>
+    <div class="onboarding-actions">
+      <button id="onboarding-skip" class="onboarding-secondary">Пропустити</button>
+      <button id="onboarding-start" class="onboarding-primary">Почати гру</button>
+    </div>
+  </div>
 </div>
 
 <div id="levelup-overlay">
@@ -88,11 +144,11 @@
   </div>
 </div>
 
-<div id="toast-wrap"></div>
+<div id="toast-wrap" aria-live="polite" aria-atomic="true"></div>
 <div id="drag-ghost"></div>
 
-<script src="../../../../../../../js/db.js"></script>
-<script src="../../../../../../../js/ui-preferences.js"></script>
+<script src="../js/db.js"></script>
+<script src="../js/ui-preferences.js"></script>
 <script src="js/html-crash-course-game.js"></script>
 </body>
 </html>

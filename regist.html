@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
@@ -25,7 +25,6 @@
       }
     })();
   </script>
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css">
   <link rel="stylesheet" href="style/register.css">
@@ -39,22 +38,22 @@
 
     <main class="card auth-card">
       <div class="icon">⬛</div>
-      <h2>Create an Account</h2>
-      <p class="subtitle" id="authSubtitle">Create a stronger account or continue instantly with your preferred provider.</p>
+      <h2>Створити акаунт</h2>
+      <p class="subtitle" id="authSubtitle">Спочатку створіть акаунт вручну, а потім зможете входити через Google або Telegram.</p>
 
       <div class="field-group">
-        <input type="text" id="login" placeholder="Username" autocomplete="username">
-        <div class="field-hint" id="loginHint">3-20 chars: letters, numbers, _ . -</div>
+        <input type="text" id="login" placeholder="Логін" autocomplete="username">
+        <div class="field-hint" id="loginHint">3-20 символів: літери, цифри, _ . -</div>
       </div>
 
       <div class="field-group">
-        <input type="text" id="tag" placeholder="Profile Tag" autocomplete="off" spellcheck="false">
-        <div class="field-hint" id="tagHint">3-24 chars: letters, numbers and _</div>
+        <input type="text" id="tag" placeholder="Тег профілю" autocomplete="off" spellcheck="false">
+        <div class="field-hint" id="tagHint">3-24 символи: літери, цифри та _</div>
       </div>
 
       <div class="field-group">
         <input type="email" id="email" placeholder="Email" autocomplete="email">
-        <div class="field-hint" id="emailHint">We will use this email for sign-in and account recovery.</div>
+        <div class="field-hint" id="emailHint">Ця пошта буде використовуватись для входу та відновлення</div>
       </div>
 
       <div class="field-group gender-field">
@@ -73,33 +72,33 @@
       </div>
 
       <div class="field-group">
-        <input type="password" id="password" placeholder="Password" autocomplete="new-password">
-        <div class="field-hint" id="passwordHint">At least 8 characters, uppercase letter and number</div>
+        <input type="password" id="password" placeholder="Пароль" autocomplete="new-password">
+        <div class="field-hint" id="passwordHint">Щонайменше 8 символів, велика літера та цифра</div>
       </div>
 
       <div class="field-group">
-        <input type="password" id="confirm" placeholder="Confirm Password" autocomplete="new-password">
-        <div class="field-hint" id="confirmHint">Repeat the password exactly to finish registration</div>
+        <input type="password" id="confirm" placeholder="Підтвердіть пароль" autocomplete="new-password">
+        <div class="field-hint" id="confirmHint">Повторіть пароль без змін</div>
       </div>
 
-      <button id="registerButton" type="button">Sign Up</button>
+      <button id="registerButton" type="button">Зареєструватися</button>
 
       <div id="message" class="auth-message" aria-live="polite"></div>
 
-      <div class="divider">or sign up with</div>
+      <div class="divider">або зареєструватися через</div>
 
       <div class="socials" id="socialButtons">
         <button class="social-btn social-btn--google" data-provider="google" type="button">
           <i class="fab fa-google"></i>
-          <span class="social-btn__label">Google</span>
+          <span class="social-btn__label">Увійти через Google</span>
         </button>
         <button class="social-btn social-btn--telegram" data-provider="telegram" type="button">
           <i class="fab fa-telegram"></i>
-          <span class="social-btn__label">Telegram</span>
+          <span class="social-btn__label">Увійти через Telegram</span>
         </button>
       </div>
 
-      <div class="bottom-text">Have an account? <a href="login.html">Log In!</a></div>
+      <div class="bottom-text">Вже є акаунт? <a href="login.html">Увійти!</a></div>
     </main>
   </div>
   <script src="js/db.js"></script>
@@ -115,4 +114,3 @@
   <script src="js/app-enhancements.js"></script>
 </body>
 </html>
-

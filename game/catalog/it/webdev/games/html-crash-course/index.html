@@ -2,126 +2,344 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>HTML Crash Course</title>
-  <script>
-  (() => {
-    try {
-      const rawDb = localStorage.getItem('miniAppDb');
-      const db = rawDb ? JSON.parse(rawDb) : null;
-      const darkMode = typeof db?.settings?.darkMode === 'boolean'
-        ? db.settings.darkMode
-        : localStorage.getItem('darkMode') !== 'false';
-      const theme = darkMode ? 'dark' : 'light';
-      document.documentElement.dataset.theme = theme;
-      document.documentElement.style.colorScheme = theme;
-      const style = document.createElement('style');
-      style.textContent = darkMode
-        ? 'html[data-theme="dark"] body{background:#0c1311;color:#eef4ff}html[data-theme="dark"] .phone-frame{background:#10161d}'
-        : 'html[data-theme="light"] body{background:#dfe5e9;color:#122033}html[data-theme="light"] .phone-frame{background:#e7edf2}';
-      document.head.appendChild(style);
-    } catch (error) {
-      document.documentElement.dataset.theme = 'dark';
-    }
-  })();
-  </script>
-  <link rel="stylesheet" href="../../../../../../style/app-shell.css">
-  <link rel="stylesheet" href="../../../../../../style/ui-preferences.css">
-  <link rel="stylesheet" href="style/html-crash-course-wrapper.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Life Capital Academy</title>
+  <meta name="description" content="Life Capital Academy — mobile-first academy with gamified learning, progress, рейтинг та міні-ігри.">
+  <meta name="theme-color" content="#0d1b2a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="LCA">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="style/app.css">
 </head>
-<body class="game-wrapper-page">
-  <div class="page-shell">
-    <main class="app phone-frame">
-      <div class="screen screen--game-wrapper">
-        <div class="toast" id="toast"></div>
-
-        <header class="app-topbar">
-          <div class="app-topbar__row game-topbar">
-            <div class="game-topbar__side game-topbar__side--ghost" aria-hidden="true"></div>
-            <div class="app-topbar__center">
-              <h1 class="app-topbar__title" id="pageTitle">HTML Crash Course</h1>
-            </div>
-            <div class="game-topbar__side game-topbar__side--end">
-              <button class="game-topbar__exit" id="backBtn" type="button" aria-label="Вийти">
-                <span class="game-topbar__exit-icon" aria-hidden="true">←</span>
-                <span class="game-topbar__exit-text" id="backBtnText">Вийти</span>
-              </button>
-            </div>
-          </div>
-        </header>
-
-        <section class="game-shell">
-          <section class="game-hero game-hero--header">
-            <div class="game-hero__glow" aria-hidden="true"></div>
-            <div class="game-hero__content">
-              <div class="game-hero__copy">
-                <div class="game-hero__meta">
-                  <span class="game-hero__eyebrow" id="heroEyebrow">Веб-розробка</span>
-                  <div class="game-hero__coins" aria-label="Баланс монет">
-                    <span class="app-coin-pill__icon" aria-hidden="true"></span>
-                    <span id="coinBalance">125</span>
-                  </div>
-                </div>
-                <p class="game-hero__lead" id="heroLead">
-                  Практична міні-гра з drag and drop редактором, live preview і покроковими HTML-рівнями прямо всередині твого застосунку.
-                </p>
-                <div class="game-hero__status">
-                  <span class="game-stage__badge" id="stageLevelBadge">Рівень 1 / 5</span>
-                  <span class="game-stage__badge game-stage__badge--muted" id="stageStatusBadge">Готово до старту</span>
-                </div>
-                <div class="game-chip-row">
-                  <span class="game-chip" id="chipLevels">5 рівнів</span>
-                  <span class="game-chip" id="chipBuilder">Drag &amp; Drop</span>
-                  <span class="game-chip" id="chipPreview">Live Preview</span>
-                </div>
-              </div>
-
-              <div class="game-stats">
-                <article class="game-stat">
-                  <span class="game-stat__label" id="progressStatLabel">Прогрес курсу</span>
-                  <strong class="game-stat__value" id="progressStatValue">0 / 5</strong>
-                  <small class="game-stat__meta" id="progressStatMeta">Готово до старту</small>
-                </article>
-                <article class="game-stat">
-                  <span class="game-stat__label" id="xpStatLabel">Локальний XP</span>
-                  <strong class="game-stat__value" id="xpStatValue">0 XP</strong>
-                  <small class="game-stat__meta" id="xpStatMeta">Синхронно з рівнями гри</small>
-                </article>
-                <article class="game-stat game-stat--accent">
-                  <span class="game-stat__label" id="rewardStatLabel">Нагорода профілю</span>
-                  <strong class="game-stat__value" id="rewardStatValue">+38 XP · +35</strong>
-                  <small class="game-stat__meta" id="rewardStatMeta">Монети та рейтинг підуть у профіль</small>
-                </article>
-              </div>
-            </div>
-          </section>
-
-          <section class="game-stage">
-            <div class="game-stage__frame" id="gameFrameShell">
-              <div class="game-stage__loading" id="frameLoading">Завантажуємо гру...</div>
-              <iframe
-                id="gameFrame"
-                title="HTML Crash Course"
-                src="runtime/index.html?v=20260513-pretty-html"
-                loading="eager"
-                referrerpolicy="same-origin"
-              ></iframe>
-            </div>
-          </section>
-        </section>
-
-        <nav class="bottom-nav" aria-label="Нижня навігація">
-          <button class="bottom-nav__item active" data-nav="home" type="button"><span class="bottom-nav__icon">⌂</span><span>Головна</span></button>
-          <button class="bottom-nav__item" data-nav="profile" type="button"><span class="bottom-nav__icon">●</span><span>Аватар</span></button>
-          <button class="bottom-nav__item" data-nav="shop" type="button"><span class="bottom-nav__icon">▣</span><span>Магазин</span></button>
-          <button class="bottom-nav__item" data-nav="settings" type="button"><span class="bottom-nav__icon">⚙</span><span>Налаштування</span></button>
-        </nav>
+<body>
+  <div id="splash-screen" aria-hidden="true">
+    <div class="splash-core" id="splash-core">
+      <img src="https://cdn.discordapp.com/attachments/1488553575343849544/1491090447920271493/PolyArchive-Gif.gif?ex=6a07ddf1&is=6a068c71&hm=64ffc543b4d3cbb0cbf493ad4fd52533a51ebb843dd3002860e2aad9108f06cd" data-alt-src="assets/preview.gif" fetchpriority="high" alt="Life Capital Academy loading animation" class="splash-gif" id="splash-gif">
+      <div class="splash-loader-window is-hidden" id="splash-loader-fallback" aria-hidden="true">
+        <div class="splash-loader-top">
+          <span></span>
+          <span></span>
+          <span></span>
+          <div class="splash-loader-title">boot://life-capital-academy</div>
+        </div>
+        <div class="splash-loader-body">
+          <div>&lt;app-shell&gt;</div>
+          <div class="splash-loader-indent">&lt;academy-dashboard&gt;</div>
+          <div class="splash-loader-indent-2">Loading mobile experience...</div>
+          <div class="splash-loader-indent">&lt;/academy-dashboard&gt;</div>
+          <div>&lt;/app-shell&gt;</div>
+        </div>
       </div>
-    </main>
+      <div class="splash-copy">
+        <span class="splash-label">Life Capital Academy</span>
+        <strong>Mobile learning startup experience</strong>
+      </div>
+    </div>
   </div>
 
-  <script src="../../../../../../js/db.js"></script>
-  <script src="../../../../../../js/ui-preferences.js"></script>
-  <script src="js/html-crash-course-wrapper.js"></script>
+  <div class="app-shell" id="app-shell">
+    <header class="app-header">
+      <div class="header-row">
+        <div class="brand-lockup">
+          <div class="brand-mark">LC</div>
+          <div>
+            <p class="brand-kicker">Life Capital Academy</p>
+            <h1 class="brand-title">Вхід до гри</h1>
+          </div>
+        </div>
+      </div>
+
+      <section class="hero-card card card--hero">
+        <div class="hero-card__main">
+          <div class="profile-chip">
+            <div class="profile-chip__avatar" id="profile-avatar">LC</div>
+            <div class="profile-chip__body">
+              <span class="profile-chip__eyebrow">Лекція + практика</span>
+              <strong class="profile-chip__name">Міні-курс перед грою</strong>
+              <span class="profile-chip__meta">Спочатку суть HTML, потім сама практика</span>
+            </div>
+          </div>
+
+          <div class="hero-copy">
+            <p class="hero-copy__eyebrow">Про що ця гра</p>
+            <h2>Тут ти вчишся будувати HTML-структуру руками</h2>
+            <p>Гра показує базову логіку сторінки: які теги за що відповідають, як вони вкладаються один в один і як із цього збирається реальний макет сайту.</p>
+          </div>
+
+          <div class="hero-actions">
+            <button class="primary-btn" type="button" id="scroll-lecture-btn">Читати лекцію</button>
+          </div>
+        </div>
+
+        <div class="hero-showcase" aria-hidden="true">
+          <div class="hero-window">
+            <div class="hero-window__bar">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="hero-window__body">
+              <div class="hero-window__line">&lt;html&gt;</div>
+              <div class="hero-window__line hero-window__line--indent">&lt;body&gt;</div>
+              <div class="hero-window__line hero-window__line--indent-2">&lt;header&gt;</div>
+              <div class="hero-window__line hero-window__line--indent-2">&lt;main&gt;</div>
+              <div class="hero-window__line hero-window__line--indent-3">&lt;h1&gt;HTML&lt;/h1&gt;</div>
+              <div class="hero-window__line hero-window__line--indent-3">&lt;p&gt;Структура сторінки&lt;/p&gt;</div>
+              <div class="hero-window__line hero-window__line--indent-2">&lt;/main&gt;</div>
+              <div class="hero-window__line hero-window__line--indent">&lt;/body&gt;</div>
+              <div class="hero-window__line">&lt;/html&gt;</div>
+            </div>
+          </div>
+          <div class="hero-note">
+            <strong>Що буде в практиці</strong>
+            <span>Ти побачиш HTML не як сухий текст, а як зрозумілу послідовність блоків.</span>
+          </div>
+        </div>
+      </section>
+    </header>
+
+    <main class="app-main">
+      <section class="app-screen active" id="screen-home" data-screen="home">
+        <div id="home-toast" class="inline-toast" hidden></div>
+
+        <section class="content-block" id="lecture-section">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">Коротка лекція</p>
+              <h2>Що треба зрозуміти перед початком гри</h2>
+            </div>
+          </div>
+
+          <div class="lecture-overview">
+            <article class="lecture-overview__card card">
+              <span>Що таке HTML</span>
+              <strong>Каркас сторінки</strong>
+              <p>HTML задає структуру, а не “красивість”.</p>
+            </article>
+            <article class="lecture-overview__card card">
+              <span>Що треба зрозуміти</span>
+              <strong>Вкладеність тегів</strong>
+              <p>Один блок живе всередині іншого за логікою сторінки.</p>
+            </article>
+            <article class="lecture-overview__card card">
+              <span>Що буде в грі</span>
+              <strong>Збірка дерева</strong>
+              <p>Ти руками складеш правильну HTML-структуру.</p>
+            </article>
+          </div>
+
+          <div class="lecture-stack">
+            <article class="lecture-card card">
+              <span class="badge">1. Про що гра</span>
+              <h3>HTML Builder Quest вчить не теорії заради теорії, а структурі сторінки</h3>
+              <p>Ти не просто читаєш назви тегів, а одразу бачиш, як із <code>&lt;html&gt;</code>, <code>&lt;body&gt;</code>, <code>&lt;header&gt;</code>, <code>&lt;main&gt;</code> та інших елементів складається реальна веб-сторінка.</p>
+            </article>
+
+            <article class="lecture-card card">
+              <span class="badge">2. Основа HTML</span>
+              <h3>HTML задає каркас сайту</h3>
+              <p>Кожен тег має роль. Заголовки відповідають за структуру змісту, абзаци за текст, зображення за візуал, а секції й блоки допомагають логічно розкласти сторінку на частини.</p>
+            </article>
+
+            <article class="lecture-card card">
+              <span class="badge">3. Що буде в самій грі</span>
+              <h3>У грі треба правильно зібрати HTML-дерево</h3>
+              <p>Ти будеш додавати теги на сцену, вкладати їх один в один, заповнювати прості атрибути та перевіряти, чи структура відповідає завданню рівня.</p>
+              <div class="lecture-list">
+                <span>Старт з простих тегів: <code>&lt;h1&gt;</code> і <code>&lt;p&gt;</code></span>
+                <span>Потім: <code>&lt;header&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;footer&gt;</code></span>
+                <span>Далі: зображення, посилання, навігація і повна сторінка</span>
+              </div>
+            </article>
+
+            <article class="lecture-card card lecture-card--accent">
+              <span class="badge">4. Перед стартом</span>
+              <h3>Головна думка проста: HTML це порядок елементів</h3>
+              <p>Якщо ти розумієш, який блок повинен бути зверху, що має бути всередині нього і які теги відповідають за зміст, то гру пройти буде легко і логічно.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="content-block">
+          <article class="game-launch-panel card">
+            <p class="section-kicker">Практика</p>
+            <h2>Тепер переходь до гри</h2>
+            <p>Після цієї короткої лекції ти вже розумієш, що саме будеш будувати. Далі залишається відкрити гру і зібрати HTML-структуру руками.</p>
+            <button class="primary-btn primary-btn--full" type="button" id="launch-game-btn">Почати гру</button>
+          </article>
+        </section>
+      </section>
+
+      <section class="app-screen" id="screen-courses" data-screen="courses">
+        <div class="screen-topbar">
+          <button class="ghost-btn ghost-btn--compact" type="button" data-screen-target="home">← На головну</button>
+        </div>
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">Catalog</p>
+            <h2>Навчальні треки та категорії</h2>
+          </div>
+        </div>
+        <div class="catalog-grid" id="catalog-grid"></div>
+      </section>
+
+      <section class="app-screen" id="screen-course" data-screen="course">
+        <div class="screen-breadcrumb">
+          <button class="ghost-btn ghost-btn--compact" type="button" id="course-back-btn">← Назад до каталогу</button>
+          <span class="screen-breadcrumb__copy">Course detail</span>
+        </div>
+        <article class="course-hero card">
+          <div class="course-hero__copy">
+            <span class="badge" id="course-badge">Featured track</span>
+            <h2 id="course-title">Web Builder Track</h2>
+            <p id="course-copy">Практичний курс з HTML, CSS та композиції інтерфейсів через короткі місії.</p>
+          </div>
+          <div class="course-hero__meta">
+            <div class="course-mini-stat">
+              <span>Прогрес</span>
+              <strong id="course-progress">8 / 18</strong>
+            </div>
+            <div class="course-mini-stat">
+              <span>Складність</span>
+              <strong id="course-difficulty">Beginner</strong>
+            </div>
+            <div class="course-mini-stat">
+              <span>Нагорода</span>
+              <strong id="course-reward">5 рівнів</strong>
+            </div>
+          </div>
+          <div class="course-progress-block">
+            <div class="hero-progress__head">
+              <span>Детальний прогрес треку</span>
+              <strong id="course-progress-label">44%</strong>
+            </div>
+            <div class="progress-track" aria-label="Course progress">
+              <div class="progress-fill" id="course-progress-fill" style="width: 44%"></div>
+            </div>
+          </div>
+          <div class="course-actions">
+            <button class="primary-btn" type="button" id="course-continue-btn">Продовжити навчання</button>
+            <button class="secondary-btn" type="button" data-sheet="stats">Статистика треку</button>
+          </div>
+        </article>
+
+        <div class="course-layout">
+          <article class="card course-panel">
+            <div class="section-head section-head--compact">
+              <div>
+                <p class="section-kicker">Roadmap</p>
+                <h3>Модулі та місії</h3>
+              </div>
+            </div>
+            <div class="course-step-list" id="course-step-list"></div>
+          </article>
+
+          <article class="card course-panel">
+            <div class="section-head section-head--compact">
+              <div>
+                <p class="section-kicker">Product view</p>
+                <h3>Що отримає користувач</h3>
+              </div>
+            </div>
+            <div class="course-perks" id="course-perks"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="app-screen" id="screen-games" data-screen="games">
+        <div class="screen-topbar">
+          <button class="ghost-btn ghost-btn--compact" type="button" data-screen-target="home">← На головну</button>
+        </div>
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">Mini-games</p>
+            <h2>Практика через короткі місії</h2>
+          </div>
+        </div>
+        <div class="games-list" id="games-list"></div>
+      </section>
+
+      <section class="app-screen" id="screen-leaderboard" data-screen="leaderboard">
+        <div class="screen-topbar">
+          <button class="ghost-btn ghost-btn--compact" type="button" data-screen-target="home">← На головну</button>
+        </div>
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">Leaderboard</p>
+            <h2>Тижневий рейтинг академії</h2>
+          </div>
+        </div>
+        <div class="leaderboard-card card">
+          <div class="leaderboard-list" id="leaderboard-list"></div>
+        </div>
+      </section>
+
+      <section class="app-screen" id="screen-profile" data-screen="profile">
+        <div class="screen-topbar">
+          <button class="ghost-btn ghost-btn--compact" type="button" data-screen-target="home">← На головну</button>
+        </div>
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">Profile</p>
+            <h2>Особистий кабінет та досягнення</h2>
+          </div>
+        </div>
+        <div class="profile-layout">
+          <article class="profile-summary card">
+            <div class="profile-summary__top">
+              <div class="profile-chip profile-chip--large">
+                <div class="profile-chip__avatar" id="profile-screen-avatar">LC</div>
+                <div class="profile-chip__body">
+                  <span class="profile-chip__eyebrow">Life Capital ID</span>
+                  <strong class="profile-chip__name" id="profile-screen-name">Академіст</strong>
+                  <span class="profile-chip__meta" id="profile-screen-handle">@guest</span>
+                </div>
+              </div>
+              <span class="status-chip" id="profile-streak-pill">7 day streak</span>
+            </div>
+            <div class="stat-pairs">
+              <div><span>Формат</span><strong>Лекція</strong></div>
+              <div><span>Практика</span><strong>5 рівнів</strong></div>
+              <div><span>Тема</span><strong>HTML</strong></div>
+              <div><span>Фокус</span><strong>Структура</strong></div>
+            </div>
+          </article>
+
+          <article class="profile-achievements card">
+            <div class="section-head section-head--compact">
+              <div>
+                <p class="section-kicker">Achievements</p>
+                <h3>Твої бейджі</h3>
+              </div>
+            </div>
+            <div class="achievement-grid" id="achievement-grid"></div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+  </div>
+
+  <div class="sheet-backdrop" id="sheet-backdrop" hidden>
+    <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="sheet-header">
+        <div>
+          <p class="section-kicker" id="sheet-kicker">Sheet</p>
+          <h2 id="sheet-title">Modal</h2>
+        </div>
+        <button class="icon-btn" type="button" id="sheet-close" aria-label="Закрити">✕</button>
+      </div>
+      <div class="sheet-body" id="sheet-body"></div>
+    </div>
+  </div>
+
+  <div class="toast-stack" id="toast-stack" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="js/db.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>

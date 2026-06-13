@@ -1,6 +1,8 @@
 html,
 body.game-wrapper-page {
   min-height: 100%;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 body.game-wrapper-page {
@@ -11,6 +13,7 @@ body.game-wrapper-page {
 body.game-wrapper-page .page-shell {
   min-height: 100dvh;
   display: block;
+  overflow-x: hidden;
 }
 
 body.game-wrapper-page .phone-frame {
@@ -444,7 +447,7 @@ body.theme-light .game-stage__loading {
   }
 
   .phone-frame {
-    width: min(calc(100vw - 72px), 1120px) !important;
+    width: min(calc(100% - 72px), 1120px) !important;
     min-height: min(860px, calc(100dvh - 36px)) !important;
     height: auto !important;
   }

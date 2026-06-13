@@ -1,35 +1,17 @@
 {
-  "id": "html-crash",
-  "slug": "html-crash-course",
-  "categoryId": "it",
-  "subcategoryId": "webdev",
-  "title": {
-    "uk": "HTML Crash Course",
-    "en": "HTML Crash Course"
-  },
-  "description": {
-    "uk": "Збери сторінку з блоків",
-    "en": "Build a page from blocks"
-  },
-  "entry": {
-    "type": "html",
-    "path": "index.html"
-  },
-  "runtime": {
-    "path": "runtime/index.html"
-  },
-  "difficulty": "beginner",
-  "durationMinutes": 18,
-  "rewards": {
-    "xp": 38,
-    "coins": 35
-  },
-  "status": "active",
-  "tags": [
-    "html",
-    "web",
-    "drag-drop",
-    "builder"
-  ],
-  "lessonIds": []
+  "name": "Life Capital Academy",
+  "short_name": "LCA",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0d1b2a",
+  "theme_color": "#0d1b2a",
+  "description": "Life Capital Academy — mobile-first gamified learning academy with mini-games, progress, streaks and leaderboard.",
+  "icons": [
+    {
+      "src": "assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
 }

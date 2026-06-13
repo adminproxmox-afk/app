@@ -1,7 +1,7 @@
 const registerI18n = {
   uk: {
     title: 'Створити акаунт',
-    subtitle: 'Створіть надійний акаунт або увійдіть одразу через зручний провайдер.',
+    subtitle: 'Створіть акаунт вручну, а потім зможете входити через Google або Telegram.',
     username: 'Логін',
     tag: 'Тег профілю',
     email: 'Пошта',
@@ -10,7 +10,7 @@ const registerI18n = {
     gender_female: 'Жінка',
     gender_hint: 'Це одразу застосує аватар і персонажа.',
     password: 'Пароль',
-    confirm: 'Підтвердіть пароль',
+    confirm: 'Підтвердьте пароль',
     tag_hint: '3-24 символи: латиниця, цифри та _',
     email_hint: 'Ця пошта буде використовуватись для входу та відновлення',
     confirm_hint: 'Повторіть пароль без змін',
@@ -25,7 +25,7 @@ const registerI18n = {
     weak_password: 'Пароль має бути не коротшим за 8 символів, містити велику літеру та цифру',
     password_mismatch: 'Паролі не співпадають',
     confirm_match: 'Паролі співпадають',
-    login_exists: 'Користувач з таким логіном уже існує',
+    login_exists: 'Користувач з таким логіном вже існує',
     tag_exists: 'Такий тег уже зайнятий',
     tag_too_similar: 'Цей тег надто схожий на вже існуючий @{tag}',
     tag_ready: 'Тег буде збережено як @{tag}',
@@ -35,7 +35,7 @@ const registerI18n = {
   },
   en: {
     title: 'Create an Account',
-    subtitle: 'Create a stronger account or continue instantly with your preferred provider.',
+    subtitle: 'Create the account manually first, then you can use Google or Telegram to sign in.',
     username: 'Username',
     tag: 'Profile Tag',
     email: 'Email',
@@ -263,30 +263,34 @@ function register() {
 
   const result = window.AppDB?.registerUser?.({
     login,
-    username: tagState.normalizedTag,
+    tag: tagState.normalizedTag,
     email,
-    password,
     gender,
+    password,
     autoLogin: true
   });
 
-  if (result?.code === 'LOGIN_EXISTS') {
-    showRegisterMessage(t.login_exists, 'error');
-    return;
-  }
-
-  if (result?.code === 'TAG_EXISTS' || result?.code === 'TAG_TOO_SIMILAR' || result?.code === 'TAG_INVALID') {
-    showRegisterMessage(getTagMessage(result, t), 'error');
-    updateTagHint();
-    return;
-  }
-
-  if (result?.code === 'EMAIL_EXISTS') {
-    showRegisterMessage(t.email_exists, 'error');
-    return;
-  }
-
   if (!result?.ok) {
+    if (result?.code === 'LOGIN_EXISTS') {
+      showRegisterMessage(t.login_exists, 'error');
+      return;
+    }
+
+    if (result?.code === 'EMAIL_EXISTS') {
+      showRegisterMessage(t.email_exists, 'error');
+      return;
+    }
+
+    if (result?.code === 'TAG_EXISTS') {
+      showRegisterMessage(t.tag_exists, 'error');
+      return;
+    }
+
+    if (result?.code === 'TAG_TOO_SIMILAR') {
+      showRegisterMessage(t.tag_too_similar.replace('{tag}', result.similarTag || ''), 'error');
+      return;
+    }
+
     showRegisterMessage(t.failed, 'error');
     return;
   }
@@ -302,26 +306,27 @@ if (window.AppDB?.getCurrentUser?.()) {
 applyRegisterTranslations();
 
 registerElements.registerButton?.addEventListener('click', register);
-registerElements.password?.addEventListener('input', () => {
-  updatePasswordHint();
-  updateConfirmHint();
+registerElements.login?.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') register();
 });
-registerElements.tag?.addEventListener('input', updateTagHint);
-registerElements.confirm?.addEventListener('input', updateConfirmHint);
 registerElements.tag?.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter') {
-    register();
-  }
+  if (event.key === 'Enter') register();
 });
-registerElements.confirm?.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter') {
-    register();
-  }
+registerElements.email?.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') register();
 });
 registerElements.password?.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter') {
-    register();
-  }
+  if (event.key === 'Enter') register();
+});
+registerElements.confirm?.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') register();
+});
+document.querySelectorAll('input[name="gender"]').forEach((input) => {
+  input.addEventListener('change', () => {
+    updatePasswordHint();
+    updateConfirmHint();
+    updateTagHint();
+  });
 });
 
 window.AuthUX?.bindSocialButtons?.(registerElements.socialButtons, {

@@ -171,7 +171,7 @@ const APP_GAME_ID = 'html-crash';
 const APP_GAME_NAME = 'HTML Crash Course';
 const APP_GAME_CATEGORY = 'it';
 const APP_GAME_SUBCATEGORY = 'webdev';
-const APP_ROOT_PREFIX = '../../../../../../../';
+const APP_ROOT_PREFIX = '../';
 const APP_PROGRESS_TEMPLATE = {
   xp: 0,
   gamesPlayed: 0,
@@ -191,6 +191,7 @@ const APP_LEVEL_REWARDS = [
   { xp: 9, coins: 8 },
   { xp: 13, coins: 11 }
 ];
+const LEVEL_ICONS = ['🧩', '🏗️', '🖼️', '🧭', '🚀'];
 const APP_TOTAL_REWARD = APP_LEVEL_REWARDS.reduce((acc, reward) => ({
   xp: acc.xp + reward.xp,
   coins: acc.coins + reward.coins
@@ -200,20 +201,7 @@ const APP_COMPLETION_REDIRECT_DELAY = 1500;
 const TEXT_TAGS = new Set(['title', 'h1', 'h2', 'h3', 'p', 'a', 'li', 'span', 'button']);
 const VOID_TAGS = new Set(['img', 'br', 'hr', 'meta', 'link', 'input']);
 
-function redirectToLogin() {
-  const target = new URL(`${APP_ROOT_PREFIX}login.html`, window.location.href).href;
-  if (window.top && window.top !== window) {
-    window.top.location.href = target;
-    return;
-  }
-  window.location.href = target;
-}
-
-const currentUser = window.AppDB?.getCurrentUser?.() || '';
-if (!currentUser) {
-  redirectToLogin();
-  throw new Error('AUTH_REQUIRED');
-}
+const currentUser = window.AppDB?.getCurrentUser?.() || 'guest';
 
 const STORAGE_SCOPE = currentUser;
 const LEGACY_STORAGE_KEYS = {
@@ -231,6 +219,18 @@ const TREE_KEY_PREFIX = `${STORAGE_KEY_PREFIX}tree_`;
 const THEME_KEY = `${STORAGE_KEY_PREFIX}theme`;
 const APP_SYNC_KEY = `htmlCrashCourseAppSync:${STORAGE_SCOPE}`;
 const ghost = document.getElementById('drag-ghost');
+const onboardingOverlay = document.getElementById('onboarding-overlay');
+const onboardingStartBtn = document.getElementById('onboarding-start');
+const onboardingSkipBtn = document.getElementById('onboarding-skip');
+let touchDragTimer = 0;
+let touchStartInfo = null;
+const touchDragDelay = isMobileDevice()
+  ? { chip: 60, node: 120 }
+  : { chip: 80, node: 180 };
+
+function isMobileDevice() {
+  return window.matchMedia('(pointer: coarse)').matches || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
 
 function readJsonStorage(key, fallback) {
   try {
@@ -240,6 +240,58 @@ function readJsonStorage(key, fallback) {
   } catch {
     return fallback;
   }
+}
+
+function showOnboarding() {
+  if (!onboardingOverlay) return;
+  if (localStorage.getItem(`${STORAGE_KEY_PREFIX}seenOnboarding`) === '1') return;
+  onboardingOverlay.classList.add('show');
+}
+
+function hideOnboarding() {
+  if (!onboardingOverlay) return;
+  onboardingOverlay.classList.remove('show');
+  localStorage.setItem(`${STORAGE_KEY_PREFIX}seenOnboarding`, '1');
+}
+
+function insertTag(tag, pid = 'root') {
+  const error = validateDropTarget(pid, { type: 'chip', tag });
+  if (error) {
+    setStatus(false, error);
+    toast(error, 'err');
+    return;
+  }
+
+  const newNode = mkNode(tag);
+  if (pid === 'root') {
+    S.tree.push(newNode);
+  } else {
+    const parent = findNode(S.tree, Number(pid));
+    if (parent) parent.ch.push(newNode);
+  }
+
+  S.lastErrors = [];
+  saveTree();
+  renderCanvas();
+  setStatus(null, 'Блок додано на сцену.');
+  toast('Блок додано', 'info');
+}
+
+function beginTouchDrag(info) {
+  if (!info || S.dragSrc) return;
+  const { targetType, tag, nodeId } = info;
+  if (targetType === 'chip') {
+    S.dragSrc = { type: 'chip', tag };
+    ghost.textContent = `<${tag}>`;
+  } else {
+    const node = findNode(S.tree, nodeId);
+    if (!node) return;
+    S.dragSrc = { type: 'node', id: nodeId };
+    ghost.textContent = `<${node.tag}>`;
+  }
+  ghost.style.left = `${(info.currentX ?? info.startX) + 12}px`;
+  ghost.style.top = `${(info.currentY ?? info.startY) + 12}px`;
+  ghost.style.display = 'block';
 }
 
 function normalizeLevelIndex(value) {
@@ -459,36 +511,8 @@ function getFrameTopFromHost() {
 
 function syncSidebarWithHostScroll() {
   const sidebar = document.getElementById('sidebar');
-  const app = document.getElementById('app');
-  if (!sidebar || !app) return;
-
-  if (window.innerWidth <= 820) {
-    clearSidebarFollowState();
-    return;
-  }
-
-  try {
-    if (!window.parent || window.parent === window) {
-      clearSidebarFollowState();
-      return;
-    }
-
-    const frameTop = getFrameTopFromHost();
-    if (typeof frameTop !== 'number') {
-      clearSidebarFollowState();
-      return;
-    }
-
-    const sidebarBaseTop = sidebar.offsetTop;
-    const topGap = 18;
-    const bottomGap = 24;
-    const maxTranslate = Math.max(0, app.scrollHeight - sidebarBaseTop - sidebar.offsetHeight - bottomGap);
-    const translate = Math.max(0, Math.min(maxTranslate, topGap - (frameTop + sidebarBaseTop)));
-
-    sidebar.style.setProperty('--sidebar-follow-offset', `${Math.round(translate)}px`);
-  } catch {
-    clearSidebarFollowState();
-  }
+  if (!sidebar) return;
+  clearSidebarFollowState();
 }
 
 function scheduleSidebarFollowSync() {
@@ -527,48 +551,25 @@ function saveMeta() {
 }
 
 function getInitialTheme() {
-  const projectDarkMode = window.AppDB?.getData?.()?.settings?.darkMode;
-  if (typeof projectDarkMode === 'boolean') {
-    return projectDarkMode ? 'dark' : 'light';
-  }
+  const storedTheme = localStorage.getItem(THEME_KEY);
+  if (storedTheme === 'dark' || storedTheme === 'light') return storedTheme;
 
-  const saved = localStorage.getItem(THEME_KEY) || localStorage.getItem(LEGACY_STORAGE_KEYS.theme);
-  if (saved === 'light' || saved === 'dark') return saved;
-
-  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-    ? 'dark'
-    : 'light';
+  const darkModeEnabled = window.AppDB?.getData?.()?.settings?.darkMode;
+  return darkModeEnabled === false ? 'light' : 'dark';
 }
 
 function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
   document.documentElement.style.colorScheme = theme;
   document.body.dataset.theme = theme;
-  const btn = document.getElementById('btn-theme');
-  if (btn) {
-    btn.textContent = theme === 'dark' ? '☀' : '◐';
-    btn.title = theme === 'dark' ? 'Світла тема' : 'Темна тема';
-    btn.setAttribute('aria-label', btn.title);
-  }
 }
 
-function toggleTheme() {
-  const nextTheme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
-  localStorage.setItem(THEME_KEY, nextTheme);
-  applyTheme(nextTheme);
-  window.AppDB?.update?.((db) => {
-    db.settings = db.settings || {};
-    db.settings.darkMode = nextTheme === 'dark';
-  });
-  postHostMessage('theme-change', { theme: nextTheme });
+function closeMobileMenu() {
+  return undefined;
 }
 
 function saveTree() {
   localStorage.setItem(treeKey(), JSON.stringify(S.tree));
-}
-
-function clearAllTrees() {
-  LEVELS.forEach((_, index) => localStorage.removeItem(treeKey(index)));
 }
 
 function syncCompletedLevelsWithProject(options = {}) {
@@ -594,7 +595,8 @@ function syncCompletedLevelsWithProject(options = {}) {
 
   window.AppDB?.update?.((db) => {
     db.profile = db.profile || {};
-    db.profile.coins = Number(db.profile.coins || 125) + reward.coins;
+    const currentCoins = Number(db.profile.coins);
+    db.profile.coins = (Number.isFinite(currentCoins) ? currentCoins : 0) + reward.coins;
     db.progress = createProgressState(db.progress);
     db.progress.xp = Number(db.progress.xp || 0) + reward.xp;
     db.progress.categoryScores[APP_GAME_CATEGORY] = Number(db.progress.categoryScores[APP_GAME_CATEGORY] || 0) + reward.xp;
@@ -827,14 +829,86 @@ function buildPreviewDoc() {
 <head>
   <meta charset="utf-8">
   <style>
-    body { font-family: Arial, sans-serif; padding: 16px; color: #1f2937; line-height: 1.45; }
-    header { padding: 12px 16px; background: #eef6ff; border-radius: 12px; margin-bottom: 12px; }
-    nav { margin-bottom: 8px; }
-    nav a { margin-right: 10px; color: #2563eb; text-decoration: none; }
-    main, section, article { margin-bottom: 12px; }
-    img { max-width: 100%; min-height: 48px; border-radius: 8px; background: #e5eef7; display: inline-block; }
-    footer { margin-top: 12px; padding-top: 10px; border-top: 1px solid #d9e6f2; color: #64748b; }
-    ul { padding-left: 18px; }
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 28px;
+      color: #0f2134;
+      line-height: 1.6;
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(99, 172, 255, 0.18), transparent 24%),
+        linear-gradient(180deg, #f7fbff 0%, #edf5ff 100%);
+    }
+    body > * {
+      width: min(100%, 860px);
+      margin-left: auto;
+      margin-right: auto;
+    }
+    header, main, section, article, footer, nav, div {
+      border-radius: 20px;
+    }
+    header, main, section, article, footer {
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      background: rgba(255, 255, 255, 0.84);
+      border: 1px solid rgba(118, 166, 219, 0.18);
+      box-shadow: 0 16px 34px rgba(41, 86, 134, 0.1);
+      backdrop-filter: blur(10px);
+    }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding: 0;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+    }
+    nav a, a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #e7f2ff;
+      color: #17599e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    h1, h2, h3 {
+      margin: 0 0 10px;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+    }
+    p, li, span, button {
+      font-size: 1rem;
+    }
+    img {
+      max-width: 100%;
+      min-height: 60px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, #dcecff 0%, #c7ddf8 100%);
+      display: inline-block;
+      box-shadow: 0 10px 24px rgba(29, 78, 133, 0.14);
+    }
+    button {
+      padding: 12px 18px;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #ffc95e 0%, #ffaa30 100%);
+      color: #4f2b00;
+      font-weight: 800;
+    }
+    footer {
+      color: #56708b;
+    }
+    ul {
+      padding-left: 20px;
+    }
   </style>
 </head>
 <body>
@@ -874,6 +948,7 @@ function buildCodePanelMarkup(html) {
   const source = html || '<!-- тут поки порожньо -->';
   const lines = source.split('\n');
   const level = LEVELS[S.level];
+  const nodeTotal = countNodes(S.tree);
 
   return `
     <div class="code-shell">
@@ -882,7 +957,7 @@ function buildCodePanelMarkup(html) {
           <span class="code-shell__tab-dot"></span>
           <span class="code-shell__title">index.html</span>
         </div>
-        <div class="code-shell__meta">HTML CRASH COURSE · level ${level.id}</div>
+        <div class="code-shell__meta">HTML Builder · level ${level.id} · nodes ${nodeTotal}</div>
       </div>
       <div class="code-shell__body">
         <div class="code-gutter" aria-hidden="true">
@@ -904,12 +979,15 @@ function buildCodePanelMarkup(html) {
 }
 
 function createEmptyHint() {
+  const lvl = LEVELS[S.level];
   const hint = document.createElement('div');
   hint.className = 'empty-hint';
   hint.id = 'empty-hint';
   hint.innerHTML = `
+    <div class="empty-hint-badge">Builder arena</div>
     <div class="empty-hint-icon">⬡</div>
-    <div class="empty-hint-text">Перетягни HTML-блоки сюди</div>
+    <div class="empty-hint-text">Почни будувати сцену рівня</div>
+    <div class="empty-hint-subtext">Місія: ${lvl.template}</div>
   `;
   return hint;
 }
@@ -917,7 +995,12 @@ function createEmptyHint() {
 function renderSidebar() {
   const lvl = LEVELS[S.level];
   const sidebar = document.getElementById('sidebar');
-  sidebar.innerHTML = '<div class="sb-label">Теги</div>';
+  sidebar.innerHTML = `
+    <div class="sidebar-toolbar">
+      <div class="sb-label">Теги для цього рівня</div>
+      <button class="sidebar-reset" id="sidebar-reset" type="button">Очистити</button>
+    </div>
+  `;
 
   lvl.tags.forEach(tag => {
     const meta = TAGS[tag] || {};
@@ -934,18 +1017,35 @@ function renderSidebar() {
     });
 
     chip.addEventListener('dragend', () => chip.classList.remove('dragging'));
-    chip.addEventListener('touchstart', onTouchStart, { passive: true });
+    chip.addEventListener('touchstart', onTouchStart, { passive: false });
     sidebar.appendChild(chip);
   });
+
+  const sidebarReset = document.getElementById('sidebar-reset');
+  if (sidebarReset) sidebarReset.addEventListener('click', resetCurrentLevel);
 
   scheduleSidebarFollowSync();
 }
 
 function renderTask() {
   const lvl = LEVELS[S.level];
+  const completedPercent = Math.round((S.done.length / LEVELS.length) * 100);
+  const topbarLevelTitle = document.getElementById('topbar-level-title');
+  const topbarSummary = document.getElementById('topbar-summary');
+  const tagPreview = lvl.tags.slice(0, 3).map(tag => `<${tag}>`).join(' · ');
   document.getElementById('task-title').textContent = `Рівень ${lvl.id}: ${lvl.name}`;
   document.getElementById('task-desc').textContent = lvl.desc;
   document.getElementById('task-template').textContent = `📘 ${lvl.template}`;
+  document.getElementById('task-kicker').textContent = 'Що треба побудувати зараз';
+  document.getElementById('task-icon').textContent = LEVEL_ICONS[S.level] || '🎯';
+  document.getElementById('task-progress').textContent = `${lvl.id} / ${LEVELS.length}`;
+  document.getElementById('task-reward').textContent = tagPreview || '<html>';
+  document.getElementById('task-completion').textContent = `${completedPercent}%`;
+  if (topbarLevelTitle) topbarLevelTitle.textContent = `Рівень ${lvl.id} · ${lvl.name}`;
+  if (topbarSummary) topbarSummary.textContent = lvl.desc;
+  const mobileLevel = document.getElementById('mobile-level');
+  if (mobileLevel) mobileLevel.textContent = String(S.level + 1);
+  document.title = `HTML Builder - ${lvl.name}`;
 }
 
 function renderLevelTabs() {
@@ -1045,8 +1145,32 @@ function bindLevelTabsScroller(wrap = document.getElementById('level-tabs')) {
 
 function renderXP() {
   const maxXP = LEVELS.reduce((sum, lvl) => sum + lvl.xp, 0);
-  document.getElementById('xp-num').textContent = `${S.xp} XP`;
-  document.getElementById('xp-fill').style.width = `${Math.round(Math.min(100, (S.xp / maxXP) * 100))}%`;
+  const xpNum = document.getElementById('xp-num');
+  const xpFill = document.getElementById('xp-fill');
+  if (xpNum) xpNum.textContent = `${S.xp} XP`;
+  if (xpFill) xpFill.style.width = `${Math.round(Math.min(100, (S.xp / maxXP) * 100))}%`;
+  const mobileXP = document.getElementById('mobile-xp');
+  if (mobileXP) mobileXP.textContent = `${S.xp} XP`;
+}
+
+function renderPlayerMeta() {
+  const db = window.AppDB?.getData?.() || {};
+  const user = db.user || {};
+  const profile = db.profile || {};
+
+  const coinsEl = document.getElementById('coins-num');
+  const avatarEl = document.getElementById('player-avatar');
+  const nameEl = document.getElementById('player-name');
+  const streakEl = document.getElementById('player-streak');
+  const mobileCoins = document.getElementById('mobile-coins');
+  const mobileStreak = document.getElementById('mobile-streak');
+
+  if (coinsEl) coinsEl.textContent = String(profile.coins || 0);
+  if (avatarEl) avatarEl.textContent = user.avatar || 'LC';
+  if (nameEl) nameEl.textContent = user.name || 'Академіст';
+  if (streakEl) streakEl.textContent = `${user.streak || 0} day streak`;
+  if (mobileCoins) mobileCoins.textContent = String(profile.coins || 0);
+  if (mobileStreak) mobileStreak.textContent = `${user.streak || 0} day`;
 }
 
 function buildAttrPreview(node) {
@@ -1070,10 +1194,11 @@ function buildNodeEl(node, issueMap) {
   header.className = 'node-header';
   header.draggable = true;
   header.innerHTML = `
-    <span class="node-caret">${hasChildrenArea ? (collapsed ? '▸' : '▾') : ''}</span>
-    <span class="node-tag-open" style="color:${meta.color}">&lt;${node.tag}&gt;</span>
-    <span class="node-attrs-inline" id="ai-${node.id}">${buildAttrPreview(node)}</span>
-    ${!VOID_TAGS.has(node.tag) ? `<span class="node-tag-close">&lt;/${node.tag}&gt;</span>` : ''}
+    <div class="node-header-main">
+      <span class="node-caret">${hasChildrenArea ? (collapsed ? '▸' : '▾') : ''}</span>
+      <span class="node-tag-open" style="color:${meta.color}">&lt;${node.tag}&gt;</span>
+      <span class="node-attrs-inline" id="ai-${node.id}">${buildAttrPreview(node)}</span>
+    </div>
     <button class="node-del" title="Видалити">✕</button>
   `;
 
@@ -1083,7 +1208,7 @@ function buildNodeEl(node, issueMap) {
     event.stopPropagation();
   });
 
-  header.addEventListener('touchstart', onTouchStart, { passive: true });
+  header.addEventListener('touchstart', onTouchStart, { passive: false });
 
   const caret = header.querySelector('.node-caret');
   if (caret && hasChildrenArea) {
@@ -1129,6 +1254,7 @@ function buildNodeEl(node, issueMap) {
       input.placeholder = key === 'src' || key === 'href' ? 'https://...' : '';
       input.addEventListener('input', () => {
         node.attrs[key] = input.value;
+        S.lastErrors = [];
         const preview = document.getElementById(`ai-${node.id}`);
         if (preview) preview.innerHTML = buildAttrPreview(node);
         saveTree();
@@ -1161,11 +1287,24 @@ function buildNodeEl(node, issueMap) {
     const dropZone = document.createElement('div');
     dropZone.className = 'node-drop-zone';
     dropZone.dataset.pid = String(node.id);
+    if (!node.ch.length) {
+      const slotHint = document.createElement('div');
+      slotHint.className = 'node-slot-hint';
+      slotHint.textContent = 'Сюди додай вкладені теги';
+      dropZone.appendChild(slotHint);
+    }
     node.ch.forEach(child => dropZone.appendChild(buildNodeEl(child, issueMap)));
     setupDropZone(dropZone, node.id);
 
     childrenWrap.appendChild(dropZone);
     wrap.appendChild(childrenWrap);
+  }
+
+  if (!VOID_TAGS.has(node.tag)) {
+    const footer = document.createElement('div');
+    footer.className = 'node-footer';
+    footer.innerHTML = `<span class="node-tag-close" style="color:${meta.color}">&lt;/${node.tag}&gt;</span>`;
+    wrap.appendChild(footer);
   }
 
   return wrap;
@@ -1197,10 +1336,22 @@ function updateCode() {
   document.getElementById('code-output').innerHTML = buildCodePanelMarkup(raw);
 }
 
+function renderValidationIdle() {
+  const out = document.getElementById('val-output');
+  out.innerHTML = `
+    <div class="val-idle">Натисни "Перевірити", щоб побачити результат</div>
+  `;
+}
+
 function showValidation(errs) {
   const out = document.getElementById('val-output');
+  const total = errs.length;
   if (errs.length === 0) {
     out.innerHTML = `
+      <div class="val-summary ok">
+        <strong>Структура валідна</strong>
+        <span>Рівень зібрано правильно, можна переходити далі.</span>
+      </div>
       <div class="val-item ok">
         <span class="val-item-icon">✓</span>
         <span class="val-item-text">Усі перевірки пройдено!</span>
@@ -1209,12 +1360,18 @@ function showValidation(errs) {
     return;
   }
 
-  out.innerHTML = errs.map(err => `
+  out.innerHTML = `
+    <div class="val-summary err">
+      <strong>Знайдено ${total} ${total === 1 ? 'помилку' : total < 5 ? 'помилки' : 'помилок'}</strong>
+      <span>Дивись повідомлення нижче і добудуй структуру по шаблону рівня.</span>
+    </div>
+    ${errs.map(err => `
     <div class="val-item err">
       <span class="val-item-icon">✕</span>
       <span class="val-item-text">${err}</span>
     </div>
-  `).join('');
+  `).join('')}
+  `;
 }
 
 function switchTab(name) {
@@ -1232,6 +1389,13 @@ function switchTab(name) {
 function updatePanel() {
   if (S.activeTab === 'preview') updatePreview();
   if (S.activeTab === 'code') updateCode();
+  if (S.activeTab === 'validate') {
+    if (S.lastErrors.length > 0) {
+      showValidation(S.lastErrors);
+    } else {
+      renderValidationIdle();
+    }
+  }
 }
 
 function setupDropZone(el, pid) {
@@ -1304,27 +1468,55 @@ function onTouchStart(event) {
   const chip = event.target.closest('.tag-chip');
   const header = event.target.closest('.node-header');
   if (!chip && !header) return;
+  if (chip) event.preventDefault();
 
-  if (chip) {
-    S.dragSrc = { type: 'chip', tag: chip.dataset.tag };
-    ghost.textContent = `<${chip.dataset.tag}>`;
-  } else {
-    const nodeEl = header.closest('.dom-node');
-    const nodeId = Number(nodeEl.dataset.id);
-    S.dragSrc = { type: 'node', id: nodeId };
-    const node = findNode(S.tree, nodeId);
-    ghost.textContent = `<${node?.tag || '?'}>`;
-  }
+  const touch = event.touches[0];
+  const targetType = chip ? 'chip' : 'node';
+  const nodeEl = header?.closest('.dom-node');
+  const nodeId = nodeEl ? Number(nodeEl.dataset.id) : null;
 
-  ghost.style.display = 'block';
+  touchStartInfo = {
+    startX: touch.clientX,
+    startY: touch.clientY,
+    currentX: touch.clientX,
+    currentY: touch.clientY,
+    targetType,
+    tag: chip?.dataset.tag,
+    nodeId,
+    dragStarted: false
+  };
+
+  if (touchDragTimer) clearTimeout(touchDragTimer);
+  touchDragTimer = window.setTimeout(() => {
+    touchStartInfo.dragStarted = true;
+    beginTouchDrag(touchStartInfo);
+  }, targetType === 'chip' ? touchDragDelay.chip : touchDragDelay.node);
+
   document.addEventListener('touchmove', onTouchMove, { passive: false });
   document.addEventListener('touchend', onTouchEnd);
   document.addEventListener('touchcancel', onTouchEnd);
 }
 
 function onTouchMove(event) {
-  event.preventDefault();
+  if (!touchStartInfo) return;
   const touch = event.touches[0];
+  touchStartInfo.currentX = touch.clientX;
+  touchStartInfo.currentY = touch.clientY;
+  const deltaX = touch.clientX - touchStartInfo.startX;
+  const deltaY = touch.clientY - touchStartInfo.startY;
+  const distance = Math.hypot(deltaX, deltaY);
+
+  const threshold = touchStartInfo.targetType === 'chip' ? 6 : 12;
+  if (!touchStartInfo.dragStarted && distance > threshold) {
+    clearTimeout(touchDragTimer);
+    touchDragTimer = 0;
+    touchStartInfo.dragStarted = true;
+    beginTouchDrag(touchStartInfo);
+  }
+
+  if (!S.dragSrc) return;
+
+  event.preventDefault();
   ghost.style.left = `${touch.clientX + 12}px`;
   ghost.style.top = `${touch.clientY + 12}px`;
 
@@ -1335,18 +1527,28 @@ function onTouchMove(event) {
 }
 
 function onTouchEnd(event) {
-  ghost.style.display = 'none';
+  clearTimeout(touchDragTimer);
+  touchDragTimer = 0;
+
   document.removeEventListener('touchmove', onTouchMove);
   document.removeEventListener('touchend', onTouchEnd);
   document.removeEventListener('touchcancel', onTouchEnd);
-  document.querySelectorAll('.drag-over').forEach(zone => zone.classList.remove('drag-over'));
+
+  if (!touchStartInfo) return;
 
   const touch = event.changedTouches[0];
   const underFinger = document.elementFromPoint(touch.clientX, touch.clientY);
   const zone = underFinger?.closest('.node-drop-zone, #drop-root');
-  if (zone) handleDrop(zone.dataset.pid || 'root');
 
-  S.dragSrc = null;
+  if (S.dragSrc) {
+    ghost.style.display = 'none';
+    document.querySelectorAll('.drag-over').forEach(zoneEl => zoneEl.classList.remove('drag-over'));
+    if (zone) handleDrop(zone.dataset.pid || 'root');
+    S.dragSrc = null;
+  }
+
+  ghost.style.display = 'none';
+  touchStartInfo = null;
 }
 
 function updateStatus() {
@@ -1380,6 +1582,7 @@ function check() {
       renderXP();
       renderLevelTabs();
       syncCompletedLevelsWithProject();
+      renderPlayerMeta();
     }
 
     setTimeout(() => showLevelUp(), 350);
@@ -1419,6 +1622,18 @@ function toast(msg, type = 'info') {
   setTimeout(() => el.remove(), 2600);
 }
 
+function resetCurrentLevel() {
+  S.tree = [];
+  S.lastErrors = [];
+  S.collapsed = {};
+  localStorage.removeItem(treeKey());
+  renderCanvas();
+  updatePanel();
+  setStatus(null, `Рівень ${S.level + 1} очищено. Можна почати заново.`);
+  toast('Робочу сцену очищено', 'info');
+  closeMobileMenu();
+}
+
 function fullRender() {
   loadTree();
   renderLevelTabs();
@@ -1426,7 +1641,8 @@ function fullRender() {
   renderTask();
   renderCanvas();
   renderXP();
-  setStatus(null, `Рівень ${S.level + 1}: ${LEVELS[S.level].name}`);
+  renderPlayerMeta();
+  setStatus(null, `Місія ${S.level + 1}: ${LEVELS[S.level].name}`);
   postHostMessage('progress', buildProgressPayload());
   scheduleHostResize();
 }
@@ -1436,17 +1652,10 @@ document.querySelectorAll('.ptab').forEach(btn => {
 });
 
 document.getElementById('btn-check').addEventListener('click', check);
+document.getElementById('btn-reset').addEventListener('click', resetCurrentLevel);
 
-document.getElementById('btn-reset').addEventListener('click', () => {
-  S.tree = [];
-  S.lastErrors = [];
-  S.collapsed = {};
-  saveTree();
-  renderCanvas();
-  setStatus(null, 'Сцену очищено. Можна збирати заново.');
-  toast('Сцену очищено', 'info');
-  scheduleHostResize();
-});
+if (onboardingStartBtn) onboardingStartBtn.addEventListener('click', () => hideOnboarding());
+if (onboardingSkipBtn) onboardingSkipBtn.addEventListener('click', () => hideOnboarding());
 
 document.getElementById('lu-btn').addEventListener('click', () => {
   document.getElementById('levelup-overlay').classList.remove('show');
@@ -1471,8 +1680,16 @@ bindHostViewportSync();
 window.addEventListener('message', handleHostViewportMessage);
 window.addEventListener('resize', scheduleHostResize);
 window.addEventListener('resize', scheduleSidebarFollowSync);
+window.addEventListener('orientationchange', scheduleHostResize);
+window.addEventListener('orientationchange', scheduleSidebarFollowSync);
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', scheduleHostResize);
+  window.visualViewport.addEventListener('resize', scheduleSidebarFollowSync);
+  window.visualViewport.addEventListener('scroll', scheduleHostResize, { passive: true });
+}
 window.addEventListener('beforeunload', stopCompletionRedirect);
 fullRender();
+showOnboarding();
 postHostMessage('ready', buildProgressPayload());
 scheduleHostResize();
 scheduleSidebarFollowSync();

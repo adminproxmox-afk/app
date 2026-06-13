@@ -194,8 +194,9 @@
   }
 
   function syncFrameHeight() {
-    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 800;
-    const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 390;
+    const viewport = window.visualViewport;
+    const viewportHeight = Math.round(viewport?.height || window.innerHeight || document.documentElement.clientHeight || 800);
+    const viewportWidth = Math.round(viewport?.width || window.innerWidth || document.documentElement.clientWidth || 390);
     let desiredHeight = Math.round(viewportHeight * 0.8);
     let minHeight = 700;
     let maxHeight = 980;
@@ -377,10 +378,16 @@
 
   window.addEventListener('message', handleFrameMessage);
   window.addEventListener('focus', refreshShell);
-  window.addEventListener('resize', () => {
+  const handleViewportChange = () => {
     syncFrameHeight();
     scheduleViewportSync();
-  });
+  };
+  window.addEventListener('resize', handleViewportChange);
+  window.addEventListener('orientationchange', handleViewportChange);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', handleViewportChange);
+    window.visualViewport.addEventListener('scroll', scheduleViewportSync, { passive: true });
+  }
   window.addEventListener('scroll', scheduleViewportSync, { passive: true });
   document.addEventListener('scroll', scheduleViewportSync, { passive: true });
 

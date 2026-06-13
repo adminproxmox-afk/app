@@ -31,6 +31,8 @@
 html,
 body {
   min-height: 100%;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -55,7 +57,7 @@ button {
 }
 
 .phone-frame {
-  width: min(calc(100vw - 12px), 430px);
+  width: min(calc(100% - 12px), 430px);
   min-height: 100dvh;
   position: relative;
   overflow: hidden;
@@ -1040,7 +1042,7 @@ button {
 
 @media (min-width: 520px) {
   .phone-frame {
-    width: min(calc(100vw - 32px), 540px);
+    width: min(calc(100% - 32px), 540px);
     min-height: min(860px, calc(100dvh - 24px));
     border-radius: 30px;
   }
@@ -1075,7 +1077,7 @@ button {
   }
 
   .phone-frame {
-    width: min(calc(100vw - 96px), 840px);
+    width: min(calc(100% - 96px), 840px);
     min-height: min(760px, calc(100dvh - 40px));
   }
 
@@ -1133,7 +1135,7 @@ button {
   }
 
   .phone-frame {
-    width: min(calc(100vw - 20px), 960px);
+    width: min(calc(100% - 20px), 960px);
     height: calc(100dvh - 16px);
     min-height: auto;
     border-radius: 28px;
@@ -1247,4 +1249,3 @@ button {
     min-height: 98px;
   }
 }
-

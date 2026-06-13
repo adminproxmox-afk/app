@@ -18,7 +18,7 @@ const PROGRESS_TEMPLATE = {
 };
 
 const EXTERNAL_GAME_ROUTES = {
-  'html-crash': 'game/catalog/it/webdev/games/html-crash-course/index.html'
+  'html-crash': 'game/catalog/it/webdev/games/html-crash-course/runtime/index.html'
 };
 const APP_HOME_TOAST_KEY = 'appHomeToast';
 
@@ -2759,8 +2759,11 @@ function renderHomeStatsCard(progress) {
     </section>
   `;
 }
-
+
 function renderHomeGameCard(game, categoryId, subcategoryId) {
+  const buttonAction = `openLecture('${categoryId}','${subcategoryId}','${game.id}')`;
+  const buttonLabel = copy.openLecture;
+
   return `
     <article class="home-game-card">
       <div class="home-game-card__top">
@@ -2780,7 +2783,7 @@ function renderHomeGameCard(game, categoryId, subcategoryId) {
           <b>+${game.xp} XP</b>
           <small>+${game.reward} ${copy.coinsReward}</small>
         </div>
-        <button class="home-game-card__button" type="button" onclick="openLecture('${categoryId}','${subcategoryId}','${game.id}')">${copy.openLecture}</button>
+        <button class="home-game-card__button" type="button" onclick="${buttonAction}">${buttonLabel}</button>
       </div>
     </article>
   `;
@@ -2979,6 +2982,12 @@ function getExternalGameRoute(gameId) {
   return EXTERNAL_GAME_ROUTES[gameId] || '';
 }
 
+function launchGameById(gameId) {
+  const externalRoute = getExternalGameRoute(gameId);
+  if (!externalRoute) return;
+  window.location.href = externalRoute;
+}
+
 function openLecture(categoryId, subcategoryId, gameId) {
   const game = findGame(categoryId, subcategoryId, gameId);
   if (!game) return;
@@ -3031,6 +3040,7 @@ window.selectCategory = selectCategory;
 window.selectSubcategory = selectSubcategory;
 window.setLeaderboardFilter = setLeaderboardFilter;
 window.openLecture = openLecture;
+window.launchGameById = launchGameById;
 
 function initLectureModal() {
   lectureElements.closeBtn?.addEventListener('click', () => closeModal(lectureElements.modal));
@@ -3102,3 +3112,4 @@ function init() {
 }
 
 init();
+

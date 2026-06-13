@@ -28,7 +28,7 @@
       password_strength_strong: 'Сильний пароль',
       social_title_signin: 'Увійти через {provider}',
       social_title_signup: 'Продовжити через {provider}',
-      social_description: 'Вкажіть ім’я та пошту. Якщо акаунт уже існує, ми увійдемо в нього. Якщо ні, створимо новий.',
+      social_description: 'Вкажіть ім’я та пошту. Якщо акаунт уже існує, ми увійдемо в нього. Якщо ні, спочатку зареєструйтесь вручну.',
       social_name_placeholder: "Ім'я в профілі",
       social_email_placeholder: 'Пошта провайдера',
       social_tag_placeholder: 'Тег профілю',
@@ -44,6 +44,7 @@
       social_account_created: 'Акаунт створено через {provider}. Вхід виконано.',
       social_account_linked: 'Провайдер {provider} прив’язано, вхід виконано.',
       social_signin_success: 'Вхід через {provider} виконано.',
+      social_requires_local_account: 'Спочатку зареєструйтесь вручну, а потім увійдіть через {provider}.',
       social_error: 'Не вдалося виконати вхід через провайдера',
       login_locked: 'Забагато невдалих спроб. Спробуйте через {seconds} с.',
       login_attempts_left: 'Невірні дані. Залишилось спроб: {count}.'
@@ -58,7 +59,7 @@
       password_strength_strong: 'Strong password',
       social_title_signin: 'Sign in with {provider}',
       social_title_signup: 'Continue with {provider}',
-      social_description: 'Enter your name and email. If the account exists, we will sign you in. Otherwise we will create a new one.',
+      social_description: 'Enter your name and email. If the account exists, we will sign you in. Otherwise please register manually first.',
       social_name_placeholder: 'Profile name',
       social_email_placeholder: 'Provider email',
       social_tag_placeholder: 'Profile tag',
@@ -74,6 +75,7 @@
       social_account_created: 'Account created via {provider}. Signed in successfully.',
       social_account_linked: '{provider} has been linked and signed in.',
       social_signin_success: 'Signed in with {provider}.',
+      social_requires_local_account: 'Please register manually first, then sign in with {provider}.',
       social_error: 'Could not sign in with this provider',
       login_locked: 'Too many failed attempts. Try again in {seconds}s.',
       login_attempts_left: 'Invalid credentials. Attempts left: {count}.'
@@ -401,6 +403,8 @@
           ? 'tag_too_similar'
           : result.code === 'TAG_INVALID'
             ? 'tag_invalid'
+            : result.code === 'SOCIAL_REQUIRES_LOCAL_ACCOUNT'
+              ? 'social_requires_local_account'
             : 'social_error';
       setMessage(modalMessage, t(messageKey, { tag: result.similarTag }), 'error');
       return;

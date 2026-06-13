@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
@@ -25,7 +25,6 @@
       }
     })();
   </script>
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css">
   <link rel="stylesheet" href="style/login.css">
@@ -39,37 +38,37 @@
 
     <main class="card auth-card">
       <div class="icon">⬛</div>
-      <h2>Sign into your account</h2>
-      <p class="subtitle" id="authSubtitle">Use your username, email, or a connected provider to continue.</p>
+      <h2>Увійдіть в акаунт</h2>
+      <p class="subtitle" id="authSubtitle">Використайте логін, email або підключений провайдер, щоб продовжити.</p>
 
       <div class="field-group">
-        <input type="text" id="login" placeholder="Username or Email" autocomplete="username">
-        <div class="field-hint" id="loginHint">Use username or email</div>
+        <input type="text" id="login" placeholder="Логін або email" autocomplete="username">
+        <div class="field-hint" id="loginHint">Використайте логін або email</div>
       </div>
 
       <div class="field-group">
-        <input type="password" id="password" placeholder="Password" autocomplete="current-password">
-        <div class="field-hint" id="passwordHint">Minimum 8 characters, uppercase letter and number</div>
+        <input type="password" id="password" placeholder="Пароль" autocomplete="current-password">
+        <div class="field-hint" id="passwordHint">Мінімум 8 символів, велика літера та цифра</div>
       </div>
 
-      <button id="loginButton" type="button">Log In</button>
+      <button id="loginButton" type="button">Увійти</button>
 
       <div id="message" class="auth-message" aria-live="polite"></div>
 
-      <div class="divider">or sign in with</div>
+      <div class="divider">або увійти через</div>
 
       <div class="socials" id="socialButtons">
         <button class="social-btn social-btn--google" data-provider="google" type="button">
           <i class="fab fa-google"></i>
-          <span class="social-btn__label">Google</span>
+          <span class="social-btn__label">Увійти через Google</span>
         </button>
         <button class="social-btn social-btn--telegram" data-provider="telegram" type="button">
           <i class="fab fa-telegram"></i>
-          <span class="social-btn__label">Telegram</span>
+          <span class="social-btn__label">Увійти через Telegram</span>
         </button>
       </div>
 
-      <div class="bottom-text">Don't have an account? <a href="regist.html">Sign up!</a></div>
+      <div class="bottom-text">Ще немає акаунта? <a href="regist.html">Зареєструватися!</a></div>
     </main>
   </div>
   <script src="js/db.js"></script>
@@ -85,4 +84,3 @@
   <script src="js/app-enhancements.js"></script>
 </body>
 </html>
-
