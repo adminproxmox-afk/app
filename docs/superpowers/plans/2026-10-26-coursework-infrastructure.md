@@ -25,11 +25,11 @@
 - An archive cannot escape the configured document root or install links/private repository files.
 
 ## Tasks
-- [ ] 1. Capture deployed sources, schema-only DDL and seed; add portable private configuration, development router and reproducible setup.
-- [ ] 2. Add integration tests; observe blocked-session/password-revocation failures, then implement session checks and atomic password change/login. Test own-data boundaries, CSRF, expiry, rate limiting and database readiness.
-- [ ] 3. Package allowlisted public files; implement and test bounded archive extraction, successful release and failed-release rollback. Add PHP/JS syntax and integration CI plus manual deploy/rollback workflows.
-- [ ] 4. Snapshot Cloudflare/server configuration; configure www proxy/canonical name, Cloudflare-only trusted headers, and origin ingress. Verify forged headers are ignored, LAN/Cloudflare/ACME remain functional and SSH remains reachable.
-- [ ] 5. Install the restricted deployment account/helper, exercise deploy and rollback, write API/operations/security evidence and push a reviewable branch/PR. Run the complete checks and request one independent final review.
+- [x] 1. Deployed sources/schema-only DDL/seed, private configuration, development router and setup.
+- [x] 2. Integration tests RED→GREEN, session revocation/rotation, own-data/CSRF/expiry/rate-limit/readiness.
+- [x] 3. Public packages, bounded extraction, release/rollback tests, syntax/integration CI and manual workflows. Remote CI awaits GitHub write access.
+- [x] 4. Cloudflare/server snapshots, www proxy/canonical, trusted headers/ingress, LAN/CF/ACME/SSH verification.
+- [ ] 5. Restricted deploy/rollback, operations evidence and independent review complete. Branch/PR publication blocked by GitHub403; see ledger.
 
 ## Commands/evidence
 - PHP lint: `find api scripts -name '*.php' -exec php -l {} \;`.
