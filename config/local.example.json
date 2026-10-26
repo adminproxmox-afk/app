@@ -1,0 +1,7 @@
+{
+  "db_host": "127.0.0.1",
+  "db_port": 3306,
+  "db_name": "finway_dev",
+  "db_user": "finway_app",
+  "db_pass": "replace-with-your-local-password"
+}

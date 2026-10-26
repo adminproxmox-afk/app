@@ -2759,7 +2759,8 @@ function renderHomeStatsCard(progress) {
     </section>
   `;
 }
-
+
+
 function renderHomeGameCard(game, categoryId, subcategoryId) {
   const buttonAction = `openLecture('${categoryId}','${subcategoryId}','${game.id}')`;
   const buttonLabel = copy.openLecture;
@@ -3112,4 +3113,3 @@ function init() {
 }
 
 init();
-

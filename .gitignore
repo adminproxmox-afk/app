@@ -10,3 +10,14 @@ Thumbs.db
 # Local dependencies and build output
 node_modules/
 dist/
+build/
+config/local.json
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.tar.gz
+*.sql.gz
+__pycache__/
+.superpowers/

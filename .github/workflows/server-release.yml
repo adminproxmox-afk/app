@@ -1,0 +1,47 @@
+name: FinWay server deploy or rollback
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        type: choice
+        options: [deploy, rollback]
+        default: deploy
+permissions:
+  contents: read
+concurrency:
+  group: finway-production
+  cancel-in-progress: false
+jobs:
+  verify:
+    uses: ./.github/workflows/backend-ci.yml
+  release:
+    needs: verify
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build public package
+        if: inputs.action == 'deploy'
+        run: python3 scripts/build_release.py build/finway.tar.gz
+      - name: Configure pinned SSH identity
+        env:
+          DEPLOY_KEY: ${{ secrets.FINWAY_DEPLOY_KEY }}
+          KNOWN_HOSTS: ${{ secrets.FINWAY_KNOWN_HOSTS }}
+        run: |
+          install -d -m700 ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/finway
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/finway ~/.ssh/known_hosts
+      - name: Deploy through restricted command
+        env:
+          DEPLOY_HOST: ${{ secrets.FINWAY_DEPLOY_HOST }}
+          DEPLOY_PORT: ${{ secrets.FINWAY_DEPLOY_PORT }}
+          ACTION: ${{ inputs.action }}
+        run: |
+          args=(-i ~/.ssh/finway -p "${DEPLOY_PORT:-22}" -o BatchMode=yes -o StrictHostKeyChecking=yes "finway-deploy@$DEPLOY_HOST")
+          if [ "$ACTION" = deploy ]; then
+            ssh "${args[@]}" deploy < build/finway.tar.gz
+          else
+            ssh "${args[@]}" rollback
+          fi

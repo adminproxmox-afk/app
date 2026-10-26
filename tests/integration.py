@@ -26,7 +26,7 @@ MYSQL = [os.environ.get("MYSQL_BINARY", "mysql"), "--default-character-set=utf8m
 
 def sql(query, database=None):
     result = subprocess.run(MYSQL + ([database] if database else []), input=query,
-                            text=True, capture_output=True, timeout=30)
+                            text=True, capture_output=True, timeout=120)
     if result.returncode:
         raise RuntimeError("Test database command failed; verify MYSQL_* credentials and grants")
     return result.stdout.strip()

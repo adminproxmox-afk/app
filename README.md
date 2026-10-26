@@ -1,27 +1,46 @@
-# Skill Play Web App
+# FinWay
 
-The project uses a plain static structure on `HTML/CSS/vanilla JS`.
-The main app lives in the root files and folders: `index.html`, `js`, `pages`, `style`, and `data`.
+Навчальний вебзастосунок з уроками, мінііграми, прогресом та магазином.
+HTML/CSS/vanilla JavaScript, PHP 8.3+ (`pdo_mysql`, `mbstring`), MySQL 8.0+, Apache/PHP-FPM. Python 3.10+ для тестів і пакування, Node.js для перевірки синтаксису JS.
 
-## Main pages
+## Локальний запуск
 
-- [index.html](/E:/app/web/app/index.html)
-- [login.html](/E:/app/web/app/login.html)
-- [regist.html](/E:/app/web/app/regist.html)
-- [pages/shop.html](/E:/app/web/app/pages/shop.html)
-- [pages/character.html](/E:/app/web/app/pages/character.html)
-- [pages/setting.html](/E:/app/web/app/pages/setting.html)
+Створіть порожню БД і користувача від адміністратора MySQL; замініть пароль прикладу:
 
-## Deployment
+```sql
+CREATE DATABASE finway_dev CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+CREATE USER 'finway_app'@'localhost' IDENTIFIED BY 'replace-with-your-local-password';
+GRANT SELECT, INSERT, UPDATE, DELETE ON finway_dev.* TO 'finway_app'@'localhost';
+```
 
-- GitHub Pages is published from [.github/workflows/deploy-site.yml](/E:/app/web/app/.github/workflows/deploy-site.yml)
-- the workflow uploads the root static site directly
-- no React build step is required
+```sh
+mysql -u root -p finway_dev < database/000_schema.sql
+mysql -u root -p finway_dev < database/001_seed_catalog.sql
+cp config/local.example.json config/local.json
+# Відредагуйте локальні ім'я БД, користувача і пароль.
+export LCA_CONFIG_FILE="$PWD/config/local.json"
+php -S 127.0.0.1:8080 -t . scripts/dev-router.php
+```
 
-## Enhancement layer
+Відкрийте `http://127.0.0.1:8080/` і зареєструйте тестового користувача. На Windows ці команди можна виконувати у WSL. Вбудований сервер призначений для локальної розробки. Для Docker MySQL задайте db_host=127.0.0.1 і потрібний db_port.
 
-The vanilla site now uses CDN-based libraries for richer UX without switching to a framework:
+Змінні LCA_DB_HOST, LCA_DB_PORT, LCA_DB_NAME, LCA_DB_USER, LCA_DB_PASS мають пріоритет над приватним JSON. Production-секрет: `/home/base/etc/life-capital-db.json`, всередині FPM chroot `/etc/life-capital-db.json`. Схема/seed не містять реальних користувачів. Не додавайте секрети/дампи у Git.
 
-- `GSAP + ScrollTrigger` for entrance and scroll-driven motion
-- `Swiper` for touch-friendly carousels on the home screen
-- `Howler.js` for interface sounds and ambient audio based on user settings
+## Перевірки
+
+Тестовому користувачу потрібні права включно з CREATE/DROP тільки на `finway\_test\_%`.*. Кожен запуск створює/видаляє власну випадкову БД. Production-користувач застосунку для цього не підходить.
+
+```sh
+export MYSQL_HOST=127.0.0.1 MYSQL_USER=finway_test
+read -rs MYSQL_PWD; export MYSQL_PWD
+python3 tests/integration.py
+python3 -m unittest discover -s tests -p test_release.py -v
+find api scripts -name '*.php' -exec php -l {} \;
+find js -name '*.js' -exec node --check {} \;
+```
+
+GitHub Actions backend-ci.yml виконує ці перевірки на MySQL 8.0/PHP 8.3. server-release.yml запускає перевірки перед ручним deploy/rollback з main. GitHub Pages — статичний перегляд, PHP API там не виконується.
+
+[API](api/README.md) · [Експлуатація](docs/operations.md) · [Докази для курсової](docs/coursework-evidence.md)
+
+Даніл: інфраструктура/доступ/сесії/захист/deploy/backup. Юрій: інтерфейс та прикладні API. Вадим: UI/UX і правила гри. Вовчик: БД/QA/ігрові системи. Домен поки залишається techlifeacademys.pp.ua; перейменування у FinWay не потребує міграції даних.

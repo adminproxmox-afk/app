@@ -1,2 +1,7 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+*.php text eol=lf
+*.py text eol=lf
+*.sh text eol=lf
+*.yml text eol=lf
+scripts/server/deploy-ssh text eol=lf

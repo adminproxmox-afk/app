@@ -13,19 +13,31 @@ function lca_config(): array
         return $config;
     }
 
-    $config = [
-        'db_host' => getenv('LCA_DB_HOST') ?: 'localhost',
-        'db_name' => getenv('LCA_DB_NAME') ?: 'life_capital',
-        'db_user' => getenv('LCA_DB_USER') ?: 'life_capital_app',
-        'db_pass' => getenv('LCA_DB_PASS') ?: '',
-        'cookie_name' => getenv('LCA_SESSION_COOKIE') ?: LCA_SESSION_COOKIE,
+    $config = ['db_host' => 'localhost', 'db_port' => 3306, 'db_name' => 'life_capital',
+        'db_user' => 'life_capital_app', 'db_pass' => '', 'cookie_name' => LCA_SESSION_COOKIE];
+    $explicitConfig = getenv('LCA_CONFIG_FILE');
+    $candidates = $explicitConfig !== false ? [$explicitConfig] : [
+        dirname(__DIR__, 3) . '/etc/life-capital-db.json', '/etc/life-capital-db.json',
     ];
-
-    $privateConfig = dirname(__DIR__, 3) . '/etc/life-capital-db.json';
-    if (is_file($privateConfig)) {
-        $config = array_replace($config, json_decode(
-            file_get_contents($privateConfig), true, 512, JSON_THROW_ON_ERROR
-        ));
+    foreach ($candidates as $privateConfig) {
+        if (is_file($privateConfig)) {
+            $values = json_decode(file_get_contents($privateConfig), true, 512, JSON_THROW_ON_ERROR);
+            if (!is_array($values)) {
+                throw new RuntimeException('Invalid private configuration');
+            }
+            $config = array_replace($config, $values);
+            break;
+        }
+        if ($explicitConfig !== false) {
+            throw new RuntimeException('Private configuration file is missing');
+        }
+    }
+    foreach (['LCA_DB_HOST' => 'db_host', 'LCA_DB_PORT' => 'db_port', 'LCA_DB_NAME' => 'db_name',
+              'LCA_DB_USER' => 'db_user', 'LCA_DB_PASS' => 'db_pass', 'LCA_SESSION_COOKIE' => 'cookie_name'] as $key => $name) {
+        $value = getenv($key);
+        if ($value !== false) {
+            $config[$name] = $value;
+        }
     }
 
     return $config;
@@ -42,6 +54,12 @@ function lca_is_https(): bool
 
 function lca_send_json(array $payload, int $status = 200): never
 {
+    $requestId = bin2hex(random_bytes(8));
+    header('X-Request-ID: ' . $requestId);
+    if ($status >= 500) {
+        error_log(json_encode(['event' => 'finway_api_error', 'request_id' => $requestId,
+            'status' => $status, 'path' => substr((string)parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH), 0, 256)]));
+    }
     http_response_code($status);
     header('Content-Type: application/json; charset=utf-8');
     header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
@@ -65,6 +83,18 @@ function lca_read_json_input(): array
     return $data;
 }
 
+function lca_connect(): PDO
+{
+    $config = lca_config();
+    $dsn = sprintf('mysql:host=%s;port=%d;dbname=%s;charset=utf8mb4',
+        $config['db_host'], (int)$config['db_port'], $config['db_name']);
+    return new PDO($dsn, $config['db_user'], $config['db_pass'], [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES => false,
+    ]);
+}
+
 function lca_db(): PDO
 {
     static $pdo = null;
@@ -73,15 +103,8 @@ function lca_db(): PDO
         return $pdo;
     }
 
-    $config = lca_config();
-    $dsn = sprintf('mysql:host=%s;dbname=%s;charset=utf8mb4', $config['db_host'], $config['db_name']);
-
     try {
-        $pdo = new PDO($dsn, $config['db_user'], $config['db_pass'], [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES => false,
-        ]);
+        $pdo = lca_connect();
     } catch (Throwable $exception) {
         lca_send_json([
             'ok' => false,
@@ -89,8 +112,8 @@ function lca_db(): PDO
         ], 500);
     }
 
-        lca_ensure_csrf_cookie();
-        $pdo->exec('SET NAMES utf8mb4 COLLATE utf8mb4_0900_ai_ci');
+    lca_ensure_csrf_cookie();
+    $pdo->exec('SET NAMES utf8mb4 COLLATE utf8mb4_0900_ai_ci');
     return $pdo;
 }
 
@@ -499,6 +522,7 @@ function lca_current_session(PDO $pdo): ?array
          FROM auth_sessions s
          INNER JOIN users u ON u.id = s.user_id
          WHERE s.session_token_hash = :session_token_hash
+            AND u.status = "active" AND u.deleted_at IS NULL
          LIMIT 1'
     );
     $stmt->execute(['session_token_hash' => $hash]);
