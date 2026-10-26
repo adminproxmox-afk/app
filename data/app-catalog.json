@@ -90,15 +90,15 @@
         "en": "HTML Crash Course"
       },
       "description": {
-        "uk": "Drag-and-drop HTML-конструктор з 10 короткими рівнями і live preview",
-        "en": "A drag-and-drop HTML builder with 10 short levels and live preview"
+        "uk": "Збери сторінку з блоків",
+        "en": "Build a page from blocks"
       },
       "status": "active",
       "difficulty": "beginner",
-      "durationMinutes": 20,
+      "durationMinutes": 18,
       "rewards": {
-        "xp": 90,
-        "coins": 83
+        "xp": 38,
+        "coins": 35
       }
     }
   ],

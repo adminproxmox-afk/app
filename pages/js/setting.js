@@ -1,18 +1,18 @@
-﻿const currentUser = localStorage.getItem('user');
+const currentUser = LCAMemoryStorage.getItem('user');
 if (!currentUser) {
   window.location.href = '../login.html';
 }
 
 function initSettings() {
-  if (!localStorage.getItem('darkMode')) localStorage.setItem('darkMode', 'true');
-  if (!localStorage.getItem('notifications')) localStorage.setItem('notifications', 'true');
-  if (!localStorage.getItem('musicEnabled')) localStorage.setItem('musicEnabled', 'true');
-  if (!localStorage.getItem('soundEnabled')) localStorage.setItem('soundEnabled', 'true');
-  if (!localStorage.getItem('volume')) localStorage.setItem('volume', '70');
-  if (!localStorage.getItem('language')) localStorage.setItem('language', 'uk');
-  if (!localStorage.getItem('userName')) localStorage.setItem('userName', currentUser || 'Користувач');
-  if (!localStorage.getItem('userAvatar')) localStorage.setItem('userAvatar', localStorage.getItem('currentAvatar') || '👨‍🎓');
-  if (!localStorage.getItem('currentAvatar')) localStorage.setItem('currentAvatar', localStorage.getItem('userAvatar') || '👨‍🎓');
+  if (!LCAMemoryStorage.getItem('darkMode')) LCAMemoryStorage.setItem('darkMode', 'true');
+  if (!LCAMemoryStorage.getItem('notifications')) LCAMemoryStorage.setItem('notifications', 'true');
+  if (!LCAMemoryStorage.getItem('musicEnabled')) LCAMemoryStorage.setItem('musicEnabled', 'true');
+  if (!LCAMemoryStorage.getItem('soundEnabled')) LCAMemoryStorage.setItem('soundEnabled', 'true');
+  if (!LCAMemoryStorage.getItem('volume')) LCAMemoryStorage.setItem('volume', '70');
+  if (!LCAMemoryStorage.getItem('language')) LCAMemoryStorage.setItem('language', 'uk');
+  if (!LCAMemoryStorage.getItem('userName')) LCAMemoryStorage.setItem('userName', currentUser || 'Користувач');
+  if (!LCAMemoryStorage.getItem('userAvatar')) LCAMemoryStorage.setItem('userAvatar', LCAMemoryStorage.getItem('currentAvatar') || '👨‍🎓');
+  if (!LCAMemoryStorage.getItem('currentAvatar')) LCAMemoryStorage.setItem('currentAvatar', LCAMemoryStorage.getItem('userAvatar') || '👨‍🎓');
 }
 
 let toastTimer;
@@ -25,38 +25,38 @@ function showNotification(message) {
 }
 
 function applySettings() {
-  const darkMode = localStorage.getItem('darkMode') === 'true';
+  const darkMode = LCAMemoryStorage.getItem('darkMode') === 'true';
   document.getElementById('darkModeToggle').classList.toggle('active', darkMode);
-  document.getElementById('notificationsToggle').classList.toggle('active', localStorage.getItem('notifications') === 'true');
-  document.getElementById('musicToggle').classList.toggle('active', localStorage.getItem('musicEnabled') === 'true');
-  document.getElementById('soundToggle').classList.toggle('active', localStorage.getItem('soundEnabled') === 'true');
-  document.getElementById('volumeSlider').value = localStorage.getItem('volume');
-  document.getElementById('languageSelect').value = localStorage.getItem('language');
-  const currentName = localStorage.getItem('userName');
-  const currentAvatar = localStorage.getItem('currentAvatar') || localStorage.getItem('userAvatar');
+  document.getElementById('notificationsToggle').classList.toggle('active', LCAMemoryStorage.getItem('notifications') === 'true');
+  document.getElementById('musicToggle').classList.toggle('active', LCAMemoryStorage.getItem('musicEnabled') === 'true');
+  document.getElementById('soundToggle').classList.toggle('active', LCAMemoryStorage.getItem('soundEnabled') === 'true');
+  document.getElementById('volumeSlider').value = LCAMemoryStorage.getItem('volume');
+  document.getElementById('languageSelect').value = LCAMemoryStorage.getItem('language');
+  const currentName = LCAMemoryStorage.getItem('userName');
+  const currentAvatar = LCAMemoryStorage.getItem('currentAvatar') || LCAMemoryStorage.getItem('userAvatar');
   document.getElementById('currentUserName').innerText = currentName;
   document.getElementById('currentAvatar').innerText = currentAvatar;
   document.getElementById('currentAvatarMini').innerText = currentAvatar;
-  localStorage.setItem('userAvatar', currentAvatar);
+  LCAMemoryStorage.setItem('userAvatar', currentAvatar);
   document.body.style.filter = darkMode ? 'none' : 'saturate(.92) brightness(1.05)';
 }
 
 function showNameModal() {
-  document.getElementById('newNameInput').value = localStorage.getItem('userName');
+  document.getElementById('newNameInput').value = LCAMemoryStorage.getItem('userName');
   document.getElementById('nameModal').style.display = 'flex';
 }
 function saveName() {
   const value = document.getElementById('newNameInput').value.trim();
   if (!value || value.length > 20) { showNotification('Введіть ім\'я від 1 до 20 символів'); return; }
-  localStorage.setItem('userName', value);
+  LCAMemoryStorage.setItem('userName', value);
   document.getElementById('nameModal').style.display = 'none';
   applySettings();
   showNotification('Ім\'я оновлено');
 }
 function showAvatarModal() { document.getElementById('avatarModal').style.display = 'flex'; }
 function selectAvatar(avatar) {
-  localStorage.setItem('userAvatar', avatar);
-  localStorage.setItem('currentAvatar', avatar);
+  LCAMemoryStorage.setItem('userAvatar', avatar);
+  LCAMemoryStorage.setItem('currentAvatar', avatar);
   document.getElementById('avatarModal').style.display = 'none';
   applySettings();
   showNotification('Аватар змінено');
@@ -80,33 +80,32 @@ function showConfirmModal(title, message, onConfirm) {
   cancelBtn.addEventListener('click', cancelHandler);
 }
 function resetSettings() {
-  localStorage.setItem('darkMode', 'true');
-  localStorage.setItem('notifications', 'true');
-  localStorage.setItem('musicEnabled', 'true');
-  localStorage.setItem('soundEnabled', 'true');
-  localStorage.setItem('volume', '70');
-  localStorage.setItem('language', 'uk');
+  LCAMemoryStorage.setItem('darkMode', 'true');
+  LCAMemoryStorage.setItem('notifications', 'true');
+  LCAMemoryStorage.setItem('musicEnabled', 'true');
+  LCAMemoryStorage.setItem('soundEnabled', 'true');
+  LCAMemoryStorage.setItem('volume', '70');
+  LCAMemoryStorage.setItem('language', 'uk');
   applySettings();
   showNotification('Налаштування скинуто');
 }
 function clearCache() {
-  const keep = ['user', 'userName', 'userAvatar', 'userCoins', 'currentAvatar'];
-  Object.keys(localStorage).forEach((key) => { if (!keep.includes(key)) localStorage.removeItem(key); });
+  LCAMemoryStorage.clear();
   initSettings();
   applySettings();
   showNotification('Кеш очищено');
 }
-function logout() { localStorage.removeItem('user'); window.location.href = '../login.html'; }
+function logout() { LCAMemoryStorage.removeItem('user'); window.location.href = '../login.html'; }
 function setupToggles() {
-  document.getElementById('darkModeItem').onclick = () => { localStorage.setItem('darkMode', String(!(localStorage.getItem('darkMode') === 'true'))); applySettings(); showNotification('Тему оновлено'); };
-  document.getElementById('notificationsItem').onclick = () => { const next = !(localStorage.getItem('notifications') === 'true'); localStorage.setItem('notifications', String(next)); applySettings(); showNotification(next ? 'Сповіщення увімкнено' : 'Сповіщення вимкнено'); };
-  document.getElementById('musicItem').onclick = () => { const next = !(localStorage.getItem('musicEnabled') === 'true'); localStorage.setItem('musicEnabled', String(next)); applySettings(); showNotification(next ? 'Музику увімкнено' : 'Музику вимкнено'); };
-  document.getElementById('soundItem').onclick = () => { const next = !(localStorage.getItem('soundEnabled') === 'true'); localStorage.setItem('soundEnabled', String(next)); applySettings(); showNotification(next ? 'Звуки увімкнено' : 'Звуки вимкнено'); };
+  document.getElementById('darkModeItem').onclick = () => { LCAMemoryStorage.setItem('darkMode', String(!(LCAMemoryStorage.getItem('darkMode') === 'true'))); applySettings(); showNotification('Тему оновлено'); };
+  document.getElementById('notificationsItem').onclick = () => { const next = !(LCAMemoryStorage.getItem('notifications') === 'true'); LCAMemoryStorage.setItem('notifications', String(next)); applySettings(); showNotification(next ? 'Сповіщення увімкнено' : 'Сповіщення вимкнено'); };
+  document.getElementById('musicItem').onclick = () => { const next = !(LCAMemoryStorage.getItem('musicEnabled') === 'true'); LCAMemoryStorage.setItem('musicEnabled', String(next)); applySettings(); showNotification(next ? 'Музику увімкнено' : 'Музику вимкнено'); };
+  document.getElementById('soundItem').onclick = () => { const next = !(LCAMemoryStorage.getItem('soundEnabled') === 'true'); LCAMemoryStorage.setItem('soundEnabled', String(next)); applySettings(); showNotification(next ? 'Звуки увімкнено' : 'Звуки вимкнено'); };
 }
 function setupOtherSettings() {
-  document.getElementById('volumeSlider').oninput = (e) => { localStorage.setItem('volume', e.target.value); };
+  document.getElementById('volumeSlider').oninput = (e) => { LCAMemoryStorage.setItem('volume', e.target.value); };
   document.getElementById('volumeSlider').onchange = () => showNotification('Гучність оновлено');
-  document.getElementById('languageSelect').onchange = (e) => { localStorage.setItem('language', e.target.value); showNotification('Мову оновлено'); };
+  document.getElementById('languageSelect').onchange = (e) => { LCAMemoryStorage.setItem('language', e.target.value); showNotification('Мову оновлено'); };
 }
 function initBottomNav() {
   document.querySelectorAll('.bottom-nav__item').forEach((item) => item.addEventListener('click', () => {

@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
   const STORAGE_KEY = 'miniAppDb';
   const LEGACY_CHARACTER_KEY = 'characterPageStateV2';
   const DEFAULT_AVATAR = '👨‍🎓';
@@ -481,13 +481,13 @@
           categoryId: 'it',
           subcategoryId: 'webdev',
           title: { uk: 'HTML Crash Course', en: 'HTML Crash Course' },
-          description: { uk: 'Drag-and-drop HTML-конструктор з 10 короткими рівнями і live preview', en: 'A drag-and-drop HTML builder with 10 short levels and live preview' },
+          description: { uk: 'Збери сторінку з блоків', en: 'Build a page from blocks' },
           catalogFolder: 'game/catalog/it/webdev/games/html-crash-course',
           entryPath: 'game/catalog/it/webdev/games/html-crash-course/index.html',
           manifestPath: 'game/catalog/it/webdev/games/html-crash-course/manifest.json',
           difficulty: 'beginner',
-          durationMinutes: 20,
-          rewards: { xp: 90, coins: 83 },
+          durationMinutes: 18,
+          rewards: { xp: 38, coins: 35 },
           status: 'active',
           createdAt: now
         }
@@ -557,59 +557,59 @@
   }
 
   function migrateLegacy(db) {
-    const legacyUsers = safeParse(localStorage.getItem('users'));
+    const legacyUsers = safeParse(LCAMemoryStorage.getItem('users'));
     if (Array.isArray(legacyUsers) && legacyUsers.length) {
-      db.users = legacyUsers.map((user) => mergeDefaults(createUserRecord(user), user));
+      db.users = legacyUsers.map((user) => mergeDefaults(createUserRecord(user, db), user));
     }
 
-    const sessionUser = localStorage.getItem('user');
+    const sessionUser = LCAMemoryStorage.getItem('user');
     if (sessionUser) db.session.user = sessionUser;
 
-    const userName = localStorage.getItem('userName');
+    const userName = LCAMemoryStorage.getItem('userName');
     if (userName) db.profile.name = userName;
     if (db.session.user && !userName) db.profile.name = db.session.user;
 
-    const userAvatar = localStorage.getItem('userAvatar');
-    const currentAvatar = localStorage.getItem('currentAvatar');
+    const userAvatar = LCAMemoryStorage.getItem('userAvatar');
+    const currentAvatar = LCAMemoryStorage.getItem('currentAvatar');
     if (userAvatar) db.profile.avatar = userAvatar;
     if (currentAvatar) db.profile.currentAvatar = currentAvatar;
     if (!db.profile.currentAvatar) db.profile.currentAvatar = db.profile.avatar;
     if (!db.profile.avatar) db.profile.avatar = db.profile.currentAvatar;
 
-    const userCoins = parseInt(localStorage.getItem('userCoins') || '', 10);
+    const userCoins = parseInt(LCAMemoryStorage.getItem('userCoins') || '', 10);
     if (Number.isFinite(userCoins)) db.profile.coins = userCoins;
 
     const settingsKeys = ['darkMode', 'notifications', 'musicEnabled', 'soundEnabled', 'language'];
     settingsKeys.forEach((key) => {
-      const value = localStorage.getItem(key);
+      const value = LCAMemoryStorage.getItem(key);
       if (value !== null) {
         db.settings[key] = value === 'true' ? true : value === 'false' ? false : value;
       }
     });
-    const volume = parseInt(localStorage.getItem('volume') || '', 10);
+    const volume = parseInt(LCAMemoryStorage.getItem('volume') || '', 10);
     if (Number.isFinite(volume)) db.settings.volume = volume;
 
-    const legacyCharacter = safeParse(localStorage.getItem(LEGACY_CHARACTER_KEY));
+    const legacyCharacter = safeParse(LCAMemoryStorage.getItem(LEGACY_CHARACTER_KEY));
     if (legacyCharacter) {
       db.character.activeCategory = legacyCharacter.activeCategory || db.character.activeCategory;
       db.character.selected = mergeDefaults(db.character.selected, legacyCharacter.selected || {});
       db.character.owned = unique([...(db.character.owned || []), ...((legacyCharacter.owned || []))]);
     }
 
-    const inventory = safeParse(localStorage.getItem('inventory'));
+    const inventory = safeParse(LCAMemoryStorage.getItem('inventory'));
     if (Array.isArray(inventory)) db.shop.inventory = inventory;
-    const avatars = safeParse(localStorage.getItem('avatars'));
+    const avatars = safeParse(LCAMemoryStorage.getItem('avatars'));
     if (Array.isArray(avatars) && avatars.length) db.shop.avatars = unique(avatars);
-    const achievements = safeParse(localStorage.getItem('achievements'));
+    const achievements = safeParse(LCAMemoryStorage.getItem('achievements'));
     if (Array.isArray(achievements)) db.shop.achievements = unique(achievements);
-    const purchaseHistory = safeParse(localStorage.getItem('purchaseHistory'));
+    const purchaseHistory = safeParse(LCAMemoryStorage.getItem('purchaseHistory'));
     if (Array.isArray(purchaseHistory)) db.shop.purchaseHistory = purchaseHistory;
 
-    const lastDaily = parseInt(localStorage.getItem('lastDaily') || '', 10);
+    const lastDaily = parseInt(LCAMemoryStorage.getItem('lastDaily') || '', 10);
     if (Number.isFinite(lastDaily)) db.shop.lastDaily = lastDaily;
-    const dailyClaimCount = parseInt(localStorage.getItem('dailyClaimCount') || '', 10);
+    const dailyClaimCount = parseInt(LCAMemoryStorage.getItem('dailyClaimCount') || '', 10);
     if (Number.isFinite(dailyClaimCount)) db.shop.dailyClaimCount = dailyClaimCount;
-    const totalSpent = parseInt(localStorage.getItem('totalSpent') || '', 10);
+    const totalSpent = parseInt(LCAMemoryStorage.getItem('totalSpent') || '', 10);
     if (Number.isFinite(totalSpent)) db.shop.totalSpent = totalSpent;
   }
 
@@ -652,7 +652,7 @@
       ));
 
     db.users = db.users.map((user) => {
-      const normalizedUser = mergeDefaults(createUserRecord(user), user);
+      const normalizedUser = mergeDefaults(createUserRecord(user, db), user);
       normalizedUser.login = String(normalizedUser.login || '').trim();
       normalizedUser.email = String(normalizedUser.email || '').trim().toLowerCase();
       normalizedUser.password = String(normalizedUser.password || '');
@@ -679,40 +679,40 @@
 
   function mirrorLegacy(db) {
     syncCurrentUserProfile(db);
-    localStorage.setItem('users', JSON.stringify(db.users));
-    if (db.session.user) localStorage.setItem('user', db.session.user);
-    else localStorage.removeItem('user');
+    LCAMemoryStorage.setItem('users', JSON.stringify(db.users));
+    if (db.session.user) LCAMemoryStorage.setItem('user', db.session.user);
+    else LCAMemoryStorage.removeItem('user');
 
-    localStorage.setItem('userName', db.profile.name);
-    localStorage.setItem('userAvatar', db.profile.avatar);
-    localStorage.setItem('currentAvatar', db.profile.currentAvatar);
-    localStorage.setItem('userCoins', String(db.profile.coins));
+    LCAMemoryStorage.setItem('userName', db.profile.name);
+    LCAMemoryStorage.setItem('userAvatar', db.profile.avatar);
+    LCAMemoryStorage.setItem('currentAvatar', db.profile.currentAvatar);
+    LCAMemoryStorage.setItem('userCoins', String(db.profile.coins));
 
-    localStorage.setItem('darkMode', String(Boolean(db.settings.darkMode)));
-    localStorage.setItem('notifications', String(Boolean(db.settings.notifications)));
-    localStorage.setItem('musicEnabled', String(Boolean(db.settings.musicEnabled)));
-    localStorage.setItem('soundEnabled', String(Boolean(db.settings.soundEnabled)));
-    localStorage.setItem('volume', String(db.settings.volume));
-    localStorage.setItem('language', String(db.settings.language));
+    LCAMemoryStorage.setItem('darkMode', String(Boolean(db.settings.darkMode)));
+    LCAMemoryStorage.setItem('notifications', String(Boolean(db.settings.notifications)));
+    LCAMemoryStorage.setItem('musicEnabled', String(Boolean(db.settings.musicEnabled)));
+    LCAMemoryStorage.setItem('soundEnabled', String(Boolean(db.settings.soundEnabled)));
+    LCAMemoryStorage.setItem('volume', String(db.settings.volume));
+    LCAMemoryStorage.setItem('language', String(db.settings.language));
 
-    localStorage.setItem(LEGACY_CHARACTER_KEY, JSON.stringify({
+    LCAMemoryStorage.setItem(LEGACY_CHARACTER_KEY, JSON.stringify({
       activeCategory: db.character.activeCategory,
       selected: db.character.selected,
       owned: db.character.owned
     }));
 
-    localStorage.setItem('inventory', JSON.stringify(db.shop.inventory));
-    localStorage.setItem('avatars', JSON.stringify(db.shop.avatars));
-    localStorage.setItem('achievements', JSON.stringify(db.shop.achievements));
-    localStorage.setItem('purchaseHistory', JSON.stringify(db.shop.purchaseHistory));
-    localStorage.setItem('lastDaily', String(db.shop.lastDaily));
-    localStorage.setItem('dailyClaimCount', String(db.shop.dailyClaimCount));
-    localStorage.setItem('totalSpent', String(db.shop.totalSpent));
+    LCAMemoryStorage.setItem('inventory', JSON.stringify(db.shop.inventory));
+    LCAMemoryStorage.setItem('avatars', JSON.stringify(db.shop.avatars));
+    LCAMemoryStorage.setItem('achievements', JSON.stringify(db.shop.achievements));
+    LCAMemoryStorage.setItem('purchaseHistory', JSON.stringify(db.shop.purchaseHistory));
+    LCAMemoryStorage.setItem('lastDaily', String(db.shop.lastDaily));
+    LCAMemoryStorage.setItem('dailyClaimCount', String(db.shop.dailyClaimCount));
+    LCAMemoryStorage.setItem('totalSpent', String(db.shop.totalSpent));
   }
 
   function load() {
     if (cache) return cache;
-    const stored = safeParse(localStorage.getItem(STORAGE_KEY));
+    const stored = safeParse(LCAMemoryStorage.getItem(STORAGE_KEY));
     cache = mergeDefaults(DEFAULT_DB, stored || {});
     migrateLegacy(cache);
     normalize(cache);
@@ -723,13 +723,15 @@
 
   function save() {
     normalize(cache);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(cache));
+    LCAMemoryStorage.setItem(STORAGE_KEY, JSON.stringify(cache));
     mirrorLegacy(cache);
   }
 
-  function createUserRecord(input) {
-    const login = String(input.login || '').trim();
+  function createUserRecord(input, db = null) {
     const email = String(input.email || '').trim().toLowerCase();
+    const providedLogin = String(input.login || '').trim();
+    const fallbackBase = String(providedLogin || email.split('@')[0] || input.displayName || input.name || '').trim() || 'player';
+    const login = String(providedLogin || createUniqueLogin(db || { users: [] }, fallbackBase)).trim();
     const password = String(input.password || '');
     const authProvider = normalizeProvider(input.authProvider || (password ? 'local' : ''));
     const authProviders = unique(
@@ -904,7 +906,7 @@
         username: tagCheck.normalizedTag,
         authProvider: 'local',
         authProviders: ['local']
-      });
+      }, db);
       db.users.push(user);
       if (input.autoLogin) {
         user.lastLoginAt = new Date().toISOString();
@@ -951,6 +953,8 @@
       const normalizedEmail = String(input.email || '').trim().toLowerCase();
       const displayName = String(input.displayName || input.name || '').trim();
       const providerUserId = String(input.providerUserId || '').trim();
+      const usernameInput = String(input.username || '').trim();
+      const incomingGender = normalizeGender(input.gender);
       const db = load();
       let user = null;
       let linked = false;
@@ -960,47 +964,45 @@
         user = db.users.find((entry) => String(entry.authIdentities?.[normalizedProvider] || '') === providerUserId);
       }
 
-      if (normalizedEmail) {
-        user = user || db.users.find((entry) => (
-          getUserAuthProviders(entry).includes(normalizedProvider)
-          && String(entry.email || '').toLowerCase() === normalizedEmail
-        ));
-        if (!user) {
-          user = db.users.find((entry) => String(entry.email || '').toLowerCase() === normalizedEmail);
-        }
+      if (!user && normalizedEmail) {
+        user = db.users.find((entry) => String(entry.email || '').toLowerCase() === normalizedEmail);
       }
 
       if (!user) {
-        const login = createUniqueLogin(
-          db,
-          `${slugifyLogin(displayName || normalizedEmail.split('@')[0] || normalizedProvider)}_${normalizedProvider}`
-        );
-        const requestedTag = normalizePublicTag(input.username || displayName || normalizedEmail.split('@')[0] || login);
-        const tagCheck = requestedTag
-          ? checkPublicTagAvailability(db, requestedTag)
-          : { ok: true, normalizedTag: createUniquePublicTag(db, login) };
-        if (!tagCheck.ok) {
-          return { ok: false, code: tagCheck.code, tag: tagCheck.normalizedTag, similarTag: tagCheck.similarTag };
-        }
-        user = createUserRecord({
+        const loginBase = normalizedEmail || displayName || `${normalizedProvider}_user`;
+        const login = createUniqueLogin(db, loginBase);
+        const sanitizedUsername = validatePublicTagValue(usernameInput)
+          ? normalizePublicTag(usernameInput)
+          : '';
+        const userRecord = createUserRecord({
           login,
-          email: normalizedEmail || `${login}@${normalizedProvider}.local`,
-          password: '',
+          email: normalizedEmail,
+          displayName,
+          username: sanitizedUsername,
+          gender: incomingGender,
           authProvider: normalizedProvider,
           authProviders: [normalizedProvider],
           authIdentities: providerUserId ? { [normalizedProvider]: providerUserId } : {},
-          displayName: displayName || login,
-          username: tagCheck.normalizedTag,
-          gender: input.gender
-        });
-        db.users.push(user);
+          password: ''
+        }, db);
+
+        userRecord.authProvider = normalizedProvider;
+        userRecord.authProviders = unique([...(Array.isArray(userRecord.authProviders) ? userRecord.authProviders : []), normalizedProvider]);
+        userRecord.authIdentities = {
+          ...(userRecord.authIdentities || {}),
+          ...(providerUserId ? { [normalizedProvider]: providerUserId } : {})
+        };
+        userRecord.updatedAt = new Date().toISOString();
+        userRecord.lastLoginAt = userRecord.updatedAt;
+
+        db.users.push(userRecord);
+        user = userRecord;
         isNew = true;
       } else {
-        const incomingGender = normalizeGender(input.gender);
         const currentProviders = getUserAuthProviders(user);
         linked = !currentProviders.includes(normalizedProvider);
         user.authProviders = linked ? unique([...currentProviders, normalizedProvider]) : currentProviders;
-        user.authIdentities = (user.authIdentities && typeof user.authIdentities === 'object') ? user.authIdentities : {};
+        user.authIdentities = (user.authIdentities && typeof user.authIdentities === 'object') ? { ...user.authIdentities } : {};
         if (providerUserId) {
           user.authIdentities[normalizedProvider] = providerUserId;
         }
@@ -1015,8 +1017,8 @@
         if (normalizedEmail) {
           user.profile.email = normalizedEmail;
         }
-        if (input.username) {
-          const tagCheck = checkPublicTagAvailability(db, input.username, user.login);
+        if (usernameInput) {
+          const tagCheck = checkPublicTagAvailability(db, usernameInput, user.login);
           if (!tagCheck.ok) {
             return { ok: false, code: tagCheck.code, tag: tagCheck.normalizedTag, similarTag: tagCheck.similarTag };
           }

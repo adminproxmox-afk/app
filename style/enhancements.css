@@ -14,7 +14,16 @@ body {
 .home-games-swiper,
 .home-popular-swiper {
   width: 100%;
-  overflow: visible;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.home-swiper,
+.home-category-swiper,
+.home-games-swiper,
+.home-popular-swiper,
+.swiper {
+  min-width: 0;
 }
 
 .home-swiper .swiper-wrapper {
@@ -102,7 +111,7 @@ body {
 
   .home-games-swiper,
   .home-popular-swiper {
-    margin-right: -2px;
+    margin-right: 0;
   }
 }
 

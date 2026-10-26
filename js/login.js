@@ -2,21 +2,21 @@ const loginI18n = {
   uk: {
     title: 'Увійдіть в акаунт',
     subtitle: 'Використайте логін, email або підключений провайдер, щоб продовжити.',
-    username: 'Логін або пошта',
+    username: 'Логін або email',
     password: 'Пароль',
     button: 'Увійти',
     divider: 'або увійти через',
     bottom: 'Ще немає акаунта?',
     link: 'Зареєструватися!',
-    need_both: 'Введіть логін або пошту та пароль',
+    need_both: 'Введіть логін або email та пароль',
     need_register: 'Спочатку створіть акаунт',
-    invalid_identity: 'Перевірте логін або пошту: щонайменше 3 символи',
+    invalid_identity: 'Перевірте логін або email: щонайменше 3 символи',
     invalid: 'Невірний логін, пошта або пароль',
     success: 'Вхід успішний. Відкриваємо застосунок...',
     use_social_login: 'Цей акаунт входить через {providers}. Скористайтеся соцкнопкою.'
   },
   en: {
-    title: 'Sign into your account',
+    title: 'Sign in to your account',
     subtitle: 'Use your username, email, or a connected provider to continue.',
     username: 'Username or Email',
     password: 'Password',
@@ -120,12 +120,6 @@ function login() {
   const lockState = window.AuthUX?.getLoginAttemptState?.(identity);
   if (lockState?.isLocked) {
     showLoginMessage(window.AuthUX?.t?.('login_locked', { seconds: lockState.seconds }) || '', 'warning');
-    return;
-  }
-
-  const users = window.AppDB?.getUsers?.() || [];
-  if (users.length === 0) {
-    showLoginMessage(t.need_register, 'warning');
     return;
   }
 

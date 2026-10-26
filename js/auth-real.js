@@ -594,13 +594,6 @@
         ? text('linked', { provider: label(provider) })
         : text('signed', { provider: label(provider) });
     const finalResult = { ...result, message };
-    const completionDraft = getCompletionDraft(finalResult, prefill);
-
-    if (completionDraft.needsCompletion) {
-      openProfileCompletionModal(provider, finalResult, opts, completionDraft);
-      return;
-    }
-
     finalizeProviderSuccess(finalResult, opts);
   }
 
@@ -679,7 +672,8 @@
     root.querySelectorAll('[data-provider]').forEach((button) => {
       const provider = String(button.dataset.provider || '').trim().toLowerCase();
       const labelNode = button.querySelector('.social-btn__label');
-      if (labelNode) labelNode.textContent = label(provider);
+      const actionLabel = 'Увійти через';
+      if (labelNode) labelNode.textContent = `${actionLabel} ${label(provider)}`;
       button.classList.toggle('is-configured', configured(provider));
       button.onclick = () => {
         pageMessage('', 'info');

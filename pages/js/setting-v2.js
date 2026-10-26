@@ -1,5 +1,5 @@
 (function () {
-  const currentUser = window.AppDB?.getCurrentUser?.() || localStorage.getItem('user');
+  const currentUser = window.AppDB?.getCurrentUser?.() || LCAMemoryStorage.getItem('user');
   if (!currentUser) {
     window.location.href = '../login.html';
     return;
@@ -99,7 +99,7 @@
       settingsReset: 'Налаштування скинуто',
       cacheCleared: 'Тимчасові дані очищено',
       currentPasswordInvalid: 'Поточний пароль невірний',
-      newPasswordShort: 'Новий пароль має містити хоча б 4 символи',
+      newPasswordShort: 'Новий пароль має містити хоча б 8 символів',
       passwordsMismatch: 'Паролі не співпадають',
       passwordChanged: 'Пароль змінено',
       themeUpdated: 'Тему оновлено',
@@ -169,7 +169,7 @@
       settingsReset: 'Settings reset',
       cacheCleared: 'Temporary data cleared',
       currentPasswordInvalid: 'Current password is incorrect',
-      newPasswordShort: 'New password must be at least 4 characters',
+      newPasswordShort: 'New password must be at least 8 characters',
       passwordsMismatch: 'Passwords do not match',
       passwordChanged: 'Password changed',
       themeUpdated: 'Theme updated',
@@ -895,14 +895,7 @@
     const currentPassword = elements.currentPasswordInput.value;
     const newPassword = elements.newPasswordInput.value;
     const confirmPassword = elements.confirmPasswordInput.value;
-    const user = window.AppDB?.findUserByLogin?.(currentUser);
-
-    if (!user || user.password !== currentPassword) {
-      showToast(tr('currentPasswordInvalid'));
-      return;
-    }
-
-    if (newPassword.length < 4) {
+    if (newPassword.length < 8) {
       showToast(tr('newPasswordShort'));
       return;
     }
@@ -912,10 +905,11 @@
       return;
     }
 
-    window.AppDB?.update?.((db) => {
-      const target = db.users.find((entry) => entry.login === currentUser);
-      if (target) target.password = newPassword;
-    });
+    const result = window.LCAApi?.changePassword?.(currentPassword, newPassword);
+    if (!result?.ok) {
+      showToast(result?.code === 'INVALID_PASSWORD' ? tr('currentPasswordInvalid') : (result?.error || tr('currentPasswordInvalid')));
+      return;
+    }
 
     closeModal(elements.passwordModal);
     showToast(tr('passwordChanged'));

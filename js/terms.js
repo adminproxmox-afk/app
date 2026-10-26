@@ -49,18 +49,18 @@
   }
 
   function getStoredDb() {
-    return safeParse(localStorage.getItem(STORAGE_KEY)) || {};
+    return safeParse(LCAMemoryStorage.getItem(STORAGE_KEY)) || {};
   }
 
   function getCurrentUser() {
     const db = getStoredDb();
-    return String(db?.session?.user || localStorage.getItem('user') || '').trim();
+    return String(db?.session?.user || LCAMemoryStorage.getItem('user') || '').trim();
   }
 
   function getLanguage() {
     const db = getStoredDb();
     const dbLanguage = db?.settings?.language;
-    const legacyLanguage = localStorage.getItem('language');
+    const legacyLanguage = LCAMemoryStorage.getItem('language');
     if (dbLanguage === 'en' || legacyLanguage === 'en') return 'en';
     return 'uk';
   }
@@ -68,7 +68,7 @@
   function isDarkMode() {
     const db = getStoredDb();
     if (typeof db?.settings?.darkMode === 'boolean') return db.settings.darkMode;
-    return localStorage.getItem('darkMode') !== 'false';
+    return LCAMemoryStorage.getItem('darkMode') !== 'false';
   }
 
   function setText(id, value) {

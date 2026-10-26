@@ -27,7 +27,7 @@
     const dbSettings = window.AppDB?.getData?.()?.settings || {};
     const readBool = (key, fallback) => {
       if (typeof dbSettings[key] === 'boolean') return dbSettings[key];
-      const raw = localStorage.getItem(key);
+      const raw = LCAMemoryStorage.getItem(key);
       if (raw === 'true') return true;
       if (raw === 'false') return false;
       return fallback;
@@ -35,7 +35,7 @@
     const readVolume = () => {
       const dbValue = Number(dbSettings.volume);
       if (Number.isFinite(dbValue)) return clamp(dbValue, 0, 100);
-      const localValue = Number(localStorage.getItem('volume'));
+      const localValue = Number(LCAMemoryStorage.getItem('volume'));
       return Number.isFinite(localValue) ? clamp(localValue, 0, 100) : 70;
     };
 
@@ -45,7 +45,7 @@
       musicEnabled: readBool('musicEnabled', true),
       soundEnabled: readBool('soundEnabled', true),
       volume: readVolume(),
-      language: dbSettings.language === 'en' || localStorage.getItem('language') === 'en' ? 'en' : 'uk'
+      language: dbSettings.language === 'en' || LCAMemoryStorage.getItem('language') === 'en' ? 'en' : 'uk'
     };
   }
 

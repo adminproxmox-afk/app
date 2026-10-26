@@ -1,5 +1,5 @@
-﻿(function () {
-  const currentUser = window.AppDB?.getCurrentUser?.() || localStorage.getItem('user');
+(function () {
+  const currentUser = window.AppDB?.getCurrentUser?.() || LCAMemoryStorage.getItem('user');
   if (!currentUser) {
     window.location.href = '../login.html';
     return;
@@ -278,8 +278,8 @@
     const db = window.AppDB?.getData?.() || {};
     const profile = db.profile || {};
     const character = db.character || {};
-    const saved = safeParse(localStorage.getItem(STORAGE_KEY));
-    const userName = profile.name || localStorage.getItem('userName') || currentUser || 'Авантюрист';
+    const saved = safeParse(LCAMemoryStorage.getItem(STORAGE_KEY));
+    const userName = profile.name || LCAMemoryStorage.getItem('userName') || currentUser || 'Авантюрист';
     const gender = normalizeGender(profile.gender);
     const genderDefaultState = getDefaultStateForGender(gender);
     const base = {
@@ -323,7 +323,7 @@
       owned: Array.from(new Set(state.owned))
     };
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    LCAMemoryStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
 
     window.AppDB?.update?.((db) => {
       db.character = {
@@ -483,17 +483,21 @@
 
     const glow = extra === 'transparent' ? 'transparent' : `${extra}55`;
     const shadow = extra === 'transparent' ? 'transparent' : `${extra}aa`;
-    elements.avatarAuraLeft.style.background = glow;
-    elements.avatarAuraRight.style.background = glow;
-    elements.avatarAuraLeft.style.boxShadow = `0 0 14px ${shadow}`;
-    elements.avatarAuraRight.style.boxShadow = `0 0 14px ${shadow}`;
+    if (elements.avatarAuraLeft) {
+      elements.avatarAuraLeft.style.background = glow;
+      elements.avatarAuraLeft.style.boxShadow = `0 0 14px ${shadow}`;
+    }
+    if (elements.avatarAuraRight) {
+      elements.avatarAuraRight.style.background = glow;
+      elements.avatarAuraRight.style.boxShadow = `0 0 14px ${shadow}`;
+    }
 
     const profile = window.AppDB?.getData?.()?.profile || {};
     const gender = normalizeGender(profile.gender);
     elements.avatarPreview?.classList.toggle('avatar-figure--female', gender === 'female');
     document.body.classList.toggle('character-page--female', gender === 'female');
     elements.coinBalance.textContent = String(Number(profile.coins || state.coins || 125));
-    elements.profileName.textContent = profile.name || localStorage.getItem('userName') || state.profileName;
+    elements.profileName.textContent = profile.name || LCAMemoryStorage.getItem('userName') || state.profileName;
     elements.profileStatus.textContent = `${countOwnedItems()} ${text.ownedItems}`;
   }
 

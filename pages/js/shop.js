@@ -569,7 +569,7 @@ function updateAchievements(db, spentAmount) {
   return newUnlocks;
 }
 
-function buyItem(item) {
+function buyItemLegacy(item) {
   let modalState = null;
   let toastMessage = '';
   let unlockedAchievements = [];
@@ -616,7 +616,7 @@ function buyItem(item) {
   });
 }
 
-function buyWardrobeItem(itemId) {
+function buyWardrobeItemLegacy(itemId) {
   const item = findWardrobeItemById(itemId);
   if (!item) return;
 
@@ -665,7 +665,7 @@ function buyWardrobeItem(itemId) {
   });
 }
 
-function buyAvatar(avatar) {
+function buyAvatarLegacy(avatar) {
   let modalState = null;
   let toastMessage = '';
   let unlockedAchievements = [];
@@ -715,7 +715,7 @@ function buyAvatar(avatar) {
   });
 }
 
-function claimDaily() {
+function claimDailyLegacy() {
   let modalState = null;
   let toastMessage = '';
   let unlockedAchievements = [];
@@ -894,8 +894,49 @@ function renderCurrentTab() {
   window.AppEnhancements?.refresh?.();
 }
 
+function serverShopAction(itemId, successMessage) {
+  const result = window.LCAApi?.purchase?.(itemId);
+  if (!result?.ok) {
+    showModal(trShop('Помилка'), result?.error || trShop('Покупку не виконано'));
+    return false;
+  }
+  updateBalance();
+  renderCurrentTab();
+  if (successMessage) showToast(successMessage);
+  return true;
+}
+
+function buyItem(item) {
+  if (!item) return;
+  serverShopAction(item.id, `${trShop('Куплено')}: ${trShop(item.name)}`);
+}
+
+function buyWardrobeItem(itemId) {
+  const item = findWardrobeItemById(itemId);
+  if (!item) return;
+  serverShopAction(item.id, `${trShop('Куплено')}: ${trShop(item.label)}`);
+}
+
+function buyAvatar(avatar) {
+  const index = allAvatars.findIndex((entry) => entry.emoji === avatar?.emoji);
+  if (index < 0) return;
+  serverShopAction(`avatar_${index}`, `${trShop('Новий аватар')}: ${trShop(avatar.name)}`);
+}
+
+function claimDaily() {
+  const result = window.LCAApi?.claimDaily?.();
+  if (!result?.ok) {
+    showModal(trShop('Помилка'), result?.error || trShop('Бонус уже отримано'));
+    return;
+  }
+  updateBalance();
+  renderCurrentTab();
+  showToast(`${trShop('Щоденний бонус')} +50`);
+}
+
 window.buyItem = buyItem;
 window.buyWardrobeItem = buyWardrobeItem;
+window.buyAvatar = buyAvatar;
 window.claimDaily = claimDaily;
 window.closeModal = closeModal;
 
