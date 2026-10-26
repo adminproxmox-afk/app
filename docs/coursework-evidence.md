@@ -6,7 +6,7 @@
 
 До виправлень відтворено 4 відмови: blocked session приймалася, cookie не змінювалася, dev-server віддавав SQL, readiness не перевіряла БД. Після — 9/9 на серверному PHP 8.5/MySQL 8.0. CI окремо перевіряє PHP 8.3/MySQL 8.0.
 
-`tests/test_release.py`: 4 сценарії через CLI/HTTP — успішний deploy/ручний rollback, автоматичний rollback при 503, заборона traversal/private files, links/дублікатів. До реалізації helper не проходили, після — 4/4.
+`tests/test_release.py`: 5 сценаріїв через CLI/HTTP — успішний deploy/ручний rollback, автоматичний rollback при 503, заборона traversal/private files, links/дублікатів та sparse-файлів. Перші 4 не проходили до реалізації helper; незалежний review знайшов sparse bypass, окремий тест відтворив і закрив його. Після — 5/5.
 
 `scripts/server/check-origin.py`: прямий HTTPS із підробленими X-Forwarded-For/CF-Connecting-IP і перевіркою Apache log. До виправлення записувався підставний 198.51.100.89; після очікується реальна LAN-адреса. Також canonical www, закриті файли, readiness. Приватні логи/конфіги/дампи зберігаються у maintenance snapshot на сервері; підсумкові фактичні запуски — в execution ledger.
 

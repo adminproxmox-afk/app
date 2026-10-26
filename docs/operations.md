@@ -28,6 +28,8 @@ ssh -i ~/.ssh/finway_deploy_ed25519 finway-deploy@192.168.31.219 rollback
 
 На новому сервері перевірте однакову файлову систему DocumentRoot/state і readiness попередньої версії до першого deploy. Схему/seed імпортують тільки у нову порожню БД. Старі релізи зберігаються для аналізу; стежте за диском і видаляйте тільки перевірені каталоги, які не є DocumentRoot або previous.json.directory.
 
+Перевірка батьківських прав: `namei -l /home/base/sites/techlifeacademys.pp.ua`. Усі батьківські каталоги мають належати root і не бути доступними PHP-користувачу для запису. На поточному сервері /home/base=root:root 0755, /home/base/sites=root:base 0755. Installer не призначений для довільних layout без цієї перевірки.
+
 GitHub environment production потребує FINWAY_DEPLOY_HOST, FINWAY_DEPLOY_PORT, FINWAY_DEPLOY_KEY, FINWAY_KNOWN_HOSTS. Known hosts отримують через довірений LAN/root-доступ з перевіркою fingerprint. Не вимикайте StrictHostKeyChecking. GitHub runner потребує доступу до SSH: LAN 192.168.31.219 недоступний GitHub-hosted runner. Використовуйте налаштований публічний SSH endpoint або окремий довірений runner; не запускайте PR-runner на production. Локальний контрольований SSH deploy працює незалежно від GitHub secrets.
 
 ## Перевірки/backup/recovery

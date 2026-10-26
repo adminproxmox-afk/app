@@ -49,10 +49,13 @@ def unpack(stream, directory):
         raise ValueError('Archive exceeds expanded size limit')
     seen = set()
     manifest = None
+    expanded = 0
     with tarfile.open(fileobj=io.BytesIO(raw), mode='r:') as archive:
         for member in archive:
             name = member.name
-            if name in seen or len(seen) >= 10000 or not member.isfile():
+            expanded += member.size
+            if (name in seen or len(seen) >= 10000 or not member.isfile()
+                    or member.sparse is not None or expanded > 256 * 1024 * 1024):
                 raise ValueError('Duplicate, excessive or non-regular archive entry')
             seen.add(name)
             if name != 'release.json' and not (name.startswith('public/') and allowed(name[7:])):

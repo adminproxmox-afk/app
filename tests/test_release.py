@@ -106,6 +106,22 @@ class ReleaseTests(unittest.TestCase):
         self.assertNotEqual(self.release(output.getvalue()).returncode, 0)
         self.assertEqual((self.site / "index.html").read_text(), "a" * 40)
 
+    def test_sparse_files_are_rejected_before_expansion(self):
+        self.assertEqual(self.release(archive("a" * 40)).returncode, 0)
+        output = io.BytesIO()
+        with tarfile.open(fileobj=output, mode="w:gz", format=tarfile.PAX_FORMAT) as tar:
+            with tarfile.open(fileobj=io.BytesIO(archive("b" * 40)), mode="r:gz") as normal:
+                for member in normal:
+                    tar.addfile(member, normal.extractfile(member))
+            member = tarfile.TarInfo("public/assets/sparse.dat")
+            member.size = 1
+            member.pax_headers = {'GNU.sparse.map': '0,1', 'GNU.sparse.size': '100',
+                                  'GNU.sparse.name': 'public/assets/sparse.dat'}
+            tar.addfile(member, io.BytesIO(b'x'))
+        result = self.release(output.getvalue())
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual((self.site / "index.html").read_text(), "a" * 40)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
