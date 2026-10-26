@@ -27,9 +27,9 @@
 ## Tasks
 - [x] 1. Deployed sources/schema-only DDL/seed, private configuration, development router and setup.
 - [x] 2. Integration tests RED→GREEN, session revocation/rotation, own-data/CSRF/expiry/rate-limit/readiness.
-- [x] 3. Public packages, bounded extraction, release/rollback tests, syntax/integration CI and manual workflows. Remote CI awaits GitHub write access.
+- [x] 3. Public packages, bounded extraction, release/rollback tests, syntax/integration CI and manual workflows. GitHub-hosted backend CI passed.
 - [x] 4. Cloudflare/server snapshots, www proxy/canonical, trusted headers/ingress, LAN/CF/ACME/SSH verification.
-- [ ] 5. Restricted deploy/rollback, operations evidence and independent review complete. Branch/PR publication blocked by GitHub403; see ledger.
+- [x] 5. Restricted deploy/rollback, operations evidence, independent review, branch publication and draft PR complete. Backend CI passed; production workflow activation requires documented secrets and reachable SSH.
 
 ## Commands/evidence
 - PHP lint: `find api scripts -name '*.php' -exec php -l {} \;`.
