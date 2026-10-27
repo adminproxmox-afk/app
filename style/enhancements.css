@@ -9,6 +9,16 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+.auth-card .auth-brand {
+  width: fit-content;
+  min-width: 112px;
+  max-width: 100%;
+  padding-inline: 14px;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
 .home-swiper,
 .home-category-swiper,
 .home-games-swiper,

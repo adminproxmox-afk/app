@@ -18,15 +18,15 @@
   const TAGS = {
     html: { text: '', attrs: [] },
     head: { text: '', attrs: [] },
-    title: { text: 'Life Capital Academy', attrs: [] },
+    title: { text: 'FinWay', attrs: [] },
     body: { text: '', attrs: [] },
     header: { text: '', attrs: [] },
     main: { text: '', attrs: [] },
-    footer: { text: 'LCA. Навчайся через дію.', attrs: [] },
+    footer: { text: 'FinWay. Навчайся через дію.', attrs: [] },
     nav: { text: '', attrs: [] },
     section: { text: '', attrs: [] },
     div: { text: '', attrs: [] },
-    h1: { text: 'Life Capital Academy', attrs: [] },
+    h1: { text: 'FinWay', attrs: [] },
     h2: { text: 'HTML-місія', attrs: [] },
     h3: { text: 'Картка навички', attrs: [] },
     p: { text: 'Коротко опиши, що побачить студент.', attrs: [] },
@@ -58,7 +58,7 @@
     {
       badge: 'Місія 01 · Старт',
       title: 'Каркас сторінки',
-      scene: 'Запусти порожній документ Академії.',
+      scene: 'Запусти порожній документ FinWay.',
       task: 'Додай <html>, а всередину нього <head> і <body>. У <head> поклади <title>.',
       hint: 'Перетягни <html> у поле. Потім кидай <head> і <body> всередину нього.',
       tags: ['html', 'head', 'title', 'body'],
@@ -204,8 +204,8 @@
     },
     {
       badge: 'Місія 10 · Фінал',
-      title: 'Міні-сторінка LCA',
-      scene: 'Склади маленьку сторінку Life Capital Academy.',
+      title: 'Міні-сторінка FinWay',
+      scene: 'Склади маленьку сторінку FinWay.',
       task: 'Збери сторінку: <header>, <main>, <section> у main, <footer>.',
       hint: 'У <section> додай хоча б <h2> і <p>.',
       tags: ['header', 'main', 'section', 'h2', 'p', 'footer'],
@@ -385,7 +385,7 @@
   function defaultAttr(tag, name) {
     if (tag === 'img' && name === 'src') return 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80';
     if (tag === 'img' && name === 'alt') return 'Ноутбук з кодом';
-    if (tag === 'a' && name === 'href') return 'https://life-capital.academy';
+    if (tag === 'a' && name === 'href') return 'https://techlifeacademys.pp.ua';
     return '';
   }
 
@@ -642,7 +642,7 @@
     els.finishCoins.textContent = `${TOTAL_REWARD.coins} монети`;
     els.finishScreen.hidden = false;
     els.nextBtn.hidden = true;
-    setFeedback('ok', 'Курс завершено. Академія прийняла твою сторінку.');
+    setFeedback('ok', 'Курс завершено. FinWay прийняв твою сторінку.');
     renderHeader();
     renderLevelTabs();
     postProgress();

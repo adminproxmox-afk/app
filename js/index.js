@@ -25,7 +25,7 @@ const APP_HOME_TOAST_KEY = 'appHomeToast';
 const copy = {
   uk: {
     eyebrow: 'Learning Hub',
-    pageTitle: 'Головна',
+    pageTitle: 'FinWay',
     subtitle: 'Профіль, аналітика і швидкий вибір ігор в одному екрані.',
     compactTopCategory: 'Топ категорія',
     compactStatsTitle: 'Статистика',
@@ -104,7 +104,7 @@ const copy = {
   },
   en: {
     eyebrow: 'Learning Hub',
-    pageTitle: 'Home',
+    pageTitle: 'FinWay',
     subtitle: 'Profile, analytics and fast game selection in one screen.',
     compactTopCategory: 'Top Category',
     compactStatsTitle: 'Statistics',
